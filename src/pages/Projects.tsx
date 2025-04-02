@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
 import { Suspense, useRef } from 'react';
+import * as THREE from 'three';
 
 // Project Card component for 3D scene with proper typing
 function ProjectCard({ position, color, title, onClick }: { 

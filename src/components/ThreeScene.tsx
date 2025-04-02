@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 
 // Simple Island component
 function Island(props: any) {
-  const meshRef = useRef<any>();
+  const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
@@ -65,7 +65,7 @@ function Island(props: any) {
 
 // Simple bicycle model representing your cycling-themed portfolio
 function Bicycle(props: any) {
-  const meshRef = useRef<any>();
+  const meshRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
