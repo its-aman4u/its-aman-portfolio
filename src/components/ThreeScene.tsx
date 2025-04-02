@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
 import { Suspense } from 'react';
+import * as THREE from 'three';
 
 // Simple Island component
 function Island(props: any) {
