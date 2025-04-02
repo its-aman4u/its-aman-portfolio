@@ -1,7 +1,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars } from '@react-three/drei';
-import { Suspense, useRef } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 // 3D Project Card component
@@ -17,6 +17,7 @@ function ProjectCard({
   onClick: () => void 
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
   
   return (
     <mesh 
@@ -25,12 +26,15 @@ function ProjectCard({
       onClick={onClick}
       onPointerOver={() => {
         document.body.style.cursor = 'pointer';
+        setHovered(true);
         if (meshRef.current) meshRef.current.scale.set(1.1, 1.1, 1.1);
       }}
       onPointerOut={() => {
         document.body.style.cursor = 'default';
+        setHovered(false);
         if (meshRef.current) meshRef.current.scale.set(1, 1, 1);
       }}
+      scale={hovered ? [1.1, 1.1, 1.1] : [1, 1, 1]}
     >
       <boxGeometry args={[1.5, 0.5, 1.5]} />
       <meshStandardMaterial color={color} />
@@ -69,7 +73,7 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
       <Stars radius={100} depth={50} count={1000} factor={4} />
       <OrbitControls 
         enableZoom={true}
-        enablePan={false}
+        enablePan={true}
         minPolarAngle={Math.PI / 4}
         maxPolarAngle={Math.PI / 2}
         minDistance={4}

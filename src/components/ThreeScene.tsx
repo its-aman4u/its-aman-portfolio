@@ -95,6 +95,20 @@ function Bicycle({ position }: { position: [number, number, number] }) {
   );
 }
 
+// Profile picture component
+function ProfilePicture({ position }: { position: [number, number, number] }) {
+  return (
+    <group position={position}>
+      <mesh position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[1.5, 1.5]} />
+        <meshStandardMaterial>
+          <meshStandardMaterial color="#ffffff" />
+        </meshStandardMaterial>
+      </mesh>
+    </group>
+  );
+}
+
 // 3D Scene containing all elements
 function Scene() {
   return (
@@ -103,10 +117,11 @@ function Scene() {
       <pointLight position={[10, 10, 10]} intensity={1} />
       <Island position={[0, -2, -2]} />
       <Bicycle position={[0, 0, 0]} />
+      <ProfilePicture position={[2, 0, 0]} />
       <Stars radius={100} depth={50} count={1000} factor={4} />
       <OrbitControls 
         enableZoom={true}
-        enablePan={false}
+        enablePan={true}
         minPolarAngle={Math.PI / 6}
         maxPolarAngle={Math.PI / 2}
         minDistance={3}
