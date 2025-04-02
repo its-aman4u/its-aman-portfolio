@@ -3,116 +3,6 @@ import {
   Github, ExternalLink, Code 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, Stars, Float } from '@react-three/drei';
-import { Suspense, useRef } from 'react';
-
-// Project Card component for 3D scene
-function ProjectCard({ position, color, title, onClick }: any) {
-  const ref = useRef<any>();
-  
-  return (
-    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-      <mesh 
-        position={position} 
-        ref={ref} 
-        onClick={onClick}
-        onPointerOver={() => {
-          document.body.style.cursor = 'pointer';
-          if (ref.current) ref.current.scale.set(1.1, 1.1, 1.1);
-        }}
-        onPointerOut={() => {
-          document.body.style.cursor = 'default';
-          if (ref.current) ref.current.scale.set(1, 1, 1);
-        }}
-      >
-        <boxGeometry args={[1.5, 0.5, 1.5]} />
-        <meshStandardMaterial color={color} />
-        <Text position={[0, 0, 0.76]} fontSize={0.15} color="#ffffff">
-          {title}
-        </Text>
-      </mesh>
-    </Float>
-  );
-}
-
-// Text component for 3D scene
-function Text({ children, position, fontSize = 0.1, color = '#000000' }: any) {
-  return (
-    <mesh position={position}>
-      <planeGeometry args={[1, 0.3]} />
-      <meshBasicMaterial transparent opacity={0} />
-      <Html center transform>
-        <div style={{ 
-          color: color, 
-          fontSize: `${fontSize * 100}px`,
-          fontWeight: 'bold',
-          textAlign: 'center',
-          whiteSpace: 'nowrap'
-        }}>
-          {children}
-        </div>
-      </Html>
-    </mesh>
-  );
-}
-
-// HTML content component for Three.js
-function Html(props: any) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        transform: props.transform ? 'translate(-50%, -50%)' : 'none',
-        ...props.style
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
-
-// 3D Scene for Projects
-function ProjectsScene({ scrollToProject }: { scrollToProject: (index: number) => void }) {
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} />
-      
-      <ProjectCard 
-        position={[-2, 0, 0]} 
-        color="#1A6A8F" 
-        title="O3 Automation" 
-        onClick={() => scrollToProject(0)}
-      />
-      
-      <ProjectCard 
-        position={[0, 0, 0]} 
-        color="#53A2BE" 
-        title="AI Portfolios" 
-        onClick={() => scrollToProject(1)}
-      />
-      
-      <ProjectCard 
-        position={[2, 0, 0]} 
-        color="#53BE76" 
-        title="Masterclass Scheduler" 
-        onClick={() => scrollToProject(2)}
-      />
-      
-      <Stars radius={100} depth={50} count={1000} factor={4} />
-      <OrbitControls 
-        enableZoom={true}
-        enablePan={false}
-        minPolarAngle={Math.PI / 4}
-        maxPolarAngle={Math.PI / 2}
-        minDistance={4}
-        maxDistance={10}
-      />
-      <Environment preset="sunset" />
-    </>
-  );
-}
 
 const Projects = () => {
   const projects = [
@@ -144,30 +34,10 @@ const Projects = () => {
       github: "https://github.com/its-aman4u"
     }
   ];
-
-  // Function to scroll to project section
-  const scrollToProject = (index: number) => {
-    const projectElements = document.querySelectorAll('.project-card-detailed');
-    if (projectElements[index]) {
-      projectElements[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
   
   return (
     <div className="min-h-screen pt-20">
-      {/* 3D Projects Scene */}
-      <section className="h-[500px] w-full mb-16">
-        <Canvas camera={{ position: [0, 2, 6], fov: 45 }}>
-          <Suspense fallback={null}>
-            <ProjectsScene scrollToProject={scrollToProject} />
-          </Suspense>
-        </Canvas>
-        <div className="absolute bottom-5 left-0 right-0 text-center text-primary text-shadow-lg pointer-events-none">
-          <p className="text-sm">Click on a project to learn more</p>
-        </div>
-      </section>
-      
-      <section className="py-8">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold mb-4">Projects</h1>
@@ -180,7 +50,7 @@ const Projects = () => {
             {projects.map((project, index) => (
               <div 
                 key={index} 
-                className="project-card-detailed bg-white dark:bg-card rounded-xl shadow-md overflow-hidden animate-fade-in"
+                className="bg-white dark:bg-card rounded-xl shadow-md overflow-hidden animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2">
