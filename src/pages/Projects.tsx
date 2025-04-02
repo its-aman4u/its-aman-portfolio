@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars, Float } from '@react-three/drei';
 import { Suspense, useRef } from 'react';
-import * as THREE from 'three';
 
 // Project Card component for 3D scene
 function ProjectCard({ position, color, title, onClick }: any) {
@@ -14,7 +13,7 @@ function ProjectCard({ position, color, title, onClick }: any) {
   return (
     <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
       <mesh 
-        position={position} 
+        position={[position[0], position[1], position[2]]} 
         ref={ref} 
         onClick={onClick}
         onPointerOver={() => {
@@ -30,15 +29,6 @@ function ProjectCard({ position, color, title, onClick }: any) {
         <meshStandardMaterial color={color} />
       </mesh>
     </Float>
-  );
-}
-
-// Alternative text component using sprites instead of HTML
-function TextSprite({ text, position = [0, 0, 0], color = "#ffffff", fontSize = 0.2 }) {
-  return (
-    <sprite position={position} scale={[2, 0.5, 1]}>
-      <spriteMaterial color={color} />
-    </sprite>
   );
 }
 
