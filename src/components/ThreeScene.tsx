@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 import * as THREE from 'three';
 
 // Simple Island component
-function Island(props: any) {
+function Island({ position }: { position: [number, number, number] }) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
@@ -16,7 +16,7 @@ function Island(props: any) {
   });
 
   return (
-    <group {...props}>
+    <group position={position}>
       <mesh
         ref={meshRef}
         position={[0, 0, 0]}
