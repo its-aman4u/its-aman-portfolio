@@ -1,7 +1,7 @@
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, Stars, Float, Html } from '@react-three/drei';
+import { OrbitControls, Environment, Stars, Float } from '@react-three/drei';
 import { Suspense } from 'react';
 
 // Simple Island component
@@ -100,7 +100,7 @@ function Bicycle(props: any) {
 }
 
 // 3D Scene containing all elements
-export function Scene() {
+function Scene() {
   return (
     <>
       <ambientLight intensity={0.5} />

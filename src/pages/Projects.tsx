@@ -1,9 +1,10 @@
+
 import { 
   Github, ExternalLink, Code 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, Stars, Float, Html } from '@react-three/drei';
+import { OrbitControls, Environment, Stars, Float } from '@react-three/drei';
 import { Suspense, useRef } from 'react';
 
 // Project Card component for 3D scene
@@ -27,19 +28,23 @@ function ProjectCard({ position, color, title, onClick }: any) {
       >
         <boxGeometry args={[1.5, 0.5, 1.5]} />
         <meshStandardMaterial color={color} />
-        <Html position={[0, 0, 0.76]}>
-          <div style={{ 
-            color: '#ffffff', 
-            fontSize: '15px',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            whiteSpace: 'nowrap'
-          }}>
-            {title}
-          </div>
-        </Html>
+        <textSprite 
+          text={title} 
+          color="#ffffff" 
+          fontSize={0.2}
+          position={[0, 0, 0.76]}
+        />
       </mesh>
     </Float>
+  );
+}
+
+// Alternative text component using sprites instead of HTML
+function TextSprite({ text, position = [0, 0, 0], color = "#ffffff", fontSize = 0.2 }) {
+  return (
+    <sprite position={position} scale={[2, 0.5, 1]}>
+      <spriteMaterial color={color} />
+    </sprite>
   );
 }
 
