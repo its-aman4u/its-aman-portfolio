@@ -1,38 +1,42 @@
+
 import { 
   Github, ExternalLink, Code 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Stars, Float } from '@react-three/drei';
+import { OrbitControls, Environment, Stars } from '@react-three/drei';
 import { Suspense, useRef } from 'react';
 
-// Project Card component for 3D scene
-function ProjectCard({ position, color, title, onClick }: any) {
-  const ref = useRef<any>();
+// Project Card component for 3D scene with proper typing
+function ProjectCard({ position, color, title, onClick }: { 
+  position: [number, number, number], 
+  color: string, 
+  title: string, 
+  onClick: () => void 
+}) {
+  const ref = useRef<THREE.Mesh>(null);
   
   return (
-    <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-      <mesh 
-        position={[position[0], position[1], position[2]]} 
-        ref={ref} 
-        onClick={onClick}
-        onPointerOver={() => {
-          document.body.style.cursor = 'pointer';
-          if (ref.current) ref.current.scale.set(1.1, 1.1, 1.1);
-        }}
-        onPointerOut={() => {
-          document.body.style.cursor = 'default';
-          if (ref.current) ref.current.scale.set(1, 1, 1);
-        }}
-      >
-        <boxGeometry args={[1.5, 0.5, 1.5]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </Float>
+    <mesh 
+      position={position}
+      ref={ref} 
+      onClick={onClick}
+      onPointerOver={() => {
+        document.body.style.cursor = 'pointer';
+        if (ref.current) ref.current.scale.set(1.1, 1.1, 1.1);
+      }}
+      onPointerOut={() => {
+        document.body.style.cursor = 'default';
+        if (ref.current) ref.current.scale.set(1, 1, 1);
+      }}
+    >
+      <boxGeometry args={[1.5, 0.5, 1.5]} />
+      <meshStandardMaterial color={color} />
+    </mesh>
   );
 }
 
-// 3D Scene for Projects
+// Simplified 3D Scene for Projects
 function ProjectsScene({ scrollToProject }: { scrollToProject: (index: number) => void }) {
   return (
     <>
@@ -122,9 +126,6 @@ const Projects = () => {
             <ProjectsScene scrollToProject={scrollToProject} />
           </Suspense>
         </Canvas>
-        <div className="absolute bottom-5 left-0 right-0 text-center text-primary text-shadow-lg pointer-events-none">
-          <p className="text-sm">Click on a project to learn more</p>
-        </div>
         
         {/* Project labels using HTML overlay instead of Three.js text */}
         <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none">
@@ -135,6 +136,10 @@ const Projects = () => {
               <div className="text-white font-bold transform translate-x-[32px]">Masterclass Scheduler</div>
             </div>
           </div>
+        </div>
+        
+        <div className="absolute bottom-5 left-0 right-0 text-center text-primary text-shadow-lg pointer-events-none">
+          <p className="text-sm">Click on a project to learn more</p>
         </div>
       </section>
       

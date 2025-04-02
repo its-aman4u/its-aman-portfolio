@@ -1,13 +1,12 @@
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, Stars, Float } from '@react-three/drei';
+import { OrbitControls, Environment, Stars } from '@react-three/drei';
 import { Suspense } from 'react';
 
 // Simple Island component
 function Island(props: any) {
   const meshRef = useRef<any>();
-  const [hovered, setHover] = useState(false);
   
   useFrame((state) => {
     if (meshRef.current) {
@@ -17,53 +16,49 @@ function Island(props: any) {
 
   return (
     <group {...props}>
-      <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-        <mesh
-          ref={meshRef}
-          scale={hovered ? 1.05 : 1}
-          onPointerOver={() => setHover(true)}
-          onPointerOut={() => setHover(false)}
-        >
-          <cylinderGeometry args={[3, 3.5, 0.4, 6]} />
-          <meshStandardMaterial color={hovered ? "#1A6A8F" : "#53A2BE"} />
-          
-          {/* Simple trees */}
-          <group position={[1, 0.4, 0]}>
-            <mesh position={[0, 0.7, 0]}>
-              <coneGeometry args={[0.5, 1.2, 6]} />
-              <meshStandardMaterial color="#53BE76" />
-            </mesh>
-            <mesh position={[0, 0, 0]}>
-              <cylinderGeometry args={[0.1, 0.1, 0.4, 6]} />
-              <meshStandardMaterial color="#8B5A2B" />
-            </mesh>
-          </group>
-          
-          {/* Another tree */}
-          <group position={[-1.2, 0.4, 1]}>
-            <mesh position={[0, 0.7, 0]}>
-              <coneGeometry args={[0.4, 1, 6]} />
-              <meshStandardMaterial color="#53BE76" />
-            </mesh>
-            <mesh position={[0, 0, 0]}>
-              <cylinderGeometry args={[0.08, 0.08, 0.4, 6]} />
-              <meshStandardMaterial color="#8B5A2B" />
-            </mesh>
-          </group>
-          
-          {/* Simple building representing career */}
-          <group position={[0, 0.4, -1]}>
-            <mesh position={[0, 0.5, 0]}>
-              <boxGeometry args={[0.8, 1, 0.8]} />
-              <meshStandardMaterial color="#E8F3F7" />
-            </mesh>
-            <mesh position={[0, 1.2, 0]} rotation={[0, 0.5, 0]}>
-              <coneGeometry args={[0.6, 0.6, 4]} />
-              <meshStandardMaterial color="#142936" />
-            </mesh>
-          </group>
-        </mesh>
-      </Float>
+      <mesh
+        ref={meshRef}
+        position={[0, 0, 0]}
+      >
+        <cylinderGeometry args={[3, 3.5, 0.4, 6]} />
+        <meshStandardMaterial color="#53A2BE" />
+        
+        {/* Simple trees */}
+        <group position={[1, 0.4, 0]}>
+          <mesh position={[0, 0.7, 0]}>
+            <coneGeometry args={[0.5, 1.2, 6]} />
+            <meshStandardMaterial color="#53BE76" />
+          </mesh>
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.1, 0.1, 0.4, 6]} />
+            <meshStandardMaterial color="#8B5A2B" />
+          </mesh>
+        </group>
+        
+        {/* Another tree */}
+        <group position={[-1.2, 0.4, 1]}>
+          <mesh position={[0, 0.7, 0]}>
+            <coneGeometry args={[0.4, 1, 6]} />
+            <meshStandardMaterial color="#53BE76" />
+          </mesh>
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.08, 0.08, 0.4, 6]} />
+            <meshStandardMaterial color="#8B5A2B" />
+          </mesh>
+        </group>
+        
+        {/* Simple building representing career */}
+        <group position={[0, 0.4, -1]}>
+          <mesh position={[0, 0.5, 0]}>
+            <boxGeometry args={[0.8, 1, 0.8]} />
+            <meshStandardMaterial color="#E8F3F7" />
+          </mesh>
+          <mesh position={[0, 1.2, 0]}>
+            <coneGeometry args={[0.6, 0.6, 4]} />
+            <meshStandardMaterial color="#142936" />
+          </mesh>
+        </group>
+      </mesh>
     </group>
   );
 }
