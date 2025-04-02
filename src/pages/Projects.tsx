@@ -1,4 +1,3 @@
-
 import { 
   Github, ExternalLink, Code 
 } from 'lucide-react';
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars, Float } from '@react-three/drei';
 import { Suspense, useRef } from 'react';
+import * as THREE from 'three';
 
 // Project Card component for 3D scene
 function ProjectCard({ position, color, title, onClick }: any) {
@@ -28,12 +28,6 @@ function ProjectCard({ position, color, title, onClick }: any) {
       >
         <boxGeometry args={[1.5, 0.5, 1.5]} />
         <meshStandardMaterial color={color} />
-        <textSprite 
-          text={title} 
-          color="#ffffff" 
-          fontSize={0.2}
-          position={[0, 0, 0.76]}
-        />
       </mesh>
     </Float>
   );
@@ -132,7 +126,7 @@ const Projects = () => {
   return (
     <div className="min-h-screen pt-20">
       {/* 3D Projects Scene */}
-      <section className="h-[500px] w-full mb-16">
+      <section className="h-[500px] w-full mb-16 relative">
         <Canvas camera={{ position: [0, 2, 6], fov: 45 }}>
           <Suspense fallback={null}>
             <ProjectsScene scrollToProject={scrollToProject} />
@@ -140,6 +134,17 @@ const Projects = () => {
         </Canvas>
         <div className="absolute bottom-5 left-0 right-0 text-center text-primary text-shadow-lg pointer-events-none">
           <p className="text-sm">Click on a project to learn more</p>
+        </div>
+        
+        {/* Project labels using HTML overlay instead of Three.js text */}
+        <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none">
+          <div className="flex justify-center items-center h-full">
+            <div className="flex gap-16 sm:gap-24 md:gap-32">
+              <div className="text-white font-bold transform translate-x-[-32px]">O3 Automation</div>
+              <div className="text-white font-bold">AI Portfolios</div>
+              <div className="text-white font-bold transform translate-x-[32px]">Masterclass Scheduler</div>
+            </div>
+          </div>
         </div>
       </section>
       
