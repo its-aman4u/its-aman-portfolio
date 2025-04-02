@@ -1,10 +1,9 @@
-
 import { 
   Github, ExternalLink, Code 
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, Stars, Float } from '@react-three/drei';
+import { OrbitControls, useGLTF, Environment, Stars, Float, Html } from '@react-three/drei';
 import { Suspense, useRef } from 'react';
 
 // Project Card component for 3D scene
@@ -28,47 +27,19 @@ function ProjectCard({ position, color, title, onClick }: any) {
       >
         <boxGeometry args={[1.5, 0.5, 1.5]} />
         <meshStandardMaterial color={color} />
-        <Text position={[0, 0, 0.76]} fontSize={0.15} color="#ffffff">
-          {title}
-        </Text>
+        <Html position={[0, 0, 0.76]}>
+          <div style={{ 
+            color: '#ffffff', 
+            fontSize: '15px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            whiteSpace: 'nowrap'
+          }}>
+            {title}
+          </div>
+        </Html>
       </mesh>
     </Float>
-  );
-}
-
-// Text component for 3D scene
-function Text({ children, position, fontSize = 0.1, color = '#000000' }: any) {
-  return (
-    <mesh position={position}>
-      <planeGeometry args={[1, 0.3]} />
-      <meshBasicMaterial transparent opacity={0} />
-      <Html center transform>
-        <div style={{ 
-          color: color, 
-          fontSize: `${fontSize * 100}px`,
-          fontWeight: 'bold',
-          textAlign: 'center',
-          whiteSpace: 'nowrap'
-        }}>
-          {children}
-        </div>
-      </Html>
-    </mesh>
-  );
-}
-
-// HTML content component for Three.js
-function Html(props: any) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        transform: props.transform ? 'translate(-50%, -50%)' : 'none',
-        ...props.style
-      }}
-    >
-      {props.children}
-    </div>
   );
 }
 
@@ -167,6 +138,7 @@ const Projects = () => {
         </div>
       </section>
       
+      {/* Rest of the projects section */}
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">

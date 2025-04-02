@@ -1,7 +1,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, Environment, Stars, Float } from '@react-three/drei';
+import { OrbitControls, useGLTF, Environment, Stars, Float, Html } from '@react-three/drei';
 import { Suspense } from 'react';
 
 // Simple Island component
