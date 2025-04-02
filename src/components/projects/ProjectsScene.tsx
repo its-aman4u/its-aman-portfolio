@@ -11,20 +11,20 @@ function ProjectCard({ position, color, title, onClick }: {
   title: string, 
   onClick: () => void 
 }) {
-  const ref = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<THREE.Mesh>(null);
   
   return (
     <mesh 
       position={position}
-      ref={ref} 
+      ref={meshRef} 
       onClick={onClick}
       onPointerOver={() => {
         document.body.style.cursor = 'pointer';
-        if (ref.current) ref.current.scale.set(1.1, 1.1, 1.1);
+        if (meshRef.current) meshRef.current.scale.set(1.1, 1.1, 1.1);
       }}
       onPointerOut={() => {
         document.body.style.cursor = 'default';
-        if (ref.current) ref.current.scale.set(1, 1, 1);
+        if (meshRef.current) meshRef.current.scale.set(1, 1, 1);
       }}
     >
       <boxGeometry args={[1.5, 0.5, 1.5]} />

@@ -66,16 +66,16 @@ function Island(props: any) {
 
 // Simple bicycle model representing your cycling-themed portfolio
 function Bicycle(props: any) {
-  const meshRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.3;
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.3;
     }
   });
 
   return (
-    <group ref={meshRef} {...props}>
+    <group ref={groupRef} {...props}>
       {/* Frame */}
       <mesh position={[0, 0, 0]}>
         <torusGeometry args={[0.3, 0.03, 8, 24]} />
