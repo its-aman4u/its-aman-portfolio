@@ -1,13 +1,13 @@
+
 import { ArrowRight, Mail, Download, Bike } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import ThreeScene from '@/components/ThreeScene';
 
 const Home = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section with 3D */}
-      <section className="relative pt-20 pb-0 md:pt-20 md:pb-0 overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cycle-light to-muted dark:from-cycle-dark dark:to-background -z-10"></div>
         
         <div className="container mx-auto px-4">
@@ -37,9 +37,13 @@ const Home = () => {
               </div>
             </div>
             
-            <div className="order-1 md:order-2 flex justify-center animate-fade-in">
-              <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
-                <ThreeScene />
+            <div className="order-1 md:order-2 flex justify-center animate-fade-in delay-100">
+              <div className="relative w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 overflow-hidden rounded-full border-4 border-primary">
+                <img 
+                  src="/lovable-uploads/247886eb-a665-4597-bfee-6d4be11a09e8.png" 
+                  alt="Aman Singh" 
+                  className="object-cover w-full h-full"
+                />
               </div>
             </div>
           </div>
