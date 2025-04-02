@@ -5,7 +5,12 @@ import { Suspense, useRef } from 'react';
 import * as THREE from 'three';
 
 // 3D Project Card component
-function ProjectCard({ position, color, title, onClick }: { 
+function ProjectCard({ 
+  position, 
+  color, 
+  title, 
+  onClick 
+}: { 
   position: [number, number, number], 
   color: string, 
   title: string, 

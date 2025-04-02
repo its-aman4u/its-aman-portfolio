@@ -65,7 +65,7 @@ function Island(props: any) {
 }
 
 // Simple bicycle model representing your cycling-themed portfolio
-function Bicycle(props: any) {
+function Bicycle({ position }: { position: [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
@@ -75,7 +75,7 @@ function Bicycle(props: any) {
   });
 
   return (
-    <group ref={groupRef} {...props}>
+    <group ref={groupRef} position={position}>
       {/* Frame */}
       <mesh position={[0, 0, 0]}>
         <torusGeometry args={[0.3, 0.03, 8, 24]} />
