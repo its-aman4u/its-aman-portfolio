@@ -1,3 +1,4 @@
+
 import { ArrowRight, Mail, Download, Bike } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,7 @@ const Home = () => {
             </div>
             
             <div className="order-1 md:order-2 flex justify-center animate-fade-in">
-              <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
+              <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden rounded-lg shadow-lg">
                 <ThreeScene />
               </div>
             </div>
@@ -66,10 +67,10 @@ const Home = () => {
                     <Bike className="w-4 h-4 text-white" />
                   </div>
                   <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
-                    <h3 className="text-lg font-bold mb-2">Started the Journey</h3>
+                    <h3 className="text-lg font-bold mb-2">Academic Foundation</h3>
                     <p className="text-sm text-muted-foreground mb-2">2016 - 2018</p>
                     <p className="text-sm">
-                      Opted for commerce after 12th, joined ITM for B.Com after a gap year, and became a first-year topper.
+                      After completing 12th standard, I strategically chose commerce to build my business foundation. Following a gap year due to family circumstances, I enrolled at ITM for Bachelor of Commerce studies where I achieved first-year topper status through dedicated academic focus.
                     </p>
                   </div>
                 </div>
@@ -83,7 +84,7 @@ const Home = () => {
                     <h3 className="text-lg font-bold mb-2">Professional Growth</h3>
                     <p className="text-sm text-muted-foreground mb-2">2020 - 2022</p>
                     <p className="text-sm">
-                      Completed MBA in Supply Chain Management & Marketing and joined Holisol as Warehouse Executive.
+                      Expanded my expertise with an MBA specializing in Supply Chain Management & Marketing. Successfully transitioned into the professional sphere by joining Holisol as a Warehouse Executive, gaining valuable hands-on experience in logistics operations.
                     </p>
                   </div>
                 </div>
@@ -97,7 +98,7 @@ const Home = () => {
                     <h3 className="text-lg font-bold mb-2">Data Science Journey</h3>
                     <p className="text-sm text-muted-foreground mb-2">2024 - Present</p>
                     <p className="text-sm">
-                      Certified in Data Analysis and working on automation with AppScript and ML models.
+                      Recognized the transformative potential of AI in business operations and obtained professional certification in Data Analysis. Currently implementing automation solutions with AppScript and developing machine learning models to drive operational efficiency across the organization.
                     </p>
                   </div>
                 </div>

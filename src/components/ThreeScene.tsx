@@ -1,3 +1,4 @@
+
 import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars, useTexture } from '@react-three/drei';
@@ -126,35 +127,52 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   
+  // Add a frame behind the profile picture
+  const frameSize = 1.6;
+  
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.1;
+      // More subtle floating movement
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.getElapsedTime() * 0.3) * 0.05;
       
       if (hovered) {
-        meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.5;
+        meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
       } else {
-        meshRef.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.2) * 0.2;
+        meshRef.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.1) * 0.05;
       }
     }
   });
 
   return (
-    <mesh 
-      ref={meshRef} 
-      position={position}
-      onPointerOver={() => {
-        setHovered(true);
-        document.body.style.cursor = 'pointer';
-      }}
-      onPointerOut={() => {
-        setHovered(false);
-        document.body.style.cursor = 'default';
-      }}
-      scale={hovered ? [1.05, 1.05, 1.05] : [1, 1, 1]}
-    >
-      <planeGeometry args={[1.5, 1.5]} />
-      <meshStandardMaterial map={texture} transparent={true} />
-    </mesh>
+    <group position={position}>
+      {/* Frame behind the picture */}
+      <mesh position={[0, 0, -0.01]} scale={[1.05, 1.05, 1]}>
+        <planeGeometry args={[frameSize, frameSize]} />
+        <meshStandardMaterial color="#1A6A8F" />
+      </mesh>
+      
+      {/* Main profile picture */}
+      <mesh 
+        ref={meshRef} 
+        onPointerOver={() => {
+          setHovered(true);
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          document.body.style.cursor = 'default';
+        }}
+        scale={hovered ? [1.02, 1.02, 1.02] : [1, 1, 1]}
+      >
+        <planeGeometry args={[frameSize - 0.1, frameSize - 0.1]} />
+        <meshStandardMaterial 
+          map={texture} 
+          transparent={true}
+          emissive={"#ffffff"}
+          emissiveIntensity={hovered ? 0.1 : 0}
+        />
+      </mesh>
+    </group>
   );
 }
 
@@ -188,14 +206,14 @@ function Scene() {
 // Main component that renders the Canvas
 const ThreeScene = () => {
   return (
-    <div className="three-scene-container h-[500px] md:h-[600px] w-full">
+    <div className="three-scene-container h-full w-full">
       <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
         <Suspense fallback={null}>
           <Scene />
         </Suspense>
       </Canvas>
-      <div className="absolute bottom-5 left-0 right-0 text-center text-white text-shadow-lg pointer-events-none">
-        <p className="text-sm opacity-70">Click on the bicycle to speed it up! Scroll to zoom, click and drag to rotate</p>
+      <div className="absolute bottom-5 left-0 right-0 text-center text-white text-shadow-sm pointer-events-none bg-black/20 py-2 backdrop-blur-sm">
+        <p className="text-sm">Click on the bicycle to speed it up! Scroll to zoom, click and drag to rotate</p>
       </div>
     </div>
   );
