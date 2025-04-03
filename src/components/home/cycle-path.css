@@ -1,0 +1,88 @@
+
+/* Cycle path styling */
+.cycle-path {
+  position: relative;
+}
+
+.cycle-path::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: linear-gradient(to bottom, #1A6A8F20, #1A6A8F, #1A6A8F20);
+  transform: translateX(-50%);
+}
+
+.cycle-milestone {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.cycle-milestone:nth-child(odd) {
+  justify-content: flex-end;
+}
+
+@media (min-width: 768px) {
+  .cycle-milestone:nth-child(even) {
+    justify-content: flex-start;
+  }
+
+  .cycle-milestone:nth-child(odd) .cycle-dot {
+    left: calc(50% - 12px);
+  }
+
+  .cycle-milestone:nth-child(even) .cycle-dot {
+    left: calc(50% - 12px);
+  }
+}
+
+.cycle-dot {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  background-color: #1A6A8F;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.skill-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.skill-card:hover {
+  transform: translateY(-5px);
+}
+
+.dark .skill-card {
+  background-color: hsl(var(--card));
+}
+
+.project-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .project-card {
+  background-color: hsl(var(--card));
+}
