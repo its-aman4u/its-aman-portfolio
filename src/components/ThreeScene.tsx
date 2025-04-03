@@ -1,17 +1,20 @@
-
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, Stars } from '@react-three/drei';
+import { OrbitControls, Environment, Stars, useTexture } from '@react-three/drei';
 import { Suspense } from 'react';
 import * as THREE from 'three';
 
 // Simple Island component
 function Island({ position }: { position: [number, number, number] }) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
   
   useFrame((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.1) * 0.05;
+      if (hovered) {
+        meshRef.current.position.y = Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
+      }
     }
   });
 
@@ -20,9 +23,11 @@ function Island({ position }: { position: [number, number, number] }) {
       <mesh
         ref={meshRef}
         position={[0, 0, 0]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
       >
         <cylinderGeometry args={[3, 3.5, 0.4, 6]} />
-        <meshStandardMaterial color="#53A2BE" />
+        <meshStandardMaterial color={hovered ? "#64B5D9" : "#53A2BE"} />
         
         {/* Simple trees */}
         <group position={[1, 0.4, 0]}>
@@ -64,48 +69,92 @@ function Island({ position }: { position: [number, number, number] }) {
   );
 }
 
-// Simple bicycle model representing your cycling-themed portfolio
+// Interactive bicycle model
 function Bicycle({ position }: { position: [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
+  const [speed, setSpeed] = useState(0.3);
+  const [hovered, setHovered] = useState(false);
   
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.3;
+      groupRef.current.rotation.y = state.clock.getElapsedTime() * speed;
+      if (hovered) {
+        groupRef.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 2) * 0.1;
+      }
     }
   });
 
   return (
-    <group ref={groupRef} position={position}>
+    <group 
+      ref={groupRef} 
+      position={position}
+      onPointerOver={() => {
+        setHovered(true);
+        setSpeed(0.6);
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        setSpeed(0.3);
+        document.body.style.cursor = 'default';
+      }}
+      onClick={() => setSpeed(prev => prev > 0.5 ? 0.3 : 0.9)}
+    >
       {/* Frame */}
       <mesh position={[0, 0, 0]}>
         <torusGeometry args={[0.3, 0.03, 8, 24]} />
-        <meshStandardMaterial color="#1A6A8F" />
+        <meshStandardMaterial color={hovered ? "#2A8AB5" : "#1A6A8F"} metalness={0.6} roughness={0.2} />
       </mesh>
       
       {/* Wheels */}
       <mesh position={[0.3, 0, 0]} rotation={[Math.PI/2, 0, 0]}>
         <torusGeometry args={[0.2, 0.02, 8, 24]} />
-        <meshStandardMaterial color="#53A2BE" />
+        <meshStandardMaterial color={hovered ? "#64B5D9" : "#53A2BE"} metalness={0.6} roughness={0.2} />
       </mesh>
       <mesh position={[-0.3, 0, 0]} rotation={[Math.PI/2, 0, 0]}>
         <torusGeometry args={[0.2, 0.02, 8, 24]} />
-        <meshStandardMaterial color="#53A2BE" />
+        <meshStandardMaterial color={hovered ? "#64B5D9" : "#53A2BE"} metalness={0.6} roughness={0.2} />
       </mesh>
     </group>
   );
 }
 
-// Profile picture component
+// Profile picture component with texture
 function ProfilePicture({ position }: { position: [number, number, number] }) {
+  const textureUrl = "/lovable-uploads/247886eb-a665-4597-bfee-6d4be11a09e8.png";
+  const texture = useTexture(textureUrl);
+  const meshRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.position.y = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.1;
+      
+      if (hovered) {
+        meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.5;
+      } else {
+        meshRef.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.2) * 0.2;
+      }
+    }
+  });
+
   return (
-    <group position={position}>
-      <mesh position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[1.5, 1.5]} />
-        <meshStandardMaterial>
-          <meshStandardMaterial color="#ffffff" />
-        </meshStandardMaterial>
-      </mesh>
-    </group>
+    <mesh 
+      ref={meshRef} 
+      position={position}
+      onPointerOver={() => {
+        setHovered(true);
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        document.body.style.cursor = 'default';
+      }}
+      scale={hovered ? [1.05, 1.05, 1.05] : [1, 1, 1]}
+    >
+      <planeGeometry args={[1.5, 1.5]} />
+      <meshStandardMaterial map={texture} transparent={true} />
+    </mesh>
   );
 }
 
@@ -118,7 +167,7 @@ function Scene() {
       <Island position={[0, -2, -2]} />
       <Bicycle position={[0, 0, 0]} />
       <ProfilePicture position={[2, 0, 0]} />
-      <Stars radius={100} depth={50} count={1000} factor={4} />
+      <Stars radius={100} depth={50} count={1000} factor={4} saturation={0.5} fade speed={1.5} />
       <OrbitControls 
         enableZoom={true}
         enablePan={true}
@@ -126,6 +175,10 @@ function Scene() {
         maxPolarAngle={Math.PI / 2}
         minDistance={3}
         maxDistance={8}
+        autoRotate={false}
+        autoRotateSpeed={0.5}
+        enableDamping={true}
+        dampingFactor={0.05}
       />
       <Environment preset="sunset" />
     </>
@@ -142,7 +195,7 @@ const ThreeScene = () => {
         </Suspense>
       </Canvas>
       <div className="absolute bottom-5 left-0 right-0 text-center text-white text-shadow-lg pointer-events-none">
-        <p className="text-sm opacity-70">Scroll to zoom, click and drag to rotate</p>
+        <p className="text-sm opacity-70">Click on the bicycle to speed it up! Scroll to zoom, click and drag to rotate</p>
       </div>
     </div>
   );
