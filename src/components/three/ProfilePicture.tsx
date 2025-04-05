@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useTexture, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { useSpring, animated } from '@react-spring/three';
+import { useSpring, a } from '@react-spring/three';
 
 function ProfilePicture({ position }: { position: [number, number, number] }) {
   const textureUrl = "/lovable-uploads/247886eb-a665-4597-bfee-6d4be11a09e8.png";
@@ -12,7 +12,7 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
   const [hovered, setHovered] = useState(false);
   
   // Add a slight glow effect when hovered
-  const { scale, glow } = useSpring({
+  const springs = useSpring({
     scale: hovered ? 1.05 : 1,
     glow: hovered ? 0.2 : 0,
     config: { mass: 1, tension: 280, friction: 60 }
@@ -67,10 +67,10 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
         />
       </mesh>
       
-      {/* Main profile picture with enhanced material */}
-      <animated.mesh 
+      {/* Main profile picture with enhanced material - use 'a.mesh' instead of 'animated.mesh' */}
+      <a.mesh 
         ref={meshRef} 
-        scale={scale}
+        scale={springs.scale}
         onPointerOver={() => {
           setHovered(true);
           document.body.style.cursor = 'pointer';
@@ -85,10 +85,10 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
           map={texture} 
           transparent={true}
           emissive={"#ffffff"}
-          emissiveIntensity={glow}
+          emissiveIntensity={springs.glow}
           emissiveMap={texture}
         />
-      </animated.mesh>
+      </a.mesh>
 
       {/* Optional HTML overlay for caption */}
       {hovered && (

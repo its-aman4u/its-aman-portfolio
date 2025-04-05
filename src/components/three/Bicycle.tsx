@@ -2,7 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useSpring, animated } from '@react-spring/three';
+import { useSpring, a } from '@react-spring/three';
 
 function Bicycle({ position }: { position: [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
@@ -11,8 +11,7 @@ function Bicycle({ position }: { position: [number, number, number] }) {
   const [clicked, setClicked] = useState(false);
   
   // Create smoother animations with react-spring
-  const { rotationY, scale, hover } = useSpring({
-    rotationY: 0,
+  const springs = useSpring({
     scale: clicked ? 1.1 : hovered ? 1.05 : 1,
     hover: hovered ? 1 : 0,
     config: { mass: 2, tension: 300, friction: 30 }
@@ -46,10 +45,10 @@ function Bicycle({ position }: { position: [number, number, number] }) {
   };
 
   return (
-    <animated.group 
+    <a.group 
       ref={groupRef} 
       position={position}
-      scale={scale}
+      scale={springs.scale}
       onPointerOver={() => {
         setHovered(true);
         document.body.style.cursor = 'pointer';
@@ -111,7 +110,7 @@ function Bicycle({ position }: { position: [number, number, number] }) {
         <cylinderGeometry args={[0.01, 0.01, 0.4, 8]} />
         <meshStandardMaterial color="#ffffff" metalness={0.9} roughness={0.1} />
       </mesh>
-    </animated.group>
+    </a.group>
   );
 }
 
