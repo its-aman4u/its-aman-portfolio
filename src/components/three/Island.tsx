@@ -1,29 +1,11 @@
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useTexture } from '@react-three/drei';
 
 function Island({ position }: { position: [number, number, number] }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
-  
-  // Load textures for enhanced visual appeal
-  const grassTexture = useTexture('/lovable-uploads/grass.jpg');
-  const treeTexture = useTexture('/lovable-uploads/bark.jpg');
-  const buildingTexture = useTexture('/lovable-uploads/building.jpg');
-  
-  // Set up texture repeat and wrapping
-  useEffect(() => {
-    if (grassTexture) {
-      grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
-      grassTexture.repeat.set(2, 2);
-    }
-    if (treeTexture) {
-      treeTexture.wrapS = treeTexture.wrapT = THREE.RepeatWrapping;
-      treeTexture.repeat.set(1, 3);
-    }
-  }, [grassTexture, treeTexture]);
   
   // Enhanced animation
   useFrame((state) => {
@@ -49,7 +31,6 @@ function Island({ position }: { position: [number, number, number] }) {
     color: "#8B5A2B",
     roughness: 0.9,
     metalness: 0.1,
-    map: treeTexture
   });
 
   const treeTopMaterial = new THREE.MeshStandardMaterial({
@@ -62,7 +43,6 @@ function Island({ position }: { position: [number, number, number] }) {
     color: "#E8F3F7",
     roughness: 0.7,
     metalness: 0.3,
-    map: buildingTexture
   });
 
   return (
@@ -79,7 +59,6 @@ function Island({ position }: { position: [number, number, number] }) {
         <cylinderGeometry args={[3, 3.5, 0.4, 8]} />
         <meshStandardMaterial 
           color={hovered ? "#64B5D9" : "#53A2BE"} 
-          map={grassTexture}
           roughness={0.8}
           metalness={0.2}
           envMapIntensity={0.8}
