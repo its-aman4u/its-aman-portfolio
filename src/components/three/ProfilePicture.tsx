@@ -3,7 +3,6 @@ import { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useTexture, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { useSpring, a } from '@react-spring/three';
 
 function ProfilePicture({ position }: { position: [number, number, number] }) {
   const textureUrl = "/lovable-uploads/247886eb-a665-4597-bfee-6d4be11a09e8.png";
@@ -11,13 +10,6 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   
-  // Add a slight glow effect when hovered
-  const springs = useSpring({
-    scale: hovered ? 1.05 : 1,
-    glow: hovered ? 0.2 : 0,
-    config: { mass: 1, tension: 280, friction: 60 }
-  });
-
   // Frame size with better proportions
   const frameSize = 1.5;
   
@@ -38,8 +30,10 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
       // Gentle rotation animation
       if (hovered) {
         meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
+        meshRef.current.scale.set(1.05, 1.05, 1.05);
       } else {
         meshRef.current.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.1) * 0.05;
+        meshRef.current.scale.set(1, 1, 1);
       }
     }
   });
@@ -67,10 +61,9 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
         />
       </mesh>
       
-      {/* Main profile picture with enhanced material - use 'a.mesh' instead of 'animated.mesh' */}
-      <a.mesh 
+      {/* Main profile picture with enhanced material */}
+      <mesh 
         ref={meshRef} 
-        scale={springs.scale}
         onPointerOver={() => {
           setHovered(true);
           document.body.style.cursor = 'pointer';
@@ -81,14 +74,14 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
         }}
       >
         <planeGeometry args={[frameSize - 0.1, frameSize - 0.1]} />
-        <a.meshStandardMaterial 
+        <meshStandardMaterial 
           map={texture} 
           transparent={true}
           emissive={"#ffffff"}
-          emissiveIntensity={springs.glow}
+          emissiveIntensity={hovered ? 0.2 : 0}
           emissiveMap={texture}
         />
-      </a.mesh>
+      </mesh>
 
       {/* Optional HTML overlay for caption */}
       {hovered && (

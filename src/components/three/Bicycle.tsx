@@ -1,21 +1,13 @@
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useSpring, a } from '@react-spring/three';
 
 function Bicycle({ position }: { position: [number, number, number] }) {
   const groupRef = useRef<THREE.Group>(null);
   const [speed, setSpeed] = useState(0.3);
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
-  
-  // Create smoother animations with react-spring
-  const springs = useSpring({
-    scale: clicked ? 1.1 : hovered ? 1.05 : 1,
-    hover: hovered ? 1 : 0,
-    config: { mass: 2, tension: 300, friction: 30 }
-  });
   
   // Animate rotation continuously
   useFrame((state) => {
@@ -27,9 +19,11 @@ function Bicycle({ position }: { position: [number, number, number] }) {
       if (hovered) {
         groupRef.current.position.y = position[1] + Math.sin(state.clock.getElapsedTime() * 3) * 0.05;
         groupRef.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
+        groupRef.current.scale.set(1.05, 1.05, 1.05);
       } else {
         groupRef.current.position.y = position[1];
         groupRef.current.rotation.x = 0;
+        groupRef.current.scale.set(clicked ? 1.1 : 1, clicked ? 1.1 : 1, clicked ? 1.1 : 1);
       }
     }
   });
@@ -45,10 +39,9 @@ function Bicycle({ position }: { position: [number, number, number] }) {
   };
 
   return (
-    <a.group 
+    <group 
       ref={groupRef} 
       position={position}
-      scale={springs.scale}
       onPointerOver={() => {
         setHovered(true);
         document.body.style.cursor = 'pointer';
@@ -110,7 +103,7 @@ function Bicycle({ position }: { position: [number, number, number] }) {
         <cylinderGeometry args={[0.01, 0.01, 0.4, 8]} />
         <meshStandardMaterial color="#ffffff" metalness={0.9} roughness={0.1} />
       </mesh>
-    </a.group>
+    </group>
   );
 }
 
