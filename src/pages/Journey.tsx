@@ -2,7 +2,7 @@
 import { Bike } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 import { Stars, Environment, OrbitControls } from '@react-three/drei';
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense } from 'react';
 
 // 3D Background for Journey Page
 const JourneyBackground = () => {
