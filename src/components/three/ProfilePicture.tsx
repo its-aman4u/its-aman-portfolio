@@ -81,7 +81,7 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
         }}
       >
         <planeGeometry args={[frameSize - 0.1, frameSize - 0.1]} />
-        <meshStandardMaterial 
+        <a.meshStandardMaterial 
           map={texture} 
           transparent={true}
           emissive={"#ffffff"}
