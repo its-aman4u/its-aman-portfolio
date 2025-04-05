@@ -27,24 +27,6 @@ function Island({ position }: { position: [number, number, number] }) {
     }
   });
 
-  const treeTrunkMaterial = new THREE.MeshStandardMaterial({
-    color: "#8B5A2B",
-    roughness: 0.9,
-    metalness: 0.1,
-  });
-
-  const treeTopMaterial = new THREE.MeshStandardMaterial({
-    color: "#53BE76",
-    roughness: 0.8,
-    metalness: 0.1,
-  });
-
-  const buildingMaterial = new THREE.MeshStandardMaterial({
-    color: "#E8F3F7",
-    roughness: 0.7,
-    metalness: 0.3,
-  });
-
   return (
     <group position={position}>
       <mesh
@@ -68,11 +50,19 @@ function Island({ position }: { position: [number, number, number] }) {
         <group position={[1, 0.4, 0]}>
           <mesh position={[0, 0.7, 0]} castShadow>
             <coneGeometry args={[0.5, 1.2, 8]} />
-            <primitive object={treeTopMaterial} />
+            <meshStandardMaterial
+              color="#53BE76"
+              roughness={0.8}
+              metalness={0.1}
+            />
           </mesh>
           <mesh position={[0, 0, 0]} castShadow>
             <cylinderGeometry args={[0.1, 0.1, 0.4, 8]} />
-            <primitive object={treeTrunkMaterial} />
+            <meshStandardMaterial
+              color="#8B5A2B"
+              roughness={0.9}
+              metalness={0.1}
+            />
           </mesh>
         </group>
         
@@ -80,11 +70,19 @@ function Island({ position }: { position: [number, number, number] }) {
         <group position={[-1.2, 0.4, 1]}>
           <mesh position={[0, 0.7, 0]} castShadow>
             <coneGeometry args={[0.4, 1, 8]} />
-            <primitive object={treeTopMaterial} />
+            <meshStandardMaterial
+              color="#53BE76"
+              roughness={0.8}
+              metalness={0.1}
+            />
           </mesh>
           <mesh position={[0, 0, 0]} castShadow>
             <cylinderGeometry args={[0.08, 0.08, 0.4, 8]} />
-            <primitive object={treeTrunkMaterial} />
+            <meshStandardMaterial
+              color="#8B5A2B"
+              roughness={0.9}
+              metalness={0.1}
+            />
           </mesh>
         </group>
         
@@ -92,7 +90,11 @@ function Island({ position }: { position: [number, number, number] }) {
         <group position={[0, 0.4, -1]}>
           <mesh position={[0, 0.5, 0]} castShadow>
             <boxGeometry args={[0.8, 1, 0.8]} />
-            <primitive object={buildingMaterial} />
+            <meshStandardMaterial
+              color="#E8F3F7"
+              roughness={0.7}
+              metalness={0.3}
+            />
           </mesh>
           <mesh position={[0, 1.2, 0]} castShadow>
             <coneGeometry args={[0.6, 0.6, 4]} />
