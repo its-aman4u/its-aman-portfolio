@@ -10,7 +10,6 @@ import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
 import Island from './Island';
 import Bicycle from './Bicycle';
-import ProfilePicture from './ProfilePicture';
 
 function Scene() {
   const { gl } = useThree();
@@ -42,7 +41,6 @@ function Scene() {
       {/* Main 3D elements */}
       <Island position={[0, -2, -2]} />
       <Bicycle position={[0, 0, 0]} />
-      <ProfilePicture position={[2, 0, 0]} />
       
       {/* Enhanced star field */}
       <Stars 

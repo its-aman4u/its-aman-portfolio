@@ -2,7 +2,7 @@
 import { Bike } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 import { Stars, Environment, OrbitControls } from '@react-three/drei';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 
 // 3D Background for Journey Page
 const JourneyBackground = () => {
@@ -23,6 +23,22 @@ const JourneyBackground = () => {
           <Environment preset="night" />
         </Suspense>
       </Canvas>
+    </div>
+  );
+};
+
+// Animated Icon Component
+const AnimatedIcon = ({ delay = 0 }: { delay?: number }) => {
+  return (
+    <div 
+      className="p-4 bg-primary/10 backdrop-blur-sm rounded-full shadow-lg"
+      style={{ 
+        animation: `float 3s infinite ease-in-out ${delay}s`,
+        opacity: 0,
+        animationFillMode: 'forwards' 
+      }}
+    >
+      <Bike className="w-6 h-6 md:w-8 md:h-8 text-primary" />
     </div>
   );
 };
@@ -85,6 +101,23 @@ const Journey = () => {
     <div className="min-h-screen pt-20 relative">
       <JourneyBackground />
       
+      <style jsx>{`
+        @keyframes float {
+          0% { transform: translateY(20px); opacity: 0; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        
+        @keyframes trail {
+          0% { height: 0; opacity: 0; }
+          100% { height: 100%; opacity: 1; }
+        }
+      `}</style>
+      
       <section className="py-16 relative z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -101,23 +134,59 @@ const Journey = () => {
             <div className="space-y-16 md:space-y-28">
               {milestones.map((milestone, index) => (
                 <div className="relative" key={index}>
-                  {/* Cycling dot */}
+                  {/* Cycling dot - fixed positioning */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div className="bg-primary text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform">
-                      <Bike className="w-4 h-4" />
+                    <div className="w-12 h-12 flex items-center justify-center bg-primary/80 backdrop-blur-sm text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform">
+                      <Bike className="w-6 h-6" style={{ animation: 'pulse 2s infinite ease-in-out' }}/>
                     </div>
                   </div>
                   
-                  {/* Content card - alternating sides */}
-                  <div className={`flex ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-                    <div className="bg-white/90 dark:bg-card/90 backdrop-blur-sm shadow-md rounded-lg p-6 md:max-w-md w-full animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
-                      <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm inline-block mb-3">
-                        {milestone.year}
-                      </div>
-                      <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
-                      <p className="text-muted-foreground">
-                        {milestone.description}
-                      </p>
+                  {/* Content cards - alternating sides with animations on empty side */}
+                  <div className={`grid grid-cols-1 md:grid-cols-2 gap-4`}>
+                    {/* Left side */}
+                    <div className={`${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
+                      {index % 2 === 0 ? (
+                        <div className="bg-white/90 dark:bg-card/90 backdrop-blur-sm shadow-md rounded-lg p-6 w-full animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                          <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm inline-block mb-3">
+                            {milestone.year}
+                          </div>
+                          <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
+                          <p className="text-muted-foreground">
+                            {milestone.description}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="h-full flex items-center justify-center opacity-0 md:opacity-100">
+                          <div className="flex space-x-4">
+                            <AnimatedIcon delay={index * 0.2} />
+                            <AnimatedIcon delay={index * 0.2 + 0.3} />
+                            <AnimatedIcon delay={index * 0.2 + 0.6} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Right side */}
+                    <div className={`${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
+                      {index % 2 === 1 ? (
+                        <div className="bg-white/90 dark:bg-card/90 backdrop-blur-sm shadow-md rounded-lg p-6 w-full animate-fade-in hover:transform hover:scale-105 transition-all duration-300">
+                          <div className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm inline-block mb-3">
+                            {milestone.year}
+                          </div>
+                          <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
+                          <p className="text-muted-foreground">
+                            {milestone.description}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="h-full flex items-center justify-center opacity-0 md:opacity-100">
+                          <div className="flex space-x-4">
+                            <AnimatedIcon delay={index * 0.2} />
+                            <AnimatedIcon delay={index * 0.2 + 0.3} />
+                            <AnimatedIcon delay={index * 0.2 + 0.6} />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

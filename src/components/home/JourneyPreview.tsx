@@ -20,44 +20,71 @@ const JourneyPreview = () => {
             {/* Preview Timeline with 3 items */}
             <div className="space-y-12 md:space-y-24">
               {/* First Milestone */}
-              <div className="cycle-milestone">
-                <div className="cycle-dot">
-                  <Bike className="w-4 h-4 text-white" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:order-1">
+                  <div className="cycle-milestone">
+                    <div className="cycle-dot">
+                      <Bike className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
+                      <h3 className="text-lg font-bold mb-2">Academic Foundation</h3>
+                      <p className="text-sm text-muted-foreground mb-2">2016 - 2018</p>
+                      <p className="text-sm">
+                        After completing 12th standard, I strategically chose commerce to build my business foundation. Following a gap year due to family circumstances, I enrolled at ITM for Bachelor of Commerce studies where I achieved first-year topper status through dedicated academic focus.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
-                  <h3 className="text-lg font-bold mb-2">Academic Foundation</h3>
-                  <p className="text-sm text-muted-foreground mb-2">2016 - 2018</p>
-                  <p className="text-sm">
-                    After completing 12th standard, I strategically chose commerce to build my business foundation. Following a gap year due to family circumstances, I enrolled at ITM for Bachelor of Commerce studies where I achieved first-year topper status through dedicated academic focus.
-                  </p>
+                <div className="md:order-2 hidden md:flex justify-center items-center">
+                  <div className="p-4 bg-primary/10 rounded-full shadow-lg animate-pulse">
+                    <Bike className="w-8 h-8 text-primary" />
+                  </div>
                 </div>
               </div>
               
               {/* Second Milestone */}
-              <div className="cycle-milestone">
-                <div className="cycle-dot">
-                  <Bike className="w-4 h-4 text-white" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:order-2">
+                  <div className="cycle-milestone">
+                    <div className="cycle-dot">
+                      <Bike className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
+                      <h3 className="text-lg font-bold mb-2">Professional Growth</h3>
+                      <p className="text-sm text-muted-foreground mb-2">2020 - 2022</p>
+                      <p className="text-sm">
+                        Expanded my expertise with an MBA specializing in Supply Chain Management & Marketing. Successfully transitioned into the professional sphere by joining Holisol as a Warehouse Executive, gaining valuable hands-on experience in logistics operations.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
-                  <h3 className="text-lg font-bold mb-2">Professional Growth</h3>
-                  <p className="text-sm text-muted-foreground mb-2">2020 - 2022</p>
-                  <p className="text-sm">
-                    Expanded my expertise with an MBA specializing in Supply Chain Management & Marketing. Successfully transitioned into the professional sphere by joining Holisol as a Warehouse Executive, gaining valuable hands-on experience in logistics operations.
-                  </p>
+                <div className="md:order-1 hidden md:flex justify-center items-center">
+                  <div className="p-4 bg-primary/10 rounded-full shadow-lg animate-pulse">
+                    <Bike className="w-8 h-8 text-primary" />
+                  </div>
                 </div>
               </div>
               
               {/* Third Milestone */}
-              <div className="cycle-milestone">
-                <div className="cycle-dot">
-                  <Bike className="w-4 h-4 text-white" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:order-1">
+                  <div className="cycle-milestone">
+                    <div className="cycle-dot">
+                      <Bike className="w-4 h-4 text-white" />
+                    </div>
+                    <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
+                      <h3 className="text-lg font-bold mb-2">Data Science Journey</h3>
+                      <p className="text-sm text-muted-foreground mb-2">2024 - Present</p>
+                      <p className="text-sm">
+                        Recognized the transformative potential of AI in business operations and obtained professional certification in Data Analysis. Currently implementing automation solutions with AppScript and developing machine learning models to drive operational efficiency across the organization.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
-                  <h3 className="text-lg font-bold mb-2">Data Science Journey</h3>
-                  <p className="text-sm text-muted-foreground mb-2">2024 - Present</p>
-                  <p className="text-sm">
-                    Recognized the transformative potential of AI in business operations and obtained professional certification in Data Analysis. Currently implementing automation solutions with AppScript and developing machine learning models to drive operational efficiency across the organization.
-                  </p>
+                <div className="md:order-2 hidden md:flex justify-center items-center">
+                  <div className="p-4 bg-primary/10 rounded-full shadow-lg animate-pulse">
+                    <Bike className="w-8 h-8 text-primary" />
+                  </div>
                 </div>
               </div>
             </div>
