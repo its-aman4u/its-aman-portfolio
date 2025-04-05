@@ -77,7 +77,7 @@ function ProfilePicture({ position }: { position: [number, number, number] }) {
         <meshStandardMaterial 
           map={texture} 
           transparent={true}
-          emissive={"#ffffff"}
+          emissive={new THREE.Color("#ffffff")}
           emissiveIntensity={hovered ? 0.2 : 0}
           emissiveMap={texture}
         />

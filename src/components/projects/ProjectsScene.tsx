@@ -106,7 +106,6 @@ function ProjectTitle({
 
 // Enhanced 3D Visualization Component
 function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }) {
-  const [activeProject, setActiveProject] = useState<number | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   
   useFrame((state) => {
@@ -127,7 +126,6 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
           color="#1A6A8F" 
           title="O3 Automation" 
           onClick={() => {
-            setActiveProject(0);
             scrollToProject(0);
           }}
         />
@@ -143,7 +141,6 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
           color="#53A2BE" 
           title="AI Portfolios" 
           onClick={() => {
-            setActiveProject(1);
             scrollToProject(1);
           }}
         />
@@ -159,7 +156,6 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
           color="#53BE76" 
           title="Masterclass Scheduler" 
           onClick={() => {
-            setActiveProject(2);
             scrollToProject(2);
           }}
         />

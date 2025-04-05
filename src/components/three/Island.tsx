@@ -1,6 +1,6 @@
 
 import { useRef, useState, useEffect } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useTexture } from '@react-three/drei';
 
@@ -9,9 +9,9 @@ function Island({ position }: { position: [number, number, number] }) {
   const [hovered, setHovered] = useState(false);
   
   // Load textures for enhanced visual appeal
-  const grassTexture = useTexture('/lovable-uploads/grass.jpg') as THREE.Texture;
-  const treeTexture = useTexture('/lovable-uploads/bark.jpg') as THREE.Texture;
-  const buildingTexture = useTexture('/lovable-uploads/building.jpg') as THREE.Texture;
+  const grassTexture = useTexture('/lovable-uploads/grass.jpg');
+  const treeTexture = useTexture('/lovable-uploads/bark.jpg');
+  const buildingTexture = useTexture('/lovable-uploads/building.jpg');
   
   // Set up texture repeat and wrapping
   useEffect(() => {
@@ -43,13 +43,6 @@ function Island({ position }: { position: [number, number, number] }) {
         meshRef.current.rotation.z = 0;
       }
     }
-  });
-
-  // Fallback textures in case the uploaded ones don't exist
-  const fallbackMaterial = new THREE.MeshStandardMaterial({
-    color: hovered ? "#64B5D9" : "#53A2BE",
-    roughness: 0.8,
-    metalness: 0.2,
   });
 
   const treeTrunkMaterial = new THREE.MeshStandardMaterial({

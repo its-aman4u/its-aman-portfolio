@@ -3,7 +3,6 @@ import {
   OrbitControls, 
   Environment, 
   Stars, 
-  useTexture,
   ContactShadows,
   SpotLight
 } from '@react-three/drei';

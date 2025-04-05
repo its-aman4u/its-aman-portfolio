@@ -59,7 +59,7 @@ function Bicycle({ position }: { position: [number, number, number] }) {
           color={hovered ? "#2A8AB5" : "#1A6A8F"} 
           metalness={0.8} 
           roughness={0.2}
-          emissive={hovered ? "#2A8AB5" : "#000000"}
+          emissive={hovered ? new THREE.Color("#2A8AB5") : new THREE.Color("#000000")}
           emissiveIntensity={hovered ? 0.3 : 0}
         />
       </mesh>
