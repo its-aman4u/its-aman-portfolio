@@ -101,7 +101,8 @@ const Journey = () => {
     <div className="min-h-screen pt-20 relative">
       <JourneyBackground />
       
-      <style jsx>{`
+      <style>
+        {`
         @keyframes float {
           0% { transform: translateY(20px); opacity: 0; }
           100% { transform: translateY(0); opacity: 1; }
@@ -116,7 +117,8 @@ const Journey = () => {
           0% { height: 0; opacity: 0; }
           100% { height: 100%; opacity: 1; }
         }
-      `}</style>
+        `}
+      </style>
       
       <section className="py-16 relative z-10">
         <div className="container mx-auto px-4">
