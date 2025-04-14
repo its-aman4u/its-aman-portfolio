@@ -1,5 +1,4 @@
-
-import { GraduationCap, Briefcase, Award, BookOpen, BarChart, Code, Rocket } from 'lucide-react';
+import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stars, Environment, OrbitControls } from '@react-three/drei';
 import { Suspense } from 'react';
@@ -11,6 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { GraduationCap, Briefcase, Award, BookOpen, BarChart, Code, Rocket } from 'lucide-react';
 
 // 3D Background for Journey Page
 const JourneyBackground = () => {
@@ -104,65 +104,68 @@ const Journey = () => {
   const milestones = [
     {
       year: "2016",
-      title: "Academic Pivot",
+      title: "Academic Pivot", 
       description: "Made a strategic career decision to pursue commerce after 12th standard, establishing a solid foundation for my future business studies despite initial academic challenges.",
-      icon: GraduationCap
+      icon: null // Removed icon
     },
     {
-      year: "2017",
+      year: "2017", 
       title: "Higher Education",
       description: "Despite facing significant family challenges that resulted in a gap year, I demonstrated resilience by enrolling at ITM to pursue a Bachelor of Commerce degree, determined to excel academically.",
-      icon: BookOpen
+      icon: null // Removed icon
     },
     {
       year: "2018",
       title: "Academic Excellence",
       description: "Through dedication and disciplined study habits, I achieved first-year topper status, showcasing my commitment to academic excellence and establishing a strong foundation for future professional growth.",
-      icon: Award
+      icon: null
     },
     {
       year: "2020",
       title: "MBA Specialization",
       description: "Enhanced my expertise by pursuing an MBA with dual specialization in Supply Chain Management & Marketing, developing comprehensive knowledge in business operations and strategic market dynamics.",
-      icon: GraduationCap
+      icon: null
     },
     {
       year: "2021",
       title: "Professional Debut",
       description: "Secured a position as Warehouse Executive at Holisol, where I gained valuable hands-on experience in logistics operations and developed practical skills in supply chain management and process optimization.",
-      icon: Briefcase
+      icon: null
     },
     {
       year: "2022",
       title: "Graduation & Career Growth",
       description: "Successfully completed my MBA and advanced professionally by joining Holisol Corporate, transitioning from operational roles to strategic positions with broader organizational responsibilities.",
-      icon: Briefcase
+      icon: null
     },
     {
       year: "2024 (June)",
       title: "Data Science Exploration",
       description: "Recognized the transformative potential of AI in business operations and proactively embraced data science learning through LinkedIn and Coursera, adapting to evolving technological landscapes.",
-      icon: Code
+      icon: null
     },
     {
       year: "2024 (August)",
       title: "Data Analysis Certification",
       description: "Formalized my expertise in data analysis through professional certification, validating my technical skills in extracting actionable business insights from complex datasets.",
-      icon: BarChart
+      icon: null
     },
     {
       year: "2024 (October)",
       title: "Leadership Advancement",
       description: "Rejoined Holisol in a leadership capacity, spearheading comprehensive safety initiatives across PAN India operations and successfully managing cross-functional responsibilities.",
-      icon: Briefcase
+      icon: null
     },
     {
       year: "2025 (March)",
       title: "Technology Integration",
       description: "Leveraged my combined business acumen and technical skills to develop innovative automation solutions with AppScript and implement machine learning models, significantly driving operational efficiency and cost reduction.",
-      icon: Rocket
+      icon: null
     }
-  ];
+  ].map((milestone, index) => ({
+    ...milestone,
+    icon: null // Ensure all milestones have no icon
+  }));
 
   return (
     <div className="min-h-screen pt-20 relative">
@@ -199,6 +202,11 @@ const Journey = () => {
         .timeline-content {
           animation: fadeIn 0.8s ease-out 0.3s forwards;
           opacity: 0;
+          position: relative;
+        }
+        
+        .timeline-content::before {
+          display: none; /* Remove any icon-related pseudo-elements */
         }
         
         .milestone-icon {
