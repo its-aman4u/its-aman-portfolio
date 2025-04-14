@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stars, Environment, OrbitControls } from '@react-three/drei';
@@ -10,7 +11,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { GraduationCap, Briefcase, Award, BookOpen, BarChart, Code, Rocket } from 'lucide-react';
 
 // 3D Background for Journey Page
 const JourneyBackground = () => {
@@ -35,13 +35,13 @@ const JourneyBackground = () => {
   );
 };
 
-// Icon component for timeline milestones
-const MilestoneIcon = ({ icon: Icon, milestone }) => {
+// Modified to not use icons
+const MilestoneIcon = ({ milestone }) => {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
         <div className="milestone-icon">
-          <Icon className="w-6 h-6 text-white" />
+          <span className="text-white text-xs font-bold">{milestone.year.slice(-2)}</span>
         </div>
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
@@ -72,7 +72,9 @@ const TimelineVisual = ({ index }) => {
           <CarouselItem>
             <div className="bg-gradient-to-br from-secondary/50 to-secondary/10 backdrop-blur-md rounded-xl p-4 h-40 flex items-center justify-center">
               <div className="space-y-2 text-center">
-                {getIconForIndex(index, "w-12 h-12 mx-auto text-secondary")}
+                <div className="h-12 w-12 mx-auto rounded-full bg-secondary/40 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-secondary">{index + 1}</span>
+                </div>
                 <div className="text-sm text-secondary/80">Achievement</div>
               </div>
             </div>
@@ -85,87 +87,59 @@ const TimelineVisual = ({ index }) => {
   );
 };
 
-// Helper function to get an appropriate icon based on index
-const getIconForIndex = (index, className = "w-6 h-6") => {
-  const icons = [
-    <GraduationCap key="grad" className={className} />,
-    <Briefcase key="brief" className={className} />,
-    <Award key="award" className={className} />,
-    <BookOpen key="book" className={className} />,
-    <BarChart key="chart" className={className} />,
-    <Code key="code" className={className} />,
-    <Rocket key="rocket" className={className} />
-  ];
-  
-  return icons[index % icons.length];
-};
-
 const Journey = () => {
   const milestones = [
     {
       year: "2016",
       title: "Academic Pivot", 
-      description: "Made a strategic career decision to pursue commerce after 12th standard, establishing a solid foundation for my future business studies despite initial academic challenges.",
-      icon: null // Removed icon
+      description: "Made a strategic career decision to pursue commerce after 12th standard, establishing a solid foundation for my future business studies despite initial academic challenges."
     },
     {
       year: "2017", 
       title: "Higher Education",
-      description: "Despite facing significant family challenges that resulted in a gap year, I demonstrated resilience by enrolling at ITM to pursue a Bachelor of Commerce degree, determined to excel academically.",
-      icon: null // Removed icon
+      description: "Despite facing significant family challenges that resulted in a gap year, I demonstrated resilience by enrolling at ITM to pursue a Bachelor of Commerce degree, determined to excel academically."
     },
     {
       year: "2018",
       title: "Academic Excellence",
-      description: "Through dedication and disciplined study habits, I achieved first-year topper status, showcasing my commitment to academic excellence and establishing a strong foundation for future professional growth.",
-      icon: null
+      description: "Through dedication and disciplined study habits, I achieved first-year topper status, showcasing my commitment to academic excellence and establishing a strong foundation for future professional growth."
     },
     {
       year: "2020",
       title: "MBA Specialization",
-      description: "Enhanced my expertise by pursuing an MBA with dual specialization in Supply Chain Management & Marketing, developing comprehensive knowledge in business operations and strategic market dynamics.",
-      icon: null
+      description: "Enhanced my expertise by pursuing an MBA with dual specialization in Supply Chain Management & Marketing, developing comprehensive knowledge in business operations and strategic market dynamics."
     },
     {
       year: "2021",
       title: "Professional Debut",
-      description: "Secured a position as Warehouse Executive at Holisol, where I gained valuable hands-on experience in logistics operations and developed practical skills in supply chain management and process optimization.",
-      icon: null
+      description: "Secured a position as Warehouse Executive at Holisol, where I gained valuable hands-on experience in logistics operations and developed practical skills in supply chain management and process optimization."
     },
     {
       year: "2022",
       title: "Graduation & Career Growth",
-      description: "Successfully completed my MBA and advanced professionally by joining Holisol Corporate, transitioning from operational roles to strategic positions with broader organizational responsibilities.",
-      icon: null
+      description: "Successfully completed my MBA and advanced professionally by joining Holisol Corporate, transitioning from operational roles to strategic positions with broader organizational responsibilities."
     },
     {
       year: "2024 (June)",
       title: "Data Science Exploration",
-      description: "Recognized the transformative potential of AI in business operations and proactively embraced data science learning through LinkedIn and Coursera, adapting to evolving technological landscapes.",
-      icon: null
+      description: "Recognized the transformative potential of AI in business operations and proactively embraced data science learning through LinkedIn and Coursera, adapting to evolving technological landscapes."
     },
     {
       year: "2024 (August)",
       title: "Data Analysis Certification",
-      description: "Formalized my expertise in data analysis through professional certification, validating my technical skills in extracting actionable business insights from complex datasets.",
-      icon: null
+      description: "Formalized my expertise in data analysis through professional certification, validating my technical skills in extracting actionable business insights from complex datasets."
     },
     {
       year: "2024 (October)",
       title: "Leadership Advancement",
-      description: "Rejoined Holisol in a leadership capacity, spearheading comprehensive safety initiatives across PAN India operations and successfully managing cross-functional responsibilities.",
-      icon: null
+      description: "Rejoined Holisol in a leadership capacity, spearheading comprehensive safety initiatives across PAN India operations and successfully managing cross-functional responsibilities."
     },
     {
       year: "2025 (March)",
       title: "Technology Integration",
-      description: "Leveraged my combined business acumen and technical skills to develop innovative automation solutions with AppScript and implement machine learning models, significantly driving operational efficiency and cost reduction.",
-      icon: null
+      description: "Leveraged my combined business acumen and technical skills to develop innovative automation solutions with AppScript and implement machine learning models, significantly driving operational efficiency and cost reduction."
     }
-  ].map((milestone, index) => ({
-    ...milestone,
-    icon: null // Ensure all milestones have no icon
-  }));
+  ];
 
   return (
     <div className="min-h-screen pt-20 relative">
@@ -278,7 +252,7 @@ const Journey = () => {
                 >
                   {/* Milestone icon */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                    <MilestoneIcon icon={milestone.icon} milestone={milestone} />
+                    <MilestoneIcon milestone={milestone} />
                   </div>
                   
                   {/* Content cards - alternating sides with visuals */}
