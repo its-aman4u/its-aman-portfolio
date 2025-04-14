@@ -44,7 +44,7 @@ const ProjectsPreview = () => {
               <p className="text-muted-foreground mb-4">
                 Intelligent scheduling system for optimizing training and development programs.
               </p>
-              <p className="text-sm text-primary">Ongoing</p>
+              <p className="text-sm text-primary">Completed</p>
             </div>
           </div>
         </div>

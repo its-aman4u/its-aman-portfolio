@@ -126,7 +126,7 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
           color="#1A6A8F" 
           title="O3 Automation" 
           onClick={() => {
-            scrollToProject(0);
+            scrollToProject(1);
           }}
         />
         
@@ -141,7 +141,7 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
           color="#53A2BE" 
           title="AI Portfolios" 
           onClick={() => {
-            scrollToProject(1);
+            scrollToProject(2);
           }}
         />
         
@@ -156,7 +156,7 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
           color="#53BE76" 
           title="Masterclass Scheduler" 
           onClick={() => {
-            scrollToProject(2);
+            scrollToProject(3);
           }}
         />
         

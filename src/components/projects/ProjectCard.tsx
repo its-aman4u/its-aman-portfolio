@@ -23,8 +23,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const [hovered, setHovered] = useState(false);
   
-  // Determine if this is the D-Talk project
+  // Determine if this is the D-Talk project or Masterclass project
   const isDTalkProject = project.title.includes("D-Talk");
+  const isMasterclassProject = project.title.includes("Masterclass");
   
   return (
     <div 
@@ -47,7 +48,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
               <span className={`inline-block px-3 py-1 rounded-full text-sm ${
                 project.status === "Production" 
                   ? "bg-green-500/80 text-white" 
-                  : "bg-primary/80 text-white"
+                  : project.status === "Completed"
+                    ? "bg-blue-500/80 text-white"
+                    : "bg-primary/80 text-white"
               }`}>
                 {project.status}
               </span>
@@ -120,6 +123,58 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                       <div>
                         <h4 className="font-semibold mb-1">Technologies Used:</h4>
                         <p>Google Apps Script, HTML/CSS for email templates, REST API with doGet/doPost methods, Google Sheets as database, and time-based triggers.</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
+          
+          {/* Masterclass Scheduler additional details */}
+          {isMasterclassProject && (
+            <div className="mb-6">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setExpanded(!expanded)}
+                className="mb-2 w-full justify-between"
+              >
+                Project Details
+                {expanded ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+              
+              {expanded && (
+                <Card className="mt-3 animate-fade-in">
+                  <CardContent className="pt-6">
+                    <div className="space-y-4 text-sm">
+                      <div>
+                        <h4 className="font-semibold mb-1">Key Features:</h4>
+                        <ul className="list-disc pl-5 space-y-1">
+                          <li>Two specialized scripts: Reset Script and Email Automation Script</li>
+                          <li>Real "reply all" functionality in the same Gmail thread</li>
+                          <li>Intelligent scheduling based on participant availability</li>
+                          <li>Integration with Google Calendar for event management</li>
+                          <li>Comprehensive user guide and documentation</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Implementation Features:</h4>
+                        <ol className="list-decimal pl-5 space-y-1">
+                          <li>Reset script that preserves essential credentials</li>
+                          <li>Email automation with advanced Gmail service integration</li>
+                          <li>Smart scheduling algorithms for optimal time slots</li>
+                          <li>User-friendly interface and documentation</li>
+                          <li>Seamless calendar integration</li>
+                        </ol>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Documentation:</h4>
+                        <p>Comprehensive user guide available at: <a href="https://www.notion.so/User-Guide-for-Masterclass-V0-2-Script-1bb334bcc9218029965ccf8e9a7bae24?pvs=4" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Notion Documentation</a></p>
                       </div>
                     </div>
                   </CardContent>
