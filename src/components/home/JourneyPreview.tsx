@@ -1,5 +1,5 @@
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, GraduationCap, BookOpen, BarChart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import './cycle-path.css';
@@ -24,7 +24,7 @@ const JourneyPreview = () => {
                 <div className="md:order-1">
                   <div className="cycle-milestone">
                     <div className="cycle-dot">
-                      <span className="text-white text-xs font-bold">16</span>
+                      <GraduationCap className="w-4 h-4 text-white" />
                     </div>
                     <div className="bg-white dark:bg-muted shadow-lg rounded-lg p-6 md:max-w-md w-full hover:shadow-xl transition-all border border-primary/10">
                       <h3 className="text-lg font-bold mb-2">Academic Foundation</h3>
@@ -37,9 +37,7 @@ const JourneyPreview = () => {
                 </div>
                 <div className="md:order-2 hidden md:flex justify-center items-center">
                   <div className="preview-visual bg-gradient-to-br from-primary/30 to-primary/5 p-6 rounded-lg shadow-lg animate-pulse">
-                    <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-primary">1</span>
-                    </div>
+                    <GraduationCap className="w-16 h-16 text-primary" />
                   </div>
                 </div>
               </div>
@@ -49,7 +47,7 @@ const JourneyPreview = () => {
                 <div className="md:order-2">
                   <div className="cycle-milestone">
                     <div className="cycle-dot">
-                      <span className="text-white text-xs font-bold">20</span>
+                      <BookOpen className="w-4 h-4 text-white" />
                     </div>
                     <div className="bg-white dark:bg-muted shadow-lg rounded-lg p-6 md:max-w-md w-full hover:shadow-xl transition-all border border-primary/10">
                       <h3 className="text-lg font-bold mb-2">Professional Growth</h3>
@@ -62,9 +60,7 @@ const JourneyPreview = () => {
                 </div>
                 <div className="md:order-1 hidden md:flex justify-center items-center">
                   <div className="preview-visual bg-gradient-to-br from-secondary/30 to-secondary/5 p-6 rounded-lg shadow-lg animate-pulse">
-                    <div className="h-16 w-16 rounded-full bg-secondary/20 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-secondary">2</span>
-                    </div>
+                    <BookOpen className="w-16 h-16 text-secondary" />
                   </div>
                 </div>
               </div>
@@ -74,7 +70,7 @@ const JourneyPreview = () => {
                 <div className="md:order-1">
                   <div className="cycle-milestone">
                     <div className="cycle-dot">
-                      <span className="text-white text-xs font-bold">24</span>
+                      <BarChart className="w-4 h-4 text-white" />
                     </div>
                     <div className="bg-white dark:bg-muted shadow-lg rounded-lg p-6 md:max-w-md w-full hover:shadow-xl transition-all border border-primary/10">
                       <h3 className="text-lg font-bold mb-2">Data Science Journey</h3>
@@ -87,9 +83,7 @@ const JourneyPreview = () => {
                 </div>
                 <div className="md:order-2 hidden md:flex justify-center items-center">
                   <div className="preview-visual bg-gradient-to-br from-primary/30 to-primary/5 p-6 rounded-lg shadow-lg animate-pulse">
-                    <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center">
-                      <span className="text-2xl font-bold text-primary">3</span>
-                    </div>
+                    <BarChart className="w-16 h-16 text-primary" />
                   </div>
                 </div>
               </div>
