@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Code } from 'lucide-react';
 import ProjectCard, { Project } from './ProjectCard';
@@ -18,9 +17,25 @@ const ProjectList = ({ projects }: ProjectListProps) => {
           </p>
         </div>
         
+        {/* Featured Project */}
+        {projects.length > 0 && projects[0].title.includes("D-Talk") && (
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-semibold">Featured Project</h2>
+              <div className="h-1 w-20 bg-primary mx-auto mt-2 rounded"></div>
+            </div>
+            <ProjectCard key="featured" project={projects[0]} index={0} />
+          </div>
+        )}
+        
+        {/* Other Projects */}
         <div className="space-y-16">
-          {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} index={index} />
+          {projects.slice(projects[0].title.includes("D-Talk") ? 1 : 0).map((project, index) => (
+            <ProjectCard 
+              key={index} 
+              project={project} 
+              index={index + (projects[0].title.includes("D-Talk") ? 1 : 0)} 
+            />
           ))}
         </div>
         

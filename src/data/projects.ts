@@ -3,6 +3,15 @@ import { Project } from '@/components/projects/ProjectCard';
 
 export const projectsData: Project[] = [
   {
+    title: "D-Talk Management System",
+    description: "An automated email workflow and tracking system built using Google Apps Script that manages communication for D-Talk events. Features include automatic reminders, status tracking, and management reporting for tracking completion status.",
+    status: "Production",
+    image: "public/lovable-uploads/fa43e2e9-52b6-4ca1-ae22-09755ff308eb.png",
+    tech: ["Google Apps Script", "HTML/CSS", "REST API", "Automation", "Email Integration"],
+    link: "#",
+    github: "https://github.com/its-aman4u"
+  },
+  {
     title: "O3 Automation",
     description: "A comprehensive system designed to automate operational workflows and enhance efficiency across multiple departments. This project leverages Google AppScript and API integrations to streamline routine tasks and improve data accuracy.",
     status: "Ongoing",
