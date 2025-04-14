@@ -1,5 +1,5 @@
 
-import { ArrowRight, Bike } from 'lucide-react';
+import { ArrowRight, GraduationCap, BookOpen, BarChart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import './cycle-path.css';
@@ -11,7 +11,7 @@ const JourneyPreview = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">My Career Journey</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore my professional path, visualized as a cycling journey through significant career milestones.
+            Explore my professional path through significant career milestones and achievements.
           </p>
         </div>
         
@@ -24,9 +24,9 @@ const JourneyPreview = () => {
                 <div className="md:order-1">
                   <div className="cycle-milestone">
                     <div className="cycle-dot">
-                      <Bike className="w-4 h-4 text-white" />
+                      <GraduationCap className="w-4 h-4 text-white" />
                     </div>
-                    <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
+                    <div className="bg-white dark:bg-muted shadow-lg rounded-lg p-6 md:max-w-md w-full hover:shadow-xl transition-all border border-primary/10">
                       <h3 className="text-lg font-bold mb-2">Academic Foundation</h3>
                       <p className="text-sm text-muted-foreground mb-2">2016 - 2018</p>
                       <p className="text-sm">
@@ -36,8 +36,8 @@ const JourneyPreview = () => {
                   </div>
                 </div>
                 <div className="md:order-2 hidden md:flex justify-center items-center">
-                  <div className="p-4 bg-primary/10 rounded-full shadow-lg animate-pulse">
-                    <Bike className="w-8 h-8 text-primary" />
+                  <div className="preview-visual bg-gradient-to-br from-primary/30 to-primary/5 p-6 rounded-lg shadow-lg animate-pulse">
+                    <GraduationCap className="w-16 h-16 text-primary" />
                   </div>
                 </div>
               </div>
@@ -47,9 +47,9 @@ const JourneyPreview = () => {
                 <div className="md:order-2">
                   <div className="cycle-milestone">
                     <div className="cycle-dot">
-                      <Bike className="w-4 h-4 text-white" />
+                      <BookOpen className="w-4 h-4 text-white" />
                     </div>
-                    <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
+                    <div className="bg-white dark:bg-muted shadow-lg rounded-lg p-6 md:max-w-md w-full hover:shadow-xl transition-all border border-primary/10">
                       <h3 className="text-lg font-bold mb-2">Professional Growth</h3>
                       <p className="text-sm text-muted-foreground mb-2">2020 - 2022</p>
                       <p className="text-sm">
@@ -59,8 +59,8 @@ const JourneyPreview = () => {
                   </div>
                 </div>
                 <div className="md:order-1 hidden md:flex justify-center items-center">
-                  <div className="p-4 bg-primary/10 rounded-full shadow-lg animate-pulse">
-                    <Bike className="w-8 h-8 text-primary" />
+                  <div className="preview-visual bg-gradient-to-br from-secondary/30 to-secondary/5 p-6 rounded-lg shadow-lg animate-pulse">
+                    <BookOpen className="w-16 h-16 text-secondary" />
                   </div>
                 </div>
               </div>
@@ -70,9 +70,9 @@ const JourneyPreview = () => {
                 <div className="md:order-1">
                   <div className="cycle-milestone">
                     <div className="cycle-dot">
-                      <Bike className="w-4 h-4 text-white" />
+                      <BarChart className="w-4 h-4 text-white" />
                     </div>
-                    <div className="bg-white dark:bg-muted shadow-md rounded-lg p-6 md:max-w-md w-full">
+                    <div className="bg-white dark:bg-muted shadow-lg rounded-lg p-6 md:max-w-md w-full hover:shadow-xl transition-all border border-primary/10">
                       <h3 className="text-lg font-bold mb-2">Data Science Journey</h3>
                       <p className="text-sm text-muted-foreground mb-2">2024 - Present</p>
                       <p className="text-sm">
@@ -82,8 +82,8 @@ const JourneyPreview = () => {
                   </div>
                 </div>
                 <div className="md:order-2 hidden md:flex justify-center items-center">
-                  <div className="p-4 bg-primary/10 rounded-full shadow-lg animate-pulse">
-                    <Bike className="w-8 h-8 text-primary" />
+                  <div className="preview-visual bg-gradient-to-br from-primary/30 to-primary/5 p-6 rounded-lg shadow-lg animate-pulse">
+                    <BarChart className="w-16 h-16 text-primary" />
                   </div>
                 </div>
               </div>
@@ -99,6 +99,18 @@ const JourneyPreview = () => {
           </Button>
         </div>
       </div>
+      
+      <style>
+        {`
+        .preview-visual {
+          transition: all 0.3s ease;
+        }
+        
+        .preview-visual:hover {
+          transform: translateY(-5px) scale(1.05);
+        }
+        `}
+      </style>
     </section>
   );
 };
