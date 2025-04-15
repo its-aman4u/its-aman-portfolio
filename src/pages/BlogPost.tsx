@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
-import { BlogPost, Author } from '@/types/blog';
+import { BlogPost } from '@/types/blog';
 import { toast } from 'sonner';
 import { CalendarIcon, User2Icon } from 'lucide-react';
 import { format } from 'date-fns';

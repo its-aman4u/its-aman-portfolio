@@ -108,7 +108,7 @@ export const mockComments: BlogComment[] = [
   }
 ];
 
-// New BlogPostForm type for creating/editing blog posts
+// BlogPostForm type for creating/editing blog posts
 export type BlogPostForm = {
   id?: string;
   title: string;
@@ -118,7 +118,7 @@ export type BlogPostForm = {
   published?: boolean;
   premium?: boolean;
   price?: number;
-  author_id?: string;
+  author_id: string; // Changed from optional to required
   created_at?: string;
   updated_at?: string;
 };
