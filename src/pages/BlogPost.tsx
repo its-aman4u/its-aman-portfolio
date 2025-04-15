@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { CalendarIcon, User2Icon } from 'lucide-react';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
+
+// Import the plugins
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
@@ -90,8 +92,9 @@ const BlogPostPage = () => {
 
         <article className="prose prose-lg dark:prose-invert">
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
+            // Fix: Use type casting to resolve TypeScript errors with plugins
+            remarkPlugins={[remarkGfm as any]}
+            rehypePlugins={[rehypeRaw as any]}
             components={{
               img: ({ node, ...props }) => (
                 <img {...props} style={{ maxWidth: '100%', height: 'auto' }} alt={props.alt || ''} />
