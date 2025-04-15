@@ -5,6 +5,7 @@ import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { supabase } from "@/integrations/supabase/client";
 
 const BlogPreview = () => {
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
@@ -14,12 +15,48 @@ const BlogPreview = () => {
     async function fetchLatestPosts() {
       try {
         setLoading(true);
-        // Simulate API delay for realism
-        await new Promise(resolve => setTimeout(resolve, 800));
-        // Use mock data until Supabase tables are set up
-        setLatestPosts(mockBlogPosts.filter(post => post.published).slice(0, 3));
+        
+        const { data, error } = await supabase
+          .from('blogs')
+          .select(`
+            *,
+            profiles(id, username, full_name, avatar_url)
+          `)
+          .eq('published', true)
+          .order('created_at', { ascending: false })
+          .limit(3);
+          
+        if (error) {
+          console.error('Error fetching latest blog posts:', error);
+          // Fallback to mock data if there's an error
+          setLatestPosts(mockBlogPosts.slice(0, 3));
+          return;
+        }
+        
+        if (data.length === 0) {
+          // Use mock data if no posts are found
+          setLatestPosts(mockBlogPosts.slice(0, 3));
+          return;
+        }
+        
+        const formattedPosts = data.map(post => {
+          const profileData = post.profiles as any;
+          return {
+            ...post,
+            author: profileData ? {
+              id: profileData.id,
+              username: profileData.username,
+              full_name: profileData.full_name,
+              avatar_url: profileData.avatar_url
+            } : undefined
+          } as BlogPost;
+        });
+        
+        setLatestPosts(formattedPosts);
       } catch (error) {
         console.error('Error fetching latest blog posts:', error);
+        // Fallback to mock data
+        setLatestPosts(mockBlogPosts.slice(0, 3));
       } finally {
         setLoading(false);
       }

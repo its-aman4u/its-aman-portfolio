@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, Author } from '@/types/blog';
@@ -23,15 +24,18 @@ const Blog = () => {
 
         if (blogsError) throw blogsError;
 
-        const formattedBlogs = blogsData.map(blog => ({
-          ...blog,
-          author: blog.profiles ? {
-            id: blog.profiles.id,
-            username: blog.profiles.username,
-            full_name: blog.profiles.full_name,
-            avatar_url: blog.profiles.avatar_url
-          } : undefined
-        }));
+        const formattedBlogs = blogsData.map(blog => {
+          const profileData = blog.profiles as any;
+          return {
+            ...blog,
+            author: profileData ? {
+              id: profileData.id,
+              username: profileData.username,
+              full_name: profileData.full_name,
+              avatar_url: profileData.avatar_url
+            } : undefined
+          } as BlogPost;
+        });
 
         setBlogs(formattedBlogs);
       } catch (error) {

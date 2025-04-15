@@ -1,13 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, Author } from '@/types/blog';
 import { toast } from 'sonner';
 import { CalendarIcon, User2Icon } from 'lucide-react';
+import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { format } from 'date-fns';
 
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,15 +29,16 @@ const BlogPostPage = () => {
 
         if (blogError) throw blogError;
 
+        const profileData = blogData.profiles as any;
         const formattedBlog = {
           ...blogData,
-          author: blogData.profiles ? {
-            id: blogData.profiles.id,
-            username: blogData.profiles.username,
-            full_name: blogData.profiles.full_name,
-            avatar_url: blogData.profiles.avatar_url
+          author: profileData ? {
+            id: profileData.id,
+            username: profileData.username,
+            full_name: profileData.full_name,
+            avatar_url: profileData.avatar_url
           } : undefined
-        };
+        } as BlogPost;
 
         setBlog(formattedBlog);
       } catch (error) {
