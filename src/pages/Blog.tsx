@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { BlogPost } from '@/types/blog';
+import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { CalendarIcon, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
@@ -12,17 +11,13 @@ const Blog = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Using mock data until Supabase tables are set up
     async function fetchBlogPosts() {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('blog_posts')
-          .select('*')
-          .eq('published', true)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        setPosts(data || []);
+        // Simulate API delay for realism
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setPosts(mockBlogPosts);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
       } finally {

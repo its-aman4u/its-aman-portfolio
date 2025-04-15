@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { BlogPost as BlogPostType, BlogComment } from '@/types/blog';
+import { BlogPost as BlogPostType, BlogComment, mockBlogPosts, mockComments } from '@/types/blog';
 import { CalendarIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,28 +27,17 @@ const BlogPost = () => {
       
       try {
         setLoading(true);
-        // Fetch post
-        const { data: postData, error: postError } = await supabase
-          .from('blog_posts')
-          .select('*')
-          .eq('id', id)
-          .eq('published', true)
-          .single();
-
-        if (postError) throw postError;
+        // Simulate API delay for realism
+        await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Fetch approved comments
-        const { data: commentsData, error: commentsError } = await supabase
-          .from('blog_comments')
-          .select('*')
-          .eq('post_id', id)
-          .eq('approved', true)
-          .order('created_at', { ascending: true });
-
-        if (commentsError) throw commentsError;
+        // Use mock data until Supabase tables are set up
+        const foundPost = mockBlogPosts.find(post => post.id === id);
+        const postComments = mockComments.filter(comment => comment.post_id === id && comment.approved);
         
-        setPost(postData);
-        setComments(commentsData || []);
+        if (foundPost) {
+          setPost(foundPost);
+          setComments(postComments);
+        }
       } catch (error) {
         console.error('Error fetching blog post:', error);
       } finally {
@@ -72,21 +60,19 @@ const BlogPost = () => {
     setIsSubmitting(true);
     
     try {
-      // Save comment to Supabase
-      const { error } = await supabase
-        .from('blog_comments')
-        .insert([
-          { 
-            post_id: id,
-            name: commentForm.name,
-            email: commentForm.email,
-            content: commentForm.content,
-            created_at: new Date().toISOString(),
-            approved: false
-          }
-        ]);
-        
-      if (error) throw error;
+      // Simulate API call for submitting comment
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Create a new mock comment (normally this would be saved to the database)
+      const newComment: BlogComment = {
+        id: `mock-${Date.now()}`,
+        post_id: id,
+        name: commentForm.name,
+        email: commentForm.email,
+        content: commentForm.content,
+        created_at: new Date().toISOString(),
+        approved: false
+      };
       
       toast.success('Comment submitted successfully!', {
         description: 'Your comment will be visible after approval.'

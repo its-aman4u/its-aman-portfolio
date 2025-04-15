@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { BlogPost } from '@/types/blog';
+import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
@@ -15,15 +14,10 @@ const BlogPreview = () => {
     async function fetchLatestPosts() {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('blog_posts')
-          .select('*')
-          .eq('published', true)
-          .order('created_at', { ascending: false })
-          .limit(3);
-
-        if (error) throw error;
-        setLatestPosts(data || []);
+        // Simulate API delay for realism
+        await new Promise(resolve => setTimeout(resolve, 800));
+        // Use mock data until Supabase tables are set up
+        setLatestPosts(mockBlogPosts.slice(0, 3));
       } catch (error) {
         console.error('Error fetching latest blog posts:', error);
       } finally {

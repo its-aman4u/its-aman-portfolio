@@ -1,7 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { BlogPost, BlogComment } from '@/types/blog';
+import { BlogPost, BlogComment, mockBlogPosts, mockComments } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,25 +35,12 @@ const AdminBlog = () => {
   async function fetchData() {
     try {
       setLoading(true);
-      // Fetch blog posts
-      const { data: postsData, error: postsError } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (postsError) throw postsError;
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Fetch pending comments
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('blog_comments')
-        .select('*')
-        .eq('approved', false)
-        .order('created_at', { ascending: false });
-
-      if (commentsError) throw commentsError;
+      setPosts([...mockBlogPosts]);
       
-      setPosts(postsData || []);
-      setPendingComments(commentsData || []);
+      const pendingMockComments = mockComments.filter(comment => !comment.approved);
+      setPendingComments(pendingMockComments);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to fetch data');
@@ -78,42 +63,41 @@ const AdminBlog = () => {
     e.preventDefault();
     
     try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       if (editingPost) {
-        // Update existing post
-        const { error } = await supabase
-          .from('blog_posts')
-          .update({
-            title: formData.title,
-            excerpt: formData.excerpt,
-            content: formData.content,
-            cover_image: formData.cover_image,
-            published: formData.published,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', editingPost.id);
-          
-        if (error) throw error;
+        const updatedPosts = posts.map(post => 
+          post.id === editingPost.id 
+            ? {
+                ...post,
+                title: formData.title,
+                excerpt: formData.excerpt,
+                content: formData.content,
+                cover_image: formData.cover_image,
+                published: formData.published,
+                updated_at: new Date().toISOString()
+              } 
+            : post
+        );
+        
+        setPosts(updatedPosts);
         toast.success('Blog post updated successfully');
       } else {
-        // Create new post
-        const { error } = await supabase
-          .from('blog_posts')
-          .insert([{
-            title: formData.title,
-            excerpt: formData.excerpt,
-            content: formData.content,
-            cover_image: formData.cover_image,
-            published: formData.published,
-            created_at: new Date().toISOString()
-          }]);
-          
-        if (error) throw error;
+        const newPost: BlogPost = {
+          id: `mock-${Date.now()}`,
+          title: formData.title,
+          excerpt: formData.excerpt,
+          content: formData.content,
+          cover_image: formData.cover_image,
+          published: formData.published,
+          created_at: new Date().toISOString()
+        };
+        
+        setPosts(prev => [newPost, ...prev]);
         toast.success('Blog post created successfully');
       }
       
-      // Reset form and refresh data
       resetForm();
-      fetchData();
     } catch (error) {
       console.error('Error saving blog post:', error);
       toast.error('Failed to save blog post');
@@ -135,24 +119,11 @@ const AdminBlog = () => {
     if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) return;
     
     try {
-      // First delete all comments for this post
-      const { error: commentsError } = await supabase
-        .from('blog_comments')
-        .delete()
-        .eq('post_id', postId);
-        
-      if (commentsError) throw commentsError;
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Then delete the post
-      const { error: postError } = await supabase
-        .from('blog_posts')
-        .delete()
-        .eq('id', postId);
-        
-      if (postError) throw postError;
+      setPosts(posts.filter(post => post.id !== postId));
       
       toast.success('Blog post deleted successfully');
-      fetchData();
     } catch (error) {
       console.error('Error deleting blog post:', error);
       toast.error('Failed to delete blog post');
@@ -161,15 +132,15 @@ const AdminBlog = () => {
 
   const handleApproveComment = async (commentId: string) => {
     try {
-      const { error } = await supabase
-        .from('blog_comments')
-        .update({ approved: true })
-        .eq('id', commentId);
-        
-      if (error) throw error;
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const updatedPendingComments = pendingComments.filter(
+        comment => comment.id !== commentId
+      );
+      
+      setPendingComments(updatedPendingComments);
       
       toast.success('Comment approved');
-      fetchData();
     } catch (error) {
       console.error('Error approving comment:', error);
       toast.error('Failed to approve comment');
@@ -178,15 +149,13 @@ const AdminBlog = () => {
 
   const handleDeleteComment = async (commentId: string) => {
     try {
-      const { error } = await supabase
-        .from('blog_comments')
-        .delete()
-        .eq('id', commentId);
-        
-      if (error) throw error;
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      setPendingComments(pendingComments.filter(
+        comment => comment.id !== commentId
+      ));
       
       toast.success('Comment deleted');
-      fetchData();
     } catch (error) {
       console.error('Error deleting comment:', error);
       toast.error('Failed to delete comment');
@@ -210,7 +179,6 @@ const AdminBlog = () => {
         <h1 className="text-3xl font-bold mb-8">Blog Management</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form Section */}
           <div className="lg:col-span-1">
             <div className="bg-card p-6 rounded-lg shadow-md">
               <h2 className="text-xl font-bold mb-4">
@@ -303,7 +271,6 @@ const AdminBlog = () => {
             </div>
           </div>
           
-          {/* Posts and Comments Section */}
           <div className="lg:col-span-2">
             <div className="bg-card p-6 rounded-lg shadow-md mb-8">
               <h2 className="text-xl font-bold mb-4">Your Blog Posts</h2>
@@ -376,7 +343,6 @@ const AdminBlog = () => {
               ) : (
                 <div className="space-y-4">
                   {pendingComments.map((comment) => {
-                    // Find the post title for this comment
                     const post = posts.find(p => p.id === comment.post_id);
                     
                     return (
