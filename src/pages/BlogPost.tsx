@@ -1,19 +1,54 @@
 
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { BlogPost as BlogPostType, BlogComment, mockBlogPosts, mockComments } from '@/types/blog';
-import { CalendarIcon, ArrowLeft, MessageSquare, User } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { CalendarIcon, ArrowLeft, MessageSquare, User, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from '@/contexts/AuthContext';
+
+interface BlogPost {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  cover_image: string | null;
+  author_id: string;
+  created_at: string;
+  updated_at: string;
+  published: boolean;
+  premium: boolean;
+  price: number;
+  author: {
+    id: string;
+    username: string | null;
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null;
+}
+
+interface Comment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  name: string;
+  email: string;
+  content: string;
+  created_at: string;
+  approved: boolean;
+}
 
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<BlogPostType | null>(null);
-  const [comments, setComments] = useState<BlogComment[]>([]);
+  const navigate = useNavigate();
+  const { isAuthenticated, user, isPremium } = useAuth();
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [accessDenied, setAccessDenied] = useState(false);
   const [commentForm, setCommentForm] = useState({
     name: '',
     email: '',
@@ -22,31 +57,71 @@ const BlogPost = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!id) return;
+    
     async function fetchBlogPost() {
-      if (!id) return;
-      
       try {
         setLoading(true);
-        // Simulate API delay for realism
-        await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Use mock data until Supabase tables are set up
-        const foundPost = mockBlogPosts.find(post => post.id === id);
-        const postComments = mockComments.filter(comment => comment.post_id === id && comment.approved);
+        // Fetch the blog post with author details
+        const { data: postData, error: postError } = await supabase
+          .from('blogs')
+          .select(`
+            *,
+            author:profiles(id, username, full_name, avatar_url)
+          `)
+          .eq('id', id)
+          .single();
+
+        if (postError) {
+          console.error('Error fetching blog post:', postError);
+          setLoading(false);
+          return;
+        }
+
+        // Check if the user has access to premium content
+        if (postData.premium && !isPremium) {
+          setAccessDenied(true);
+          setPost(postData);
+          setLoading(false);
+          return;
+        }
+
+        setPost(postData);
         
-        if (foundPost) {
-          setPost(foundPost);
-          setComments(postComments);
+        // Fetch approved comments for this post
+        const { data: commentsData, error: commentsError } = await supabase
+          .from('comments')
+          .select('*')
+          .eq('post_id', id)
+          .eq('approved', true)
+          .order('created_at', { ascending: false });
+
+        if (commentsError) {
+          console.error('Error fetching comments:', commentsError);
+        } else {
+          setComments(commentsData || []);
         }
       } catch (error) {
-        console.error('Error fetching blog post:', error);
+        console.error('Error in fetchBlogPost:', error);
       } finally {
         setLoading(false);
       }
     }
 
     fetchBlogPost();
-  }, [id]);
+  }, [id, isPremium]);
+
+  useEffect(() => {
+    // Pre-fill comment form with user details if authenticated
+    if (isAuthenticated && user) {
+      setCommentForm(prev => ({
+        ...prev,
+        name: user.user_metadata?.full_name || user.email?.split('@')[0] || '',
+        email: user.email || ''
+      }));
+    }
+  }, [isAuthenticated, user]);
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -55,42 +130,49 @@ const BlogPost = () => {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
+    if (!id || !isAuthenticated || !user) {
+      toast.error('You must be logged in to comment');
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
-      // Simulate API call for submitting comment
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Create a new mock comment (normally this would be saved to the database)
-      const newComment: BlogComment = {
-        id: `mock-${Date.now()}`,
-        post_id: id,
-        name: commentForm.name,
-        email: commentForm.email,
-        content: commentForm.content,
-        created_at: new Date().toISOString(),
-        approved: false
-      };
+      const { error } = await supabase
+        .from('comments')
+        .insert({
+          post_id: id,
+          user_id: user.id,
+          name: commentForm.name,
+          email: commentForm.email,
+          content: commentForm.content,
+          approved: false
+        });
+
+      if (error) {
+        throw error;
+      }
       
       toast.success('Comment submitted successfully!', {
         description: 'Your comment will be visible after approval.'
       });
       
-      setCommentForm({
-        name: '',
-        email: '',
+      setCommentForm(prev => ({
+        ...prev,
         content: ''
-      });
-    } catch (error) {
+      }));
+    } catch (error: any) {
       console.error('Error submitting comment:', error);
       toast.error('Failed to submit comment', {
-        description: 'There was an error submitting your comment. Please try again later.'
+        description: error.message || 'There was an error submitting your comment. Please try again later.'
       });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleSubscription = () => {
+    navigate('/subscription');
   };
 
   if (loading) {
@@ -117,6 +199,58 @@ const BlogPost = () => {
     );
   }
 
+  if (accessDenied) {
+    return (
+      <div className="min-h-screen pt-20">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <Button variant="outline" asChild className="mb-8">
+              <Link to="/blog">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+              </Link>
+            </Button>
+            
+            {post.cover_image && (
+              <div className="w-full h-[300px] mb-8 rounded-xl overflow-hidden blur-sm relative">
+                <img 
+                  src={post.cover_image} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <Lock className="h-16 w-16 text-amber-400" />
+                </div>
+              </div>
+            )}
+            
+            <h1 className="text-4xl font-bold mb-4 flex items-center justify-center">
+              <Lock className="mr-2 h-6 w-6 text-amber-500" />
+              {post.title}
+            </h1>
+            
+            <div className="my-8 p-8 border-2 border-amber-500 rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Premium Content</h2>
+              <p className="mb-6">This is premium content only available to subscribers.</p>
+              
+              {isAuthenticated ? (
+                <Button onClick={handleSubscription} className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700">
+                  Upgrade to Premium
+                </Button>
+              ) : (
+                <div className="space-y-4">
+                  <p>Please sign in to access premium content.</p>
+                  <Button asChild>
+                    <Link to="/auth">Sign In</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-20">
       <article className="py-16">
@@ -132,11 +266,31 @@ const BlogPost = () => {
               <Button variant="outline" asChild>
                 <Link to="/">Home</Link>
               </Button>
-              <Button variant="outline" asChild>
-                <Link to="/admin/blog">Admin</Link>
-              </Button>
+              {!isAuthenticated ? (
+                <Button asChild>
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+              ) : (
+                <Button variant="outline" asChild>
+                  <Link to="/admin/blog">Admin</Link>
+                </Button>
+              )}
             </div>
           </div>
+          
+          {post.premium && (
+            <div className="w-full max-w-4xl mx-auto mb-8 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <Lock className="h-5 w-5 text-amber-500 mr-2" />
+                <span className="font-medium">Premium Content</span>
+              </div>
+              {isPremium && (
+                <span className="text-sm bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-2 py-1 rounded">
+                  Premium Subscriber
+                </span>
+              )}
+            </div>
+          )}
           
           {post.cover_image && (
             <div className="w-full h-[400px] mb-8 rounded-xl overflow-hidden shadow-md">
@@ -151,9 +305,17 @@ const BlogPost = () => {
           <div className="max-w-4xl mx-auto">
             <div className="mb-8">
               <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-              <div className="flex items-center text-muted-foreground">
-                <CalendarIcon className="w-5 h-5 mr-2" />
-                <span>{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
+              <div className="flex items-center justify-between text-muted-foreground">
+                <div className="flex items-center">
+                  <CalendarIcon className="w-5 h-5 mr-2" />
+                  <span>{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
+                </div>
+                {post.author?.full_name && (
+                  <div className="flex items-center">
+                    <User className="w-5 h-5 mr-2" />
+                    <span>{post.author.full_name}</span>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -194,66 +356,77 @@ const BlogPost = () => {
                   <MessageSquare className="mr-2 h-5 w-5" /> 
                   Leave a Comment
                 </h3>
-                <form onSubmit={handleCommentSubmit}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium mb-2">
-                        Your Name
-                      </label>
-                      <Input 
-                        id="name"
-                        name="name"
-                        value={commentForm.name}
-                        onChange={handleCommentChange}
-                        placeholder="John Doe"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium mb-2">
-                        Email Address
-                      </label>
-                      <Input 
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={commentForm.email}
-                        onChange={handleCommentChange}
-                        placeholder="john@example.com"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="md:col-span-2">
-                      <label htmlFor="content" className="block text-sm font-medium mb-2">
-                        Comment
-                      </label>
-                      <Textarea 
-                        id="content"
-                        name="content"
-                        value={commentForm.content}
-                        onChange={handleCommentChange}
-                        placeholder="Share your thoughts..."
-                        rows={4}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="md:col-span-2">
-                      <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
-                        {isSubmitting ? (
-                          <>
-                            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-                            Submitting...
-                          </>
-                        ) : (
-                          'Submit Comment'
-                        )}
-                      </Button>
-                    </div>
+                
+                {!isAuthenticated ? (
+                  <div className="text-center py-6">
+                    <p className="mb-4">Please sign in to leave a comment</p>
+                    <Button asChild>
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
                   </div>
-                </form>
+                ) : (
+                  <form onSubmit={handleCommentSubmit}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium mb-2">
+                          Your Name
+                        </label>
+                        <Input 
+                          id="name"
+                          name="name"
+                          value={commentForm.name}
+                          onChange={handleCommentChange}
+                          placeholder="John Doe"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium mb-2">
+                          Email Address
+                        </label>
+                        <Input 
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={commentForm.email}
+                          onChange={handleCommentChange}
+                          readOnly
+                          className="bg-muted/50"
+                          required
+                        />
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        <label htmlFor="content" className="block text-sm font-medium mb-2">
+                          Comment
+                        </label>
+                        <Textarea 
+                          id="content"
+                          name="content"
+                          value={commentForm.content}
+                          onChange={handleCommentChange}
+                          placeholder="Share your thoughts..."
+                          rows={4}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
+                          {isSubmitting ? (
+                            <>
+                              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+                              Submitting...
+                            </>
+                          ) : (
+                            'Submit Comment'
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
           </div>
