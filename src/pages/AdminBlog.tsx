@@ -1,4 +1,6 @@
+
 import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { BlogPost, BlogComment, mockBlogPosts, mockComments } from '@/types/blog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,10 +14,14 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { CheckCircle, XCircle, Edit, Trash, Eye, PlusCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Edit, Trash, Eye, PlusCircle, ArrowLeft, LogOut } from 'lucide-react';
 import { format } from 'date-fns';
+import { useAuth } from '@/contexts/AuthContext';
+import AdminLogin from '@/components/admin/AdminLogin';
 
 const AdminBlog = () => {
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [pendingComments, setPendingComments] = useState<BlogComment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,16 +179,36 @@ const AdminBlog = () => {
     });
   };
 
+  if (!isAuthenticated) {
+    return <AdminLogin />;
+  }
+
   return (
     <div className="min-h-screen pt-20">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold mb-8">Blog Management</h1>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button variant="outline" asChild>
+              <Link to="/blog">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold">Blog Management</h1>
+          </div>
+          <Button variant="outline" onClick={logout}>
+            <LogOut className="mr-2 h-4 w-4" /> Logout
+          </Button>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
             <div className="bg-card p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold mb-4">
-                {editingPost ? 'Edit Blog Post' : 'Create New Blog Post'}
+              <h2 className="text-xl font-bold mb-4 flex items-center">
+                {editingPost ? (
+                  <><Edit className="w-5 h-5 mr-2" /> Edit Blog Post</>
+                ) : (
+                  <><PlusCircle className="w-5 h-5 mr-2" /> Create New Blog Post</>
+                )}
               </h2>
               
               <form onSubmit={handleCreateOrUpdate} className="space-y-4">
@@ -258,8 +284,12 @@ const AdminBlog = () => {
                 </div>
                 
                 <div className="flex gap-3">
-                  <Button type="submit">
-                    {editingPost ? 'Update Post' : 'Create Post'}
+                  <Button type="submit" className="flex items-center">
+                    {editingPost ? (
+                      <><Edit className="mr-2 h-4 w-4" /> Update Post</>
+                    ) : (
+                      <><PlusCircle className="mr-2 h-4 w-4" /> Create Post</>
+                    )}
                   </Button>
                   {editingPost && (
                     <Button type="button" variant="outline" onClick={resetForm}>

@@ -17,7 +17,7 @@ const BlogPreview = () => {
         // Simulate API delay for realism
         await new Promise(resolve => setTimeout(resolve, 800));
         // Use mock data until Supabase tables are set up
-        setLatestPosts(mockBlogPosts.slice(0, 3));
+        setLatestPosts(mockBlogPosts.filter(post => post.published).slice(0, 3));
       } catch (error) {
         console.error('Error fetching latest blog posts:', error);
       } finally {
@@ -29,7 +29,7 @@ const BlogPreview = () => {
   }, []);
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Latest Blog Posts</h2>
@@ -49,7 +49,7 @@ const BlogPreview = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {latestPosts.map((post) => (
-              <div key={post.id} className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col">
+              <div key={post.id} className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                 {post.cover_image && (
                   <div className="h-48 overflow-hidden">
                     <img 
@@ -64,11 +64,11 @@ const BlogPreview = () => {
                     <CalendarIcon className="w-4 h-4 mr-1" />
                     <span>{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-3">{post.title}</h3>
+                  <h3 className="text-xl font-bold mb-3 hover:text-primary transition-colors">{post.title}</h3>
                   <p className="text-muted-foreground mb-4 flex-grow">{post.excerpt}</p>
-                  <Button variant="outline" asChild className="mt-auto self-start">
+                  <Button variant="outline" asChild className="mt-auto self-start group">
                     <Link to={`/blog/${post.id}`}>
-                      Read More <ArrowRight className="ml-2 h-4 w-4" />
+                      Read More <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
                 </div>
@@ -78,9 +78,9 @@ const BlogPreview = () => {
         )}
         
         <div className="text-center mt-8">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="group">
             <Link to="/blog">
-              View All Posts <ArrowRight className="ml-2 h-4 w-4" />
+              View All Posts <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
         </div>

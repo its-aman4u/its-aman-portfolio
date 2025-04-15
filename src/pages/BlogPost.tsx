@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BlogPost as BlogPostType, BlogComment, mockBlogPosts, mockComments } from '@/types/blog';
-import { CalendarIcon, ArrowLeft } from 'lucide-react';
+import { CalendarIcon, ArrowLeft, MessageSquare, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -121,14 +121,25 @@ const BlogPost = () => {
     <div className="min-h-screen pt-20">
       <article className="py-16">
         <div className="container mx-auto px-4">
-          <Button variant="outline" asChild className="mb-8">
-            <Link to="/blog">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
-            </Link>
-          </Button>
+          <div className="flex justify-between items-center mb-8">
+            <Button variant="outline" asChild>
+              <Link to="/blog">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
+              </Link>
+            </Button>
+            
+            <div className="flex space-x-2">
+              <Button variant="outline" asChild>
+                <Link to="/">Home</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/admin/blog">Admin</Link>
+              </Button>
+            </div>
+          </div>
           
           {post.cover_image && (
-            <div className="w-full h-[400px] mb-8 rounded-xl overflow-hidden">
+            <div className="w-full h-[400px] mb-8 rounded-xl overflow-hidden shadow-md">
               <img 
                 src={post.cover_image} 
                 alt={post.title} 
@@ -146,11 +157,14 @@ const BlogPost = () => {
               </div>
             </div>
             
-            <div className="prose max-w-none prose-lg dark:prose-invert mb-16" 
+            <div className="prose max-w-none prose-lg dark:prose-invert mb-16 bg-card p-8 rounded-lg shadow-sm" 
                  dangerouslySetInnerHTML={{ __html: post.content }}></div>
             
             <div className="border-t pt-12 mt-12">
-              <h2 className="text-2xl font-bold mb-6">Comments ({comments.length})</h2>
+              <h2 className="text-2xl font-bold mb-6 flex items-center">
+                <MessageSquare className="mr-2 h-5 w-5" /> 
+                Comments ({comments.length})
+              </h2>
               
               {comments.length === 0 ? (
                 <div className="bg-muted/50 rounded-lg p-6 text-center mb-8">
@@ -159,9 +173,12 @@ const BlogPost = () => {
               ) : (
                 <div className="space-y-6 mb-12">
                   {comments.map((comment) => (
-                    <div key={comment.id} className="bg-card p-6 rounded-lg shadow-sm">
+                    <div key={comment.id} className="bg-card p-6 rounded-lg shadow-sm transition-shadow hover:shadow-md">
                       <div className="flex justify-between items-center mb-3">
-                        <h4 className="font-medium">{comment.name}</h4>
+                        <h4 className="font-medium flex items-center">
+                          <User className="h-4 w-4 mr-2 text-muted-foreground" /> 
+                          {comment.name}
+                        </h4>
                         <span className="text-sm text-muted-foreground">
                           {format(new Date(comment.created_at), 'MMM d, yyyy')}
                         </span>
@@ -173,9 +190,12 @@ const BlogPost = () => {
               )}
               
               <div className="bg-card p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-bold mb-4">Leave a Comment</h3>
+                <h3 className="text-xl font-bold mb-4 flex items-center">
+                  <MessageSquare className="mr-2 h-5 w-5" /> 
+                  Leave a Comment
+                </h3>
                 <form onSubmit={handleCommentSubmit}>
-                  <div className="grid grid-cols-1 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium mb-2">
                         Your Name
@@ -205,7 +225,7 @@ const BlogPost = () => {
                       />
                     </div>
                     
-                    <div>
+                    <div className="md:col-span-2">
                       <label htmlFor="content" className="block text-sm font-medium mb-2">
                         Comment
                       </label>
@@ -220,16 +240,18 @@ const BlogPost = () => {
                       />
                     </div>
                     
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? (
-                        <>
-                          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-                          Submitting...
-                        </>
-                      ) : (
-                        'Submit Comment'
-                      )}
-                    </Button>
+                    <div className="md:col-span-2">
+                      <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
+                        {isSubmitting ? (
+                          <>
+                            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+                            Submitting...
+                          </>
+                        ) : (
+                          'Submit Comment'
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </div>

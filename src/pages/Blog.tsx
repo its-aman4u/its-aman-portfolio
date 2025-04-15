@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from '@/components/ui/button';
-import { CalendarIcon, ArrowRight } from 'lucide-react';
+import { CalendarIcon, ArrowRight, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 
 const Blog = () => {
@@ -17,7 +17,7 @@ const Blog = () => {
         setLoading(true);
         // Simulate API delay for realism
         await new Promise(resolve => setTimeout(resolve, 800));
-        setPosts(mockBlogPosts);
+        setPosts(mockBlogPosts.filter(post => post.published));
       } catch (error) {
         console.error('Error fetching blog posts:', error);
       } finally {
@@ -32,6 +32,19 @@ const Blog = () => {
     <div className="min-h-screen pt-20">
       <section className="py-16">
         <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <Button variant="outline" asChild>
+              <Link to="/">
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link to="/admin/blog">
+                Admin Dashboard
+              </Link>
+            </Button>
+          </div>
+
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold mb-4">My Blog</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -51,7 +64,7 @@ const Blog = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {posts.map((post) => (
-                <div key={post.id} className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col">
+                <div key={post.id} className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-300">
                   {post.cover_image && (
                     <div className="h-48 overflow-hidden">
                       <img 
@@ -66,11 +79,11 @@ const Blog = () => {
                       <CalendarIcon className="w-4 h-4 mr-1" />
                       <span>{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
                     </div>
-                    <h3 className="text-xl font-bold mb-3">{post.title}</h3>
+                    <h3 className="text-xl font-bold mb-3 hover:text-primary transition-colors">{post.title}</h3>
                     <p className="text-muted-foreground mb-4 flex-grow">{post.excerpt}</p>
-                    <Button variant="outline" asChild className="mt-auto self-start">
+                    <Button variant="outline" asChild className="mt-auto self-start group">
                       <Link to={`/blog/${post.id}`}>
-                        Read More <ArrowRight className="ml-2 h-4 w-4" />
+                        Read More <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </Button>
                   </div>

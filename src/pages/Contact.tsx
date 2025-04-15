@@ -1,11 +1,9 @@
-
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, AlertCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -27,20 +25,13 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // Save contact form data to Supabase
-      const { error } = await supabase
-        .from('contact_submissions')
-        .insert([
-          { 
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject,
-            message: formData.message,
-            created_at: new Date().toISOString()
-          }
-        ]);
-        
-      if (error) throw error;
+      // Simulating API call - would connect to Supabase in production
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('Form submission data:', {
+        ...formData,
+        created_at: new Date().toISOString()
+      });
       
       toast.success('Message sent successfully!', {
         description: 'Thank you for reaching out. I will get back to you shortly.'
@@ -247,4 +238,3 @@ const Contact = () => {
 };
 
 export default Contact;
-
