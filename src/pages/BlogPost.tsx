@@ -94,7 +94,7 @@ const BlogPostPage = () => {
             rehypePlugins={[rehypeRaw]}
             components={{
               img: ({ node, ...props }) => (
-                <img {...props} style={{ maxWidth: '100%', height: 'auto' }} alt={props.alt} />
+                <img {...props} style={{ maxWidth: '100%', height: 'auto' }} alt={props.alt || ''} />
               ),
               a: ({ node, ...props }) => (
                 <a {...props} target="_blank" rel="noopener noreferrer">

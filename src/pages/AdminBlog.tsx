@@ -1,59 +1,58 @@
-
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { BlogPost, BlogComment, mockBlogPosts, mockComments } from '@/types/blog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
+import React, { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { BlogPost, BlogComment, BlogPostForm } from '@/types/blog';
 import { toast } from 'sonner';
-import { CheckCircle, XCircle, Edit, Trash, Eye, PlusCircle, ArrowLeft, LogOut } from 'lucide-react';
 import { format } from 'date-fns';
+import { Trash2, Edit, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import AdminLogin from '@/components/admin/AdminLogin';
 
 const AdminBlog = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [pendingComments, setPendingComments] = useState<BlogComment[]>([]);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [comments, setComments] = useState<BlogComment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
-  const [formData, setFormData] = useState({
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState<BlogPostForm>({
     title: '',
     excerpt: '',
     content: '',
     cover_image: '',
-    published: false
+    published: false,
+    premium: false,
+    price: 0,
   });
+  const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        const { data: blogsData, error: blogsError } = await supabase
+          .from('blogs')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-  async function fetchData() {
-    try {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setPosts([...mockBlogPosts]);
-      
-      const pendingMockComments = mockComments.filter(comment => !comment.approved);
-      setPendingComments(pendingMockComments);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to fetch data');
-    } finally {
-      setLoading(false);
-    }
-  }
+        if (blogsError) throw blogsError;
+        setBlogs(blogsData || []);
+
+        const { data: commentsData, error: commentsError } = await supabase
+          .from('comments')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (commentsError) throw commentsError;
+        setComments(commentsData || []);
+      } catch (error) {
+        toast.error('Failed to fetch data', {
+          description: error instanceof Error ? error.message : 'Unknown error'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -65,346 +64,371 @@ const AdminBlog = () => {
     setFormData(prev => ({ ...prev, [name]: checked }));
   };
 
-  const handleCreateOrUpdate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    if (!user) {
+      toast.error('You must be logged in to create a blog post.');
+      return;
+    }
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      if (editingPost) {
-        const updatedPosts = posts.map(post => 
-          post.id === editingPost.id 
-            ? {
-                ...post,
-                title: formData.title,
-                excerpt: formData.excerpt,
-                content: formData.content,
-                cover_image: formData.cover_image,
-                published: formData.published,
-                updated_at: new Date().toISOString()
-              } 
-            : post
-        );
-        
-        setPosts(updatedPosts);
-        toast.success('Blog post updated successfully');
-      } else {
-        const newPost: BlogPost = {
-          id: `mock-${Date.now()}`,
-          title: formData.title,
-          excerpt: formData.excerpt,
-          content: formData.content,
-          cover_image: formData.cover_image,
-          published: formData.published,
-          created_at: new Date().toISOString()
-        };
-        
-        setPosts(prev => [newPost, ...prev]);
-        toast.success('Blog post created successfully');
-      }
-      
-      resetForm();
+      setLoading(true);
+
+      const newBlog: BlogPostForm = {
+        title: formData.title,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        cover_image: formData.cover_image,
+        published: formData.published || false,
+        premium: false,
+        price: 0,
+        author_id: user?.id || '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase.from('blogs').insert([newBlog]);
+
+      if (error) throw error;
+
+      setBlogs(prev => [...prev, ...(data as BlogPost[])]);
+      setFormData({
+        title: '',
+        excerpt: '',
+        content: '',
+        cover_image: '',
+        published: false,
+        premium: false,
+        price: 0,
+      });
+      setShowForm(false);
+      toast.success('Blog post created successfully!');
     } catch (error) {
-      console.error('Error saving blog post:', error);
-      toast.error('Failed to save blog post');
+      toast.error('Failed to create blog post', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleEditPost = (post: BlogPost) => {
-    setEditingPost(post);
-    setFormData({
-      title: post.title,
-      excerpt: post.excerpt,
-      content: post.content,
-      cover_image: post.cover_image || '',
-      published: post.published
-    });
-  };
-
-  const handleDeletePost = async (postId: string) => {
-    if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) return;
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setPosts(posts.filter(post => post.id !== postId));
-      
-      toast.success('Blog post deleted successfully');
-    } catch (error) {
-      console.error('Error deleting blog post:', error);
-      toast.error('Failed to delete blog post');
+  const handleUpdate = async (id: string) => {
+    setEditingBlogId(id);
+    const blogToEdit = blogs.find(blog => blog.id === id);
+    if (blogToEdit) {
+      setFormData({
+        title: blogToEdit.title,
+        excerpt: blogToEdit.excerpt,
+        content: blogToEdit.content,
+        cover_image: blogToEdit.cover_image || '',
+        published: blogToEdit.published || false,
+        premium: blogToEdit.premium || false,
+        price: blogToEdit.price || 0,
+      });
+      setShowForm(true);
     }
   };
 
-  const handleApproveComment = async (commentId: string) => {
+  const handleUpdateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editingBlogId) {
+      toast.error('No blog post selected for editing.');
+      return;
+    }
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      const updatedPendingComments = pendingComments.filter(
-        comment => comment.id !== commentId
+      setLoading(true);
+
+      const updatedBlog: BlogPostForm = {
+        title: formData.title,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        cover_image: formData.cover_image,
+        published: formData.published || false,
+        premium: false,
+        price: 0,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('blogs')
+        .update(updatedBlog)
+        .eq('id', editingBlogId);
+
+      if (error) throw error;
+
+      setBlogs(prev =>
+        prev.map(blog => (blog.id === editingBlogId ? { ...blog, ...updatedBlog } : blog))
       );
-      
-      setPendingComments(updatedPendingComments);
-      
-      toast.success('Comment approved');
+      setFormData({
+        title: '',
+        excerpt: '',
+        content: '',
+        cover_image: '',
+        published: false,
+        premium: false,
+        price: 0,
+      });
+      setShowForm(false);
+      setEditingBlogId(null);
+      toast.success('Blog post updated successfully!');
     } catch (error) {
-      console.error('Error approving comment:', error);
-      toast.error('Failed to approve comment');
+      toast.error('Failed to update blog post', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteComment = async (commentId: string) => {
+  const handleDelete = async (id: string) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setPendingComments(pendingComments.filter(
-        comment => comment.id !== commentId
-      ));
-      
-      toast.success('Comment deleted');
+      setLoading(true);
+      const { error } = await supabase.from('blogs').delete().eq('id', id);
+      if (error) throw error;
+
+      setBlogs(prev => prev.filter(blog => blog.id !== id));
+      toast.success('Blog post deleted successfully!');
     } catch (error) {
-      console.error('Error deleting comment:', error);
-      toast.error('Failed to delete comment');
+      toast.error('Failed to delete blog post', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const resetForm = () => {
-    setEditingPost(null);
-    setFormData({
-      title: '',
-      excerpt: '',
-      content: '',
-      cover_image: '',
-      published: false
-    });
+  const handleApproveComment = async (id: string) => {
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('comments')
+        .update({ approved: true })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setComments(prev =>
+        prev.map(comment => (comment.id === id ? { ...comment, approved: true } : comment))
+      );
+      toast.success('Comment approved successfully!');
+    } catch (error) {
+      toast.error('Failed to approve comment', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (!isAuthenticated) {
-    return <AdminLogin />;
-  }
+  const handleRejectComment = async (id: string) => {
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('comments')
+        .update({ approved: false })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setComments(prev =>
+        prev.map(comment => (comment.id === id ? { ...comment, approved: false } : comment))
+      );
+      toast.success('Comment rejected successfully!');
+    } catch (error) {
+      toast.error('Failed to reject comment', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (id: string) => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.from('comments').delete().eq('id', id);
+
+      if (error) throw error;
+
+      setComments(prev => prev.filter(comment => comment.id !== id));
+      toast.success('Comment deleted successfully!');
+    } catch (error) {
+      toast.error('Failed to delete comment', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen pt-20">
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
-              <Link to="/blog">
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
-              </Link>
-            </Button>
-            <h1 className="text-3xl font-bold">Blog Management</h1>
-          </div>
-          <Button variant="outline" onClick={logout}>
-            <LogOut className="mr-2 h-4 w-4" /> Logout
-          </Button>
+    <div className="container mx-auto py-12">
+      <h1 className="text-3xl font-bold mb-8 text-center">Admin Blog</h1>
+
+      {loading ? (
+        <div className="flex justify-center items-center h-32">
+          <span className="loading loading-spinner text-primary"></span>
         </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
-            <div className="bg-card p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold mb-4 flex items-center">
-                {editingPost ? (
-                  <><Edit className="w-5 h-5 mr-2" /> Edit Blog Post</>
-                ) : (
-                  <><PlusCircle className="w-5 h-5 mr-2" /> Create New Blog Post</>
-                )}
-              </h2>
-              
-              <form onSubmit={handleCreateOrUpdate} className="space-y-4">
-                <div>
-                  <label htmlFor="title" className="block text-sm font-medium mb-2">
-                    Title
-                  </label>
-                  <Input 
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    placeholder="Post title"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="excerpt" className="block text-sm font-medium mb-2">
-                    Excerpt
-                  </label>
-                  <Textarea 
-                    id="excerpt"
-                    name="excerpt"
-                    value={formData.excerpt}
-                    onChange={handleInputChange}
-                    placeholder="Short summary of your post"
-                    rows={2}
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="content" className="block text-sm font-medium mb-2">
-                    Content (HTML)
-                  </label>
-                  <Textarea 
-                    id="content"
-                    name="content"
-                    value={formData.content}
-                    onChange={handleInputChange}
-                    placeholder="Post content in HTML format"
-                    rows={10}
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="cover_image" className="block text-sm font-medium mb-2">
-                    Cover Image URL
-                  </label>
-                  <Input 
-                    id="cover_image"
-                    name="cover_image"
-                    value={formData.cover_image}
-                    onChange={handleInputChange}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
-                
-                <div className="flex items-center">
-                  <input 
+      ) : (
+        <>
+          <div className="mb-8">
+            <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+              {showForm ? 'Hide Form' : 'Create New Post'}
+            </button>
+          </div>
+
+          {showForm && (
+            <form onSubmit={editingBlogId ? handleUpdateSubmit : handleSubmit} className="mb-8">
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="excerpt" className="block text-gray-700 text-sm font-bold mb-2">
+                  Excerpt
+                </label>
+                <textarea
+                  id="excerpt"
+                  name="excerpt"
+                  value={formData.excerpt}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="content" className="block text-gray-700 text-sm font-bold mb-2">
+                  Content
+                </label>
+                <textarea
+                  id="content"
+                  name="content"
+                  value={formData.content}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="cover_image" className="block text-gray-700 text-sm font-bold mb-2">
+                  Cover Image URL
+                </label>
+                <input
+                  type="text"
+                  id="cover_image"
+                  name="cover_image"
+                  value={formData.cover_image || ''}
+                  onChange={handleInputChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="published" className="inline-flex items-center">
+                  <input
+                    type="checkbox"
                     id="published"
                     name="published"
-                    type="checkbox"
-                    checked={formData.published}
+                    checked={formData.published || false}
                     onChange={handleCheckboxChange}
-                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    className="form-checkbox h-5 w-5 text-primary"
                   />
-                  <label htmlFor="published" className="ml-2 block text-sm">
-                    Publish this post
-                  </label>
-                </div>
-                
-                <div className="flex gap-3">
-                  <Button type="submit" className="flex items-center">
-                    {editingPost ? (
-                      <><Edit className="mr-2 h-4 w-4" /> Update Post</>
-                    ) : (
-                      <><PlusCircle className="mr-2 h-4 w-4" /> Create Post</>
-                    )}
-                  </Button>
-                  {editingPost && (
-                    <Button type="button" variant="outline" onClick={resetForm}>
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-          
-          <div className="lg:col-span-2">
-            <div className="bg-card p-6 rounded-lg shadow-md mb-8">
-              <h2 className="text-xl font-bold mb-4">Your Blog Posts</h2>
-              
-              {loading ? (
-                <div className="flex justify-center py-8">
-                  <div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-                </div>
-              ) : posts.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No blog posts yet. Create your first post!</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {posts.map((post) => (
-                        <TableRow key={post.id}>
-                          <TableCell className="font-medium">{post.title}</TableCell>
-                          <TableCell>{format(new Date(post.created_at), 'MMM d, yyyy')}</TableCell>
-                          <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              post.published ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300'
-                            }`}>
-                              {post.published ? 'Published' : 'Draft'}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="icon" onClick={() => handleEditPost(post)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" asChild>
-                                <a href={`/blog/${post.id}`} target="_blank" rel="noopener noreferrer">
-                                  <Eye className="h-4 w-4" />
-                                </a>
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => handleDeletePost(post.id)}>
-                                <Trash className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                  <span className="ml-2 text-gray-700">Published</span>
+                </label>
+              </div>
+              <button type="submit" className="btn btn-primary">
+                {editingBlogId ? 'Update Post' : 'Create Post'}
+              </button>
+              {editingBlogId && (
+                <button type="button" className="btn btn-ghost ml-2" onClick={() => { setShowForm(false); setEditingBlogId(null); }}>
+                  Cancel
+                </button>
               )}
-            </div>
-            
-            <div className="bg-card p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold mb-4">Pending Comments</h2>
-              
-              {loading ? (
-                <div className="flex justify-center py-8">
-                  <div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-                </div>
-              ) : pendingComments.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">No pending comments to review.</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {pendingComments.map((comment) => {
-                    const post = posts.find(p => p.id === comment.post_id);
-                    
-                    return (
-                      <div key={comment.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between mb-2">
-                          <div>
-                            <span className="font-medium">{comment.name}</span>
-                            <span className="text-sm text-muted-foreground ml-2">{comment.email}</span>
-                          </div>
-                          <span className="text-sm text-muted-foreground">
-                            {format(new Date(comment.created_at), 'MMM d, yyyy')}
-                          </span>
-                        </div>
-                        <p className="text-sm mb-2">On post: {post?.title || 'Unknown post'}</p>
-                        <p className="py-2 px-3 bg-muted/50 rounded mb-3">{comment.content}</p>
-                        <div className="flex space-x-2">
-                          <Button size="sm" onClick={() => handleApproveComment(comment.id)}>
-                            <CheckCircle className="h-4 w-4 mr-1" /> Approve
-                          </Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleDeleteComment(comment.id)}>
-                            <XCircle className="h-4 w-4 mr-1" /> Delete
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            </form>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Published</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {blogs.map(blog => (
+                  <tr key={blog.id}>
+                    <td>{blog.title}</td>
+                    <td>{blog.published ? 'Yes' : 'No'}</td>
+                    <td>{format(new Date(blog.created_at), 'PPP')}</td>
+                    <td>
+                      <button className="btn btn-sm btn-info mr-2" onClick={() => handleUpdate(blog.id)}>
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button className="btn btn-sm btn-error" onClick={() => handleDelete(blog.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-      </div>
+
+          <h2 className="text-2xl font-bold mt-12 mb-4">Comments</h2>
+          <div className="overflow-x-auto">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Comment</th>
+                  <th>Approved</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comments.map(comment => (
+                  <tr key={comment.id}>
+                    <td>{comment.name}</td>
+                    <td>{comment.content}</td>
+                    <td>{comment.approved ? 'Yes' : 'No'}</td>
+                    <td>{format(new Date(comment.created_at), 'PPP')}</td>
+                    <td>
+                      {!comment.approved ? (
+                        <button className="btn btn-sm btn-success mr-2" onClick={() => handleApproveComment(comment.id)}>
+                          <CheckCircle className="h-4 w-4" />
+                        </button>
+                      ) : (
+                        <button className="btn btn-sm btn-warning mr-2" onClick={() => handleRejectComment(comment.id)}>
+                          <XCircle className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button className="btn btn-sm btn-error" onClick={() => handleDeleteComment(comment.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 };

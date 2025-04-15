@@ -107,3 +107,18 @@ export const mockComments: BlogComment[] = [
     created_at: '2023-01-17T09:15:00Z'
   }
 ];
+
+// New BlogPostForm type for creating/editing blog posts
+export type BlogPostForm = {
+  id?: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover_image?: string | null;
+  published?: boolean;
+  premium?: boolean;
+  price?: number;
+  author_id?: string;
+  created_at?: string;
+  updated_at?: string;
+};
