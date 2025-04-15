@@ -1,17 +1,20 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, BlogComment, BlogPostForm } from '@/types/blog';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { Trash2, Edit, CheckCircle, XCircle } from 'lucide-react';
+import { Trash2, Edit, CheckCircle, XCircle, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import GeminiContentGenerator from '@/components/admin/GeminiContentGenerator';
 
 const AdminBlog = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [comments, setComments] = useState<BlogComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showAiGenerator, setShowAiGenerator] = useState(false);
   const [formData, setFormData] = useState<BlogPostForm>({
     title: '',
     excerpt: '',
@@ -23,7 +26,16 @@ const AdminBlog = () => {
     author_id: '',
   });
   const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        author_id: user.id
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -66,6 +78,17 @@ const AdminBlog = () => {
     setFormData(prev => ({ ...prev, [name]: checked }));
   };
 
+  const handleContentGenerated = (generatedContent: { title: string; excerpt: string; content: string }) => {
+    setFormData(prev => ({
+      ...prev,
+      title: generatedContent.title,
+      excerpt: generatedContent.excerpt,
+      content: generatedContent.content
+    }));
+    setShowAiGenerator(false);
+    setShowForm(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -90,11 +113,11 @@ const AdminBlog = () => {
         updated_at: new Date().toISOString()
       };
 
-      const { data, error } = await supabase.from('blogs').insert([newBlog]);
+      const { data, error } = await supabase.from('blogs').insert([newBlog]).select();
 
       if (error) throw error;
 
-      setBlogs(prev => [...prev, ...(data as BlogPost[])]);
+      setBlogs(prev => [data?.[0] as BlogPost, ...prev]);
       setFormData({
         title: '',
         excerpt: '',
@@ -131,6 +154,7 @@ const AdminBlog = () => {
         author_id: blogToEdit.author_id,
       });
       setShowForm(true);
+      setShowAiGenerator(false);
     }
   };
 
@@ -160,12 +184,13 @@ const AdminBlog = () => {
       const { data, error } = await supabase
         .from('blogs')
         .update(updatedBlog)
-        .eq('id', editingBlogId);
+        .eq('id', editingBlogId)
+        .select();
 
       if (error) throw error;
 
       setBlogs(prev =>
-        prev.map(blog => (blog.id === editingBlogId ? { ...blog, ...updatedBlog } : blog))
+        prev.map(blog => (blog.id === editingBlogId ? (data?.[0] as BlogPost) : blog))
       );
       setFormData({
         title: '',
@@ -270,21 +295,62 @@ const AdminBlog = () => {
     }
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="container mx-auto py-12">
+        <div className="text-center py-16">
+          <h2 className="text-2xl font-semibold mb-4">Login Required</h2>
+          <p className="text-muted-foreground mb-6">You need to be logged in to access the admin area.</p>
+          <Link to="/auth">
+            <Button>Login</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto py-12">
       <h1 className="text-3xl font-bold mb-8 text-center">Admin Blog</h1>
 
-      {loading ? (
+      {loading && !showForm && !showAiGenerator ? (
         <div className="flex justify-center items-center h-32">
           <span className="loading loading-spinner text-primary"></span>
         </div>
       ) : (
         <>
-          <div className="mb-8">
-            <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-              {showForm ? 'Hide Form' : 'Create New Post'}
-            </button>
+          <div className="mb-8 flex space-x-4">
+            <Button 
+              variant={showForm ? "secondary" : "default"} 
+              onClick={() => {
+                setShowForm(!showForm);
+                if (!showForm) setShowAiGenerator(false);
+              }}
+            >
+              {showForm ? 'Hide Form' : 'Create New Post Manually'}
+            </Button>
+            
+            <Button 
+              variant={showAiGenerator ? "secondary" : "default"}
+              onClick={() => {
+                setShowAiGenerator(!showAiGenerator);
+                if (!showAiGenerator) setShowForm(false);
+              }}
+              className="flex items-center"
+            >
+              {showAiGenerator ? 'Hide AI Generator' : 'Generate with AI'}
+            </Button>
+            
+            <Link to="/blog" className="ml-auto">
+              <Button variant="outline">View Blog</Button>
+            </Link>
           </div>
+
+          {showAiGenerator && (
+            <div className="mb-8">
+              <GeminiContentGenerator onContentGenerated={handleContentGenerated} />
+            </div>
+          )}
 
           {showForm && (
             <form onSubmit={editingBlogId ? handleUpdateSubmit : handleSubmit} className="mb-8">
@@ -325,6 +391,7 @@ const AdminBlog = () => {
                   value={formData.content}
                   onChange={handleInputChange}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  rows={10}
                   required
                 />
               </div>
@@ -354,85 +421,99 @@ const AdminBlog = () => {
                   <span className="ml-2 text-gray-700">Published</span>
                 </label>
               </div>
-              <button type="submit" className="btn btn-primary">
+              <Button type="submit">
                 {editingBlogId ? 'Update Post' : 'Create Post'}
-              </button>
+              </Button>
               {editingBlogId && (
-                <button type="button" className="btn btn-ghost ml-2" onClick={() => { setShowForm(false); setEditingBlogId(null); }}>
+                <Button variant="ghost" className="ml-2" onClick={() => { setShowForm(false); setEditingBlogId(null); }}>
                   Cancel
-                </button>
+                </Button>
               )}
             </form>
           )}
 
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Published</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {blogs.map(blog => (
-                  <tr key={blog.id}>
-                    <td>{blog.title}</td>
-                    <td>{blog.published ? 'Yes' : 'No'}</td>
-                    <td>{format(new Date(blog.created_at), 'PPP')}</td>
-                    <td>
-                      <button className="btn btn-sm btn-info mr-2" onClick={() => handleUpdate(blog.id)}>
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button className="btn btn-sm btn-error" onClick={() => handleDelete(blog.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </td>
+          {blogs.length === 0 && !showForm && !showAiGenerator ? (
+            <div className="text-center py-12 bg-muted/20 rounded-lg">
+              <h2 className="text-xl font-semibold mb-3">No Blog Posts Yet</h2>
+              <p className="text-muted-foreground mb-6">Create your first blog post to get started.</p>
+              <Button onClick={() => setShowForm(true)}>
+                <Plus className="mr-2 h-4 w-4" /> Create First Post
+              </Button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Published</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {blogs.map(blog => (
+                    <tr key={blog.id}>
+                      <td>{blog.title}</td>
+                      <td>{blog.published ? 'Yes' : 'No'}</td>
+                      <td>{format(new Date(blog.created_at), 'PPP')}</td>
+                      <td>
+                        <Button size="sm" variant="outline" className="mr-2" onClick={() => handleUpdate(blog.id)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="destructive" onClick={() => handleDelete(blog.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-          <h2 className="text-2xl font-bold mt-12 mb-4">Comments</h2>
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Comment</th>
-                  <th>Approved</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {comments.map(comment => (
-                  <tr key={comment.id}>
-                    <td>{comment.name}</td>
-                    <td>{comment.content}</td>
-                    <td>{comment.approved ? 'Yes' : 'No'}</td>
-                    <td>{format(new Date(comment.created_at), 'PPP')}</td>
-                    <td>
-                      {!comment.approved ? (
-                        <button className="btn btn-sm btn-success mr-2" onClick={() => handleApproveComment(comment.id)}>
-                          <CheckCircle className="h-4 w-4" />
-                        </button>
-                      ) : (
-                        <button className="btn btn-sm btn-warning mr-2" onClick={() => handleRejectComment(comment.id)}>
-                          <XCircle className="h-4 w-4" />
-                        </button>
-                      )}
-                      <button className="btn btn-sm btn-error" onClick={() => handleDeleteComment(comment.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {comments.length > 0 && (
+            <>
+              <h2 className="text-2xl font-bold mt-12 mb-4">Comments</h2>
+              <div className="overflow-x-auto">
+                <table className="table w-full">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Comment</th>
+                      <th>Approved</th>
+                      <th>Created At</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {comments.map(comment => (
+                      <tr key={comment.id}>
+                        <td>{comment.name}</td>
+                        <td>{comment.content}</td>
+                        <td>{comment.approved ? 'Yes' : 'No'}</td>
+                        <td>{format(new Date(comment.created_at), 'PPP')}</td>
+                        <td>
+                          {!comment.approved ? (
+                            <Button size="sm" variant="outline" className="mr-2" onClick={() => handleApproveComment(comment.id)}>
+                              <CheckCircle className="h-4 w-4" />
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="outline" className="mr-2" onClick={() => handleRejectComment(comment.id)}>
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button size="sm" variant="destructive" onClick={() => handleDeleteComment(comment.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

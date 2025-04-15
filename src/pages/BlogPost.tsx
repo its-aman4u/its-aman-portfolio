@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
 import { toast } from 'sonner';
-import { CalendarIcon, User2Icon } from 'lucide-react';
+import { CalendarIcon, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
+import { Button } from "@/components/ui/button";
 
 // Import the plugins
 import remarkGfm from 'remark-gfm';
@@ -20,29 +21,15 @@ const BlogPostPage = () => {
   useEffect(() => {
     const fetchBlogPost = async () => {
       try {
+        // Simplified query without join
         const { data: blogData, error: blogError } = await supabase
           .from('blogs')
-          .select(`
-            *,
-            profiles(id, username, full_name, avatar_url)
-          `)
+          .select('*')
           .eq('id', id)
           .single();
 
         if (blogError) throw blogError;
-
-        const profileData = blogData.profiles as any;
-        const formattedBlog = {
-          ...blogData,
-          author: profileData ? {
-            id: profileData.id,
-            username: profileData.username,
-            full_name: profileData.full_name,
-            avatar_url: profileData.avatar_url
-          } : undefined
-        } as BlogPost;
-
-        setBlog(formattedBlog);
+        setBlog(blogData as BlogPost);
       } catch (error) {
         toast.error('Failed to fetch blog post', {
           description: error instanceof Error ? error.message : 'Unknown error'
@@ -60,12 +47,32 @@ const BlogPostPage = () => {
   }
 
   if (!blog) {
-    return <div className="min-h-screen flex items-center justify-center">Blog post not found.</div>;
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-4">Blog post not found.</h2>
+          <p className="text-muted-foreground mb-6">The post you're looking for might have been removed or doesn't exist.</p>
+        </div>
+        <Button asChild>
+          <Link to="/blog">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blogs
+          </Link>
+        </Button>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto mt-16 px-4 md:px-0">
       <div className="max-w-3xl mx-auto">
+        <div className="mb-8">
+          <Button variant="outline" asChild>
+            <Link to="/blog">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blogs
+            </Link>
+          </Button>
+        </div>
+
         <header className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">{blog.title}</h1>
           <div className="flex items-center text-gray-600 dark:text-gray-400 space-x-4">
@@ -73,12 +80,6 @@ const BlogPostPage = () => {
               <CalendarIcon className="h-5 w-5" />
               <span>{format(new Date(blog.created_at), 'MMMM dd, yyyy')}</span>
             </div>
-            {blog.author && (
-              <div className="flex items-center gap-2">
-                <User2Icon className="h-5 w-5" />
-                <span>{blog.author.full_name || blog.author.username || 'Unknown Author'}</span>
-              </div>
-            )}
           </div>
         </header>
 

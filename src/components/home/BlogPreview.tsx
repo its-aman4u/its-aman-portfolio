@@ -16,12 +16,10 @@ const BlogPreview = () => {
       try {
         setLoading(true);
         
+        // Updated query without the profiles join
         const { data, error } = await supabase
           .from('blogs')
-          .select(`
-            *,
-            profiles(id, username, full_name, avatar_url)
-          `)
+          .select('*')
           .eq('published', true)
           .order('created_at', { ascending: false })
           .limit(3);
@@ -39,20 +37,7 @@ const BlogPreview = () => {
           return;
         }
         
-        const formattedPosts = data.map(post => {
-          const profileData = post.profiles as any;
-          return {
-            ...post,
-            author: profileData ? {
-              id: profileData.id,
-              username: profileData.username,
-              full_name: profileData.full_name,
-              avatar_url: profileData.avatar_url
-            } : undefined
-          } as BlogPost;
-        });
-        
-        setLatestPosts(formattedPosts);
+        setLatestPosts(data as BlogPost[]);
       } catch (error) {
         console.error('Error fetching latest blog posts:', error);
         // Fallback to mock data
