@@ -3,6 +3,7 @@ import HeroSection from '@/components/home/HeroSection';
 import JourneyPreview from '@/components/home/JourneyPreview';
 import SkillsPreview from '@/components/home/SkillsPreview';
 import ProjectsPreview from '@/components/home/ProjectsPreview';
+import BlogPreview from '@/components/home/BlogPreview';
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
       <JourneyPreview />
       <SkillsPreview />
       <ProjectsPreview />
+      <BlogPreview />
     </div>
   );
 };
