@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, BlogComment, BlogPostForm } from '@/types/blog';
@@ -19,6 +20,7 @@ const AdminBlog = () => {
     published: false,
     premium: false,
     price: 0,
+    author_id: '',
   });
   const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
   const { user } = useAuth();
@@ -101,6 +103,7 @@ const AdminBlog = () => {
         published: false,
         premium: false,
         price: 0,
+        author_id: user?.id || '',
       });
       setShowForm(false);
       toast.success('Blog post created successfully!');
@@ -125,6 +128,7 @@ const AdminBlog = () => {
         published: blogToEdit.published || false,
         premium: blogToEdit.premium || false,
         price: blogToEdit.price || 0,
+        author_id: blogToEdit.author_id,
       });
       setShowForm(true);
     }
@@ -149,6 +153,7 @@ const AdminBlog = () => {
         published: formData.published || false,
         premium: false,
         price: 0,
+        author_id: formData.author_id,
         updated_at: new Date().toISOString()
       };
 
@@ -170,6 +175,7 @@ const AdminBlog = () => {
         published: false,
         premium: false,
         price: 0,
+        author_id: user?.id || '',
       });
       setShowForm(false);
       setEditingBlogId(null);
