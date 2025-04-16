@@ -1,521 +1,350 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { BlogPost, BlogComment, BlogPostForm } from '@/types/blog';
+import { BlogPost } from '@/types/blog';
 import { toast } from 'sonner';
+import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Trash2, Edit, CheckCircle, XCircle, Plus } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import GeminiContentGenerator from '@/components/admin/GeminiContentGenerator';
 
 const AdminBlog = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [comments, setComments] = useState<BlogComment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [showAiGenerator, setShowAiGenerator] = useState(false);
-  const [formData, setFormData] = useState<BlogPostForm>({
+  const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
+  const [blogInput, setBlogInput] = useState({
     title: '',
     excerpt: '',
     content: '',
     cover_image: '',
     published: false,
-    premium: false,
-    price: 0,
-    author_id: '',
   });
-  const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
-  const { user, isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        author_id: user.id
-      }));
-    }
-  }, [user]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
+      setIsLoadingBlogs(true);
       try {
-        setLoading(true);
-        const { data: blogsData, error: blogsError } = await supabase
+        const { data, error } = await supabase
           .from('blogs')
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (blogsError) throw blogsError;
-        setBlogs(blogsData || []);
+        if (error) {
+          throw error;
+        }
 
-        const { data: commentsData, error: commentsError } = await supabase
-          .from('comments')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (commentsError) throw commentsError;
-        setComments(commentsData || []);
-      } catch (error) {
-        toast.error('Failed to fetch data', {
-          description: error instanceof Error ? error.message : 'Unknown error'
-        });
+        setBlogs(data as BlogPost[]);
+      } catch (error: any) {
+        toast.error('Failed to fetch blogs', { description: error.message });
       } finally {
-        setLoading(false);
+        setIsLoadingBlogs(false);
       }
     };
 
     fetchBlogs();
   }, []);
 
+  useEffect(() => {
+    if (selectedBlog) {
+      setBlogInput({
+        title: selectedBlog.title,
+        excerpt: selectedBlog.excerpt,
+        content: selectedBlog.content,
+        cover_image: selectedBlog.cover_image || '',
+        published: selectedBlog.published,
+      });
+    } else {
+      setBlogInput({
+        title: '',
+        excerpt: '',
+        content: '',
+        cover_image: '',
+        published: false,
+      });
+    }
+  }, [selectedBlog]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setBlogInput(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: checked }));
-  };
-
-  const handleContentGenerated = (generatedContent: { title: string; excerpt: string; content: string }) => {
-    setFormData(prev => ({
-      ...prev,
-      title: generatedContent.title,
-      excerpt: generatedContent.excerpt,
-      content: generatedContent.content
-    }));
-    setShowAiGenerator(false);
-    setShowForm(true);
+  const handleCheckboxChange = (checked: boolean) => {
+    setBlogInput(prev => ({ ...prev, published: checked }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user) {
-      toast.error('You must be logged in to create a blog post.');
-      return;
-    }
+    setIsLoading(true);
 
     try {
-      setLoading(true);
+      if (selectedBlog) {
+        // Update existing blog post
+        const { error } = await supabase
+          .from('blogs')
+          .update({
+            ...blogInput,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', selectedBlog.id);
 
-      const newBlog: BlogPostForm = {
-        title: formData.title,
-        excerpt: formData.excerpt,
-        content: formData.content,
-        cover_image: formData.cover_image,
-        published: formData.published || false,
-        premium: false,
-        price: 0,
-        author_id: user?.id || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+        if (error) throw error;
+        toast.success('Blog post updated successfully!');
+      } else {
+        // Create new blog post
+        const { error } = await supabase
+          .from('blogs')
+          .insert({
+            ...blogInput,
+            created_at: new Date().toISOString(),
+          });
 
-      const { data, error } = await supabase.from('blogs').insert([newBlog]).select();
+        if (error) throw error;
+        toast.success('Blog post created successfully!');
+      }
 
-      if (error) throw error;
-
-      setBlogs(prev => [data?.[0] as BlogPost, ...prev]);
-      setFormData({
-        title: '',
-        excerpt: '',
-        content: '',
-        cover_image: '',
-        published: false,
-        premium: false,
-        price: 0,
-        author_id: user?.id || '',
-      });
-      setShowForm(false);
-      toast.success('Blog post created successfully!');
-    } catch (error) {
-      toast.error('Failed to create blog post', {
-        description: error instanceof Error ? error.message : 'Unknown error'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdate = async (id: string) => {
-    setEditingBlogId(id);
-    const blogToEdit = blogs.find(blog => blog.id === id);
-    if (blogToEdit) {
-      setFormData({
-        title: blogToEdit.title,
-        excerpt: blogToEdit.excerpt,
-        content: blogToEdit.content,
-        cover_image: blogToEdit.cover_image || '',
-        published: blogToEdit.published || false,
-        premium: blogToEdit.premium || false,
-        price: blogToEdit.price || 0,
-        author_id: blogToEdit.author_id,
-      });
-      setShowForm(true);
-      setShowAiGenerator(false);
-    }
-  };
-
-  const handleUpdateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!editingBlogId) {
-      toast.error('No blog post selected for editing.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const updatedBlog: BlogPostForm = {
-        title: formData.title,
-        excerpt: formData.excerpt,
-        content: formData.content,
-        cover_image: formData.cover_image,
-        published: formData.published || false,
-        premium: false,
-        price: 0,
-        author_id: formData.author_id,
-        updated_at: new Date().toISOString()
-      };
-
-      const { data, error } = await supabase
+      // Refresh blog list
+      const { data } = await supabase
         .from('blogs')
-        .update(updatedBlog)
-        .eq('id', editingBlogId)
-        .select();
-
-      if (error) throw error;
-
-      setBlogs(prev =>
-        prev.map(blog => (blog.id === editingBlogId ? (data?.[0] as BlogPost) : blog))
-      );
-      setFormData({
-        title: '',
-        excerpt: '',
-        content: '',
-        cover_image: '',
-        published: false,
-        premium: false,
-        price: 0,
-        author_id: user?.id || '',
-      });
-      setShowForm(false);
-      setEditingBlogId(null);
-      toast.success('Blog post updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update blog post', {
-        description: error instanceof Error ? error.message : 'Unknown error'
-      });
+        .select('*')
+        .order('created_at', { ascending: false });
+      setBlogs(data as BlogPost[]);
+      setSelectedBlog(null);
+    } catch (error: any) {
+      toast.error('Failed to save blog post', { description: error.message });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      setLoading(true);
-      const { error } = await supabase.from('blogs').delete().eq('id', id);
-      if (error) throw error;
+  const handleDelete = async () => {
+    if (!selectedBlog) return;
 
-      setBlogs(prev => prev.filter(blog => blog.id !== id));
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
+        .from('blogs')
+        .delete()
+        .eq('id', selectedBlog.id);
+
+      if (error) throw error;
       toast.success('Blog post deleted successfully!');
-    } catch (error) {
-      toast.error('Failed to delete blog post', {
-        description: error instanceof Error ? error.message : 'Unknown error'
-      });
+
+      // Refresh blog list
+      const { data } = await supabase
+        .from('blogs')
+        .select('*')
+        .order('created_at', { ascending: false });
+      setBlogs(data as BlogPost[]);
+      setSelectedBlog(null);
+    } catch (error: any) {
+      toast.error('Failed to delete blog post', { description: error.message });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleApproveComment = async (id: string) => {
-    try {
-      setLoading(true);
-      const { error } = await supabase
-        .from('comments')
-        .update({ approved: true })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setComments(prev =>
-        prev.map(comment => (comment.id === id ? { ...comment, approved: true } : comment))
-      );
-      toast.success('Comment approved successfully!');
-    } catch (error) {
-      toast.error('Failed to approve comment', {
-        description: error instanceof Error ? error.message : 'Unknown error'
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleSelectBlog = (blog: BlogPost) => {
+    setSelectedBlog(blog);
   };
-
-  const handleRejectComment = async (id: string) => {
-    try {
-      setLoading(true);
-      const { error } = await supabase
-        .from('comments')
-        .update({ approved: false })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      setComments(prev =>
-        prev.map(comment => (comment.id === id ? { ...comment, approved: false } : comment))
-      );
-      toast.success('Comment rejected successfully!');
-    } catch (error) {
-      toast.error('Failed to reject comment', {
-        description: error instanceof Error ? error.message : 'Unknown error'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteComment = async (id: string) => {
-    try {
-      setLoading(true);
-      const { error } = await supabase.from('comments').delete().eq('id', id);
-
-      if (error) throw error;
-
-      setComments(prev => prev.filter(comment => comment.id !== id));
-      toast.success('Comment deleted successfully!');
-    } catch (error) {
-      toast.error('Failed to delete comment', {
-        description: error instanceof Error ? error.message : 'Unknown error'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto py-12">
-        <div className="text-center py-16">
-          <h2 className="text-2xl font-semibold mb-4">Login Required</h2>
-          <p className="text-muted-foreground mb-6">You need to be logged in to access the admin area.</p>
-          <Link to="/auth">
-            <Button>Login</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="container mx-auto py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">Admin Blog</h1>
-
-      {loading && !showForm && !showAiGenerator ? (
-        <div className="flex justify-center items-center h-32">
-          <span className="loading loading-spinner text-primary"></span>
+    <div className="container mx-auto py-12 px-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Blog Management</h1>
+        <div className="flex gap-2">
+          <Button onClick={() => setSelectedBlog(null)} disabled={isLoading}>
+            New Blog Post
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/blog">View Blog</Link>
+          </Button>
         </div>
-      ) : (
-        <>
-          <div className="mb-8 flex space-x-4">
-            <Button 
-              variant={showForm ? "secondary" : "default"} 
-              onClick={() => {
-                setShowForm(!showForm);
-                if (!showForm) setShowAiGenerator(false);
-              }}
-            >
-              {showForm ? 'Hide Form' : 'Create New Post Manually'}
-            </Button>
-            
-            <Button 
-              variant={showAiGenerator ? "secondary" : "default"}
-              onClick={() => {
-                setShowAiGenerator(!showAiGenerator);
-                if (!showAiGenerator) setShowForm(false);
-              }}
-              className="flex items-center"
-            >
-              {showAiGenerator ? 'Hide AI Generator' : 'Generate with AI'}
-            </Button>
-            
-            <Link to="/blog" className="ml-auto">
-              <Button variant="outline">View Blog</Button>
-            </Link>
-          </div>
+      </div>
 
-          {showAiGenerator && (
-            <div className="mb-8">
-              <GeminiContentGenerator onContentGenerated={handleContentGenerated} />
-            </div>
-          )}
-
-          {showForm && (
-            <form onSubmit={editingBlogId ? handleUpdateSubmit : handleSubmit} className="mb-8">
-              <div className="mb-4">
-                <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">
-                  Title
-                </label>
-                <input
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Blog editor - Takes 2/3 of space on desktop */}
+        <div className="md:col-span-2">
+          <div className="bg-card rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-bold mb-6">
+              {selectedBlog ? "Edit Blog Post" : "Create New Blog Post"}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="title">Title</Label>
+                <Input
                   type="text"
                   id="title"
                   name="title"
-                  value={formData.title}
+                  value={blogInput.title}
                   onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   required
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="excerpt" className="block text-gray-700 text-sm font-bold mb-2">
-                  Excerpt
-                </label>
-                <textarea
+              <div>
+                <Label htmlFor="excerpt">Excerpt</Label>
+                <Input
+                  type="text"
                   id="excerpt"
                   name="excerpt"
-                  value={formData.excerpt}
+                  value={blogInput.excerpt}
                   onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  required
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="content" className="block text-gray-700 text-sm font-bold mb-2">
-                  Content
-                </label>
-                <textarea
-                  id="content"
-                  name="content"
-                  value={formData.content}
-                  onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  rows={10}
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="cover_image" className="block text-gray-700 text-sm font-bold mb-2">
-                  Cover Image URL
-                </label>
-                <input
+              <div>
+                <Label htmlFor="cover_image">Cover Image URL</Label>
+                <Input
                   type="text"
                   id="cover_image"
                   name="cover_image"
-                  value={formData.cover_image || ''}
+                  value={blogInput.cover_image}
                   onChange={handleInputChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="published" className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    id="published"
-                    name="published"
-                    checked={formData.published || false}
-                    onChange={handleCheckboxChange}
-                    className="form-checkbox h-5 w-5 text-primary"
-                  />
-                  <span className="ml-2 text-gray-700">Published</span>
-                </label>
+              <div>
+                <Label htmlFor="content">Content</Label>
+                <Textarea
+                  id="content"
+                  name="content"
+                  value={blogInput.content}
+                  onChange={handleInputChange}
+                  rows={8}
+                  required
+                />
               </div>
-              <Button type="submit">
-                {editingBlogId ? 'Update Post' : 'Create Post'}
-              </Button>
-              {editingBlogId && (
-                <Button variant="ghost" className="ml-2" onClick={() => { setShowForm(false); setEditingBlogId(null); }}>
-                  Cancel
-                </Button>
-              )}
+              <div>
+                <Label htmlFor="published">Published</Label>
+                <Switch
+                  id="published"
+                  checked={blogInput.published}
+                  onCheckedChange={handleCheckboxChange}
+                />
+              </div>
+              
+              <div className="flex justify-between mt-8">
+                <div>
+                  {selectedBlog && (
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Deleting..." : "Delete"}
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setSelectedBlog(null)}
+                    disabled={isLoading || !selectedBlog}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading
+                      ? "Saving..."
+                      : selectedBlog
+                      ? "Update"
+                      : "Create"}
+                  </Button>
+                </div>
+              </div>
             </form>
-          )}
+          </div>
 
-          {blogs.length === 0 && !showForm && !showAiGenerator ? (
-            <div className="text-center py-12 bg-muted/20 rounded-lg">
-              <h2 className="text-xl font-semibold mb-3">No Blog Posts Yet</h2>
-              <p className="text-muted-foreground mb-6">Create your first blog post to get started.</p>
-              <Button onClick={() => setShowForm(true)}>
-                <Plus className="mr-2 h-4 w-4" /> Create First Post
-              </Button>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="table w-full">
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Published</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {blogs.map(blog => (
-                    <tr key={blog.id}>
-                      <td>{blog.title}</td>
-                      <td>{blog.published ? 'Yes' : 'No'}</td>
-                      <td>{format(new Date(blog.created_at), 'PPP')}</td>
-                      <td>
-                        <Button size="sm" variant="outline" className="mr-2" onClick={() => handleUpdate(blog.id)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleDelete(blog.id)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {comments.length > 0 && (
-            <>
-              <h2 className="text-2xl font-bold mt-12 mb-4">Comments</h2>
-              <div className="overflow-x-auto">
-                <table className="table w-full">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Comment</th>
-                      <th>Approved</th>
-                      <th>Created At</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {comments.map(comment => (
-                      <tr key={comment.id}>
-                        <td>{comment.name}</td>
-                        <td>{comment.content}</td>
-                        <td>{comment.approved ? 'Yes' : 'No'}</td>
-                        <td>{format(new Date(comment.created_at), 'PPP')}</td>
-                        <td>
-                          {!comment.approved ? (
-                            <Button size="sm" variant="outline" className="mr-2" onClick={() => handleApproveComment(comment.id)}>
-                              <CheckCircle className="h-4 w-4" />
-                            </Button>
-                          ) : (
-                            <Button size="sm" variant="outline" className="mr-2" onClick={() => handleRejectComment(comment.id)}>
-                              <XCircle className="h-4 w-4" />
-                            </Button>
-                          )}
-                          <Button size="sm" variant="destructive" onClick={() => handleDeleteComment(comment.id)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+          {/* AI Content Generator */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>AI Content Generator</CardTitle>
+              <CardDescription>
+                Use Gemini AI to generate content for your blog posts
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+                <h3 className="font-medium mb-2">How to use AI content generation:</h3>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>Type a prompt describing what content you want</li>
+                  <li>Click "Generate Content" and wait for the AI response</li>
+                  <li>Use the entire response or click "Insert at Cursor" to add it at the cursor position</li>
+                  <li>Edit and refine the generated content as needed</li>
+                </ol>
               </div>
-            </>
-          )}
-        </>
-      )}
+              <GeminiContentGenerator onInsertContent={(content) => {
+                setBlogInput(prev => ({
+                  ...prev,
+                  content: prev.content + '\n\n' + content
+                }));
+              }} />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Blog list - Takes 1/3 of space on desktop */}
+        <div>
+          <div className="bg-card rounded-lg shadow-sm p-6 h-full">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">Your Blog Posts</h2>
+              <span className="text-sm text-muted-foreground">
+                {blogs.length} posts
+              </span>
+            </div>
+            {isLoadingBlogs ? (
+              <div className="flex justify-center">
+                <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
+              </div>
+            ) : blogs.length > 0 ? (
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                {blogs.map((blog) => (
+                  <div
+                    key={blog.id}
+                    className={`p-4 rounded-lg cursor-pointer transition-colors ${
+                      selectedBlog?.id === blog.id
+                        ? "bg-primary/10 border border-primary/30"
+                        : "hover:bg-muted"
+                    }`}
+                    onClick={() => handleSelectBlog(blog)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <h3 className="font-medium line-clamp-1">{blog.title}</h3>
+                      <div className={`h-2 w-2 rounded-full mt-2 ${blog.published ? "bg-green-500" : "bg-yellow-500"}`}></div>
+                    </div>
+                    <p className="text-sm text-muted-foreground my-2 line-clamp-2">
+                      {blog.excerpt || blog.content.substring(0, 100)}...
+                    </p>
+                    <div className="flex justify-between items-center text-xs text-muted-foreground mt-2">
+                      <span>
+                        {format(new Date(blog.created_at), "MMM d, yyyy")}
+                      </span>
+                      <span>
+                        {blog.published ? "Published" : "Draft"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground mb-4">
+                  No blog posts yet. Create your first post!
+                </p>
+                <Button onClick={() => setSelectedBlog(null)}>
+                  Create Blog Post
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

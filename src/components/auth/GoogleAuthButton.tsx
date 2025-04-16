@@ -19,14 +19,20 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ mode, className }) 
         provider: 'google',
         options: {
           redirectTo: window.location.origin + '/auth',
+          queryParams: {
+            prompt: 'select_account', // Forces Google to always show the account selection screen
+          }
         },
       });
 
       if (error) {
-        // Handle specific error for provider not enabled
         if (error.message.includes('provider is not enabled')) {
           toast.error('Google authentication is not enabled', { 
             description: 'Please enable Google provider in your Supabase project settings.' 
+          });
+        } else if (error.message.includes('refused to connect')) {
+          toast.error('Connection to Google failed', { 
+            description: 'Check your network connection and try again.' 
           });
         } else {
           toast.error('Authentication failed', { description: error.message });
@@ -42,7 +48,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ mode, className }) 
   return (
     <Button 
       variant="outline" 
-      className={`w-full flex items-center justify-center ${className}`} 
+      className={`w-full flex items-center justify-center border-2 hover:bg-muted/30 ${className}`} 
       onClick={handleGoogleAuth}
       disabled={isLoading}
     >

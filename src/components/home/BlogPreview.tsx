@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CalendarIcon } from 'lucide-react';
+import { ArrowRight, Calendar, Badge } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 const BlogPreview = () => {
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
@@ -16,7 +18,6 @@ const BlogPreview = () => {
       try {
         setLoading(true);
         
-        // Updated query without the profiles join
         const { data, error } = await supabase
           .from('blogs')
           .select('*')
@@ -51,56 +52,116 @@ const BlogPreview = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-muted/20">
+    <section className="py-20 bg-muted/10">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Latest Blog Posts</h2>
+          <h2 className="text-3xl font-bold mb-4">Latest from the Blog</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Thoughts, insights, and updates on my latest work and technologies I'm exploring.
           </p>
+          <Separator className="max-w-md mx-auto mt-6" />
         </div>
         
         {loading ? (
           <div className="flex justify-center">
-            <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           </div>
         ) : latestPosts.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="text-center py-12 bg-muted/20 rounded-lg max-w-2xl mx-auto">
             <p className="text-muted-foreground">No blog posts yet. Check back soon for new content!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {latestPosts.map((post) => (
-              <div key={post.id} className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                {post.cover_image && (
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={post.cover_image} 
-                      alt={post.title} 
-                      className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-                    />
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {latestPosts.map((post, index) => (
+              <Card 
+                key={post.id} 
+                className={`overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${index === 0 ? 'md:col-span-3 md:grid md:grid-cols-2' : ''}`}
+              >
+                {index === 0 ? (
+                  <>
+                    <div className="h-full">
+                      {post.cover_image ? (
+                        <img 
+                          src={post.cover_image} 
+                          alt={post.title} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+                          <p className="text-muted-foreground text-sm">No image available</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col p-6">
+                      <CardHeader className="p-0 pb-4">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-medium inline-flex items-center">
+                            Featured
+                          </span>
+                          <span className="flex items-center">
+                            <Calendar className="h-3.5 w-3.5 mr-1" />
+                            {format(new Date(post.created_at), 'MMM d, yyyy')}
+                          </span>
+                        </div>
+                        <CardTitle className="text-2xl">{post.title}</CardTitle>
+                        <CardDescription className="mt-2">{post.excerpt}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-0 py-4 flex-grow">
+                        <p className="text-muted-foreground">
+                          {post.content.substring(0, 180)}...
+                        </p>
+                      </CardContent>
+                      <CardFooter className="p-0 pt-2">
+                        <Button asChild className="group">
+                          <Link to={`/blog/${post.id}`}>
+                            Read Article <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </Button>
+                      </CardFooter>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {post.cover_image && (
+                      <div className="h-48 overflow-hidden">
+                        <img 
+                          src={post.cover_image} 
+                          alt={post.title} 
+                          className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                        />
+                      </div>
+                    )}
+                    <CardHeader>
+                      <div className="flex items-center text-sm text-muted-foreground mb-2">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        <time dateTime={post.created_at}>
+                          {format(new Date(post.created_at), 'MMMM d, yyyy')}
+                        </time>
+                      </div>
+                      <CardTitle className="line-clamp-1">{post.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      <p className="line-clamp-3 text-muted-foreground text-sm">
+                        {post.content.substring(0, 120)}...
+                      </p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button asChild variant="outline" className="w-full group">
+                        <Link to={`/blog/${post.id}`}>
+                          Read Article <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </>
                 )}
-                <div className="p-6 flex-grow flex flex-col">
-                  <div className="flex items-center text-sm text-muted-foreground mb-3">
-                    <CalendarIcon className="w-4 h-4 mr-1" />
-                    <span>{format(new Date(post.created_at), 'MMMM d, yyyy')}</span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 hover:text-primary transition-colors">{post.title}</h3>
-                  <p className="text-muted-foreground mb-4 flex-grow">{post.excerpt}</p>
-                  <Button variant="outline" asChild className="mt-auto self-start group">
-                    <Link to={`/blog/${post.id}`}>
-                      Read More <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
         
-        <div className="text-center mt-8">
-          <Button variant="outline" asChild className="group">
+        <div className="text-center mt-12">
+          <Button asChild size="lg" variant="outline" className="group">
             <Link to="/blog">
               View All Posts <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
