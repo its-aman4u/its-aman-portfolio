@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+import { Separator } from '@/components/ui/separator';
 
 const Auth = () => {
   const { login, signup, isAuthenticated } = useAuth();
@@ -111,6 +113,14 @@ const Auth = () => {
                 </CardHeader>
                 <form onSubmit={handleLogin}>
                   <CardContent className="space-y-4">
+                    <GoogleAuthButton mode="sign-in" />
+                    
+                    <div className="relative flex items-center">
+                      <Separator className="flex-1" />
+                      <span className="mx-2 text-xs text-muted-foreground">OR</span>
+                      <Separator className="flex-1" />
+                    </div>
+                    
                     <div className="space-y-2">
                       <Label htmlFor="login-email">Email</Label>
                       <Input
@@ -135,7 +145,7 @@ const Auth = () => {
                       />
                     </div>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="flex-col gap-4">
                     <Button type="submit" className="w-full" disabled={isLoading}>
                       {isLoading ? (
                         <>
@@ -146,6 +156,14 @@ const Auth = () => {
                         'Login'
                       )}
                     </Button>
+                    <div className="w-full text-center">
+                      <Link 
+                        to="/admin/blog" 
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Admin Login
+                      </Link>
+                    </div>
                   </CardFooter>
                 </form>
               </Card>
@@ -161,6 +179,14 @@ const Auth = () => {
                 </CardHeader>
                 <form onSubmit={handleSignup}>
                   <CardContent className="space-y-4">
+                    <GoogleAuthButton mode="sign-up" />
+                    
+                    <div className="relative flex items-center">
+                      <Separator className="flex-1" />
+                      <span className="mx-2 text-xs text-muted-foreground">OR</span>
+                      <Separator className="flex-1" />
+                    </div>
+                    
                     <div className="space-y-2">
                       <Label htmlFor="signup-fullname">Full Name</Label>
                       <Input

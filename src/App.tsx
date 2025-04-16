@@ -14,6 +14,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import AdminBlog from "./pages/AdminBlog";
+import AdminLogin from "./components/admin/AdminLogin";
 import Auth from "./pages/Auth";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="blog" element={<Blog />} />
               <Route path="blog/:id" element={<BlogPost />} />
               <Route path="admin/blog" element={<AdminBlog />} />
+              <Route path="admin/login" element={<AdminLogin />} />
               <Route path="auth" element={<Auth />} />
               <Route path="subscription" element={<Subscription />} />
               <Route path="*" element={<NotFound />} />

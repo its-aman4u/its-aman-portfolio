@@ -1,6 +1,9 @@
 
 project_id = "mwludjixlagdfgkcfgxo"
 
+[functions.gemini-content]
+verify_jwt = true
+
 [functions.create-checkout]
 verify_jwt = true
 
