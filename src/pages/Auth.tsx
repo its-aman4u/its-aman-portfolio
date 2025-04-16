@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -7,20 +7,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const Auth = () => {
   const { login, signup, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   
   // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
   
   const [loginData, setLoginData] = useState({
     email: '',
@@ -49,11 +52,17 @@ const Auth = () => {
     if (isLoading) return;
     
     setIsLoading(true);
+    setError('');
+    
     try {
       const success = await login(loginData.email, loginData.password);
       if (success) {
         navigate('/');
+      } else {
+        setError('Login failed. Please check your credentials and try again.');
       }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during login');
     } finally {
       setIsLoading(false);
     }
@@ -63,8 +72,10 @@ const Auth = () => {
     e.preventDefault();
     if (isLoading) return;
     
+    setError('');
+    
     if (signupData.password !== signupData.confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
     
@@ -80,6 +91,8 @@ const Auth = () => {
           fullName: ''
         });
       }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during signup');
     } finally {
       setIsLoading(false);
     }
@@ -96,6 +109,14 @@ const Auth = () => {
               </Link>
             </Button>
           </div>
+          
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -150,7 +171,7 @@ const Auth = () => {
                       {isLoading ? (
                         <>
                           <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
-                          Loading...
+                          Logging in...
                         </>
                       ) : (
                         'Login'
@@ -158,7 +179,7 @@ const Auth = () => {
                     </Button>
                     <div className="w-full text-center">
                       <Link 
-                        to="/admin/blog" 
+                        to="/admin/login" 
                         className="text-sm text-primary hover:underline"
                       >
                         Admin Login

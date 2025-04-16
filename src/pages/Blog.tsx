@@ -8,13 +8,13 @@ import { format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Calendar, Lock } from 'lucide-react';
+import { ArrowRight, Calendar, Lock, Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
-  const { isAuthenticated, isPremium } = useAuth();
+  const { isAuthenticated, isPremium, profile } = useAuth();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -48,12 +48,8 @@ const Blog = () => {
     );
   }
 
-  // Filter blogs: First post is free for everyone, others are premium
-  const freeBlog = blogs.length > 0 ? blogs[0] : null;
-  const premiumBlogs = blogs.length > 1 ? blogs.slice(1) : [];
-
   return (
-    <div className="container mx-auto py-12 px-4 md:px-6">
+    <div className="container mx-auto py-20 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -61,9 +57,12 @@ const Blog = () => {
             <p className="text-muted-foreground mt-2">Thoughts, insights and updates on my work</p>
           </div>
           <div className="flex gap-2">
-            {isAuthenticated && (
+            {isAuthenticated && profile?.is_admin && (
               <Link to="/admin/blog">
-                <Button variant="outline">Manage Blogs</Button>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Post
+                </Button>
               </Link>
             )}
             {!isAuthenticated && (
@@ -77,8 +76,8 @@ const Blog = () => {
         {blogs.length === 0 ? (
           <div className="text-center py-16 bg-muted/20 rounded-lg">
             <h2 className="text-2xl font-semibold mb-4">No blog posts yet</h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">Check back later or create your own post if you have access.</p>
-            {isAuthenticated && (
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">Check back later or create your own post if you have admin access.</p>
+            {isAuthenticated && profile?.is_admin && (
               <Link to="/admin/blog">
                 <Button>Create Your First Post</Button>
               </Link>
@@ -86,18 +85,18 @@ const Blog = () => {
           </div>
         ) : (
           <div className="space-y-12">
-            {/* Free blog post - featured post */}
-            {freeBlog && (
+            {/* Featured post - first post is always free */}
+            {blogs.length > 0 && (
               <div className="mb-12">
                 <h2 className="text-2xl font-bold mb-6">Featured Post</h2>
                 <div className="group">
                   <Card className="overflow-hidden transition-shadow hover:shadow-lg">
                     <div className="md:flex">
-                      {freeBlog.cover_image && (
+                      {blogs[0].cover_image && (
                         <div className="md:w-2/5 h-64 md:h-auto overflow-hidden">
                           <img 
-                            src={freeBlog.cover_image} 
-                            alt={freeBlog.title} 
+                            src={blogs[0].cover_image} 
+                            alt={blogs[0].title} 
                             className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
                           />
                         </div>
@@ -106,18 +105,18 @@ const Blog = () => {
                         <CardHeader className="p-0 pb-4">
                           <div className="flex items-center text-sm text-muted-foreground mb-2">
                             <Calendar className="h-4 w-4 mr-1" />
-                            <time dateTime={freeBlog.created_at}>
-                              {format(new Date(freeBlog.created_at), 'MMMM d, yyyy')}
+                            <time dateTime={blogs[0].created_at}>
+                              {format(new Date(blogs[0].created_at), 'MMMM d, yyyy')}
                             </time>
                           </div>
-                          <CardTitle className="text-2xl">{freeBlog.title}</CardTitle>
+                          <CardTitle className="text-2xl">{blogs[0].title}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 pb-4 flex-grow">
-                          <p className="text-muted-foreground">{freeBlog.excerpt}</p>
+                          <p className="text-muted-foreground">{blogs[0].excerpt}</p>
                         </CardContent>
                         <CardFooter className="p-0 pt-2">
                           <Button asChild variant="default" className="group">
-                            <Link to={`/blog/${freeBlog.id}`}>
+                            <Link to={`/blog/${blogs[0].id}`}>
                               Read Article <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                             </Link>
                           </Button>
@@ -130,18 +129,18 @@ const Blog = () => {
             )}
 
             {/* Premium blog posts */}
-            {premiumBlogs.length > 0 && (
+            {blogs.length > 1 && (
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold">More Articles</h2>
-                  {!isPremium && (
+                  {!isPremium && !profile?.is_admin && (
                     <Link to="/subscription">
                       <Button variant="outline" size="sm">Unlock Premium Content</Button>
                     </Link>
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {premiumBlogs.map(blog => (
+                  {blogs.slice(1).map(blog => (
                     <Card key={blog.id} className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
                       <div className="relative">
                         {blog.cover_image ? (
@@ -156,7 +155,7 @@ const Blog = () => {
                           </div>
                         )}
                         
-                        {!isPremium && (
+                        {!isPremium && !profile?.is_admin && (
                           <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px] flex flex-col items-center justify-center">
                             <Lock className="h-8 w-8 text-primary mb-2" />
                             <p className="font-medium text-center px-4">Premium Content</p>
@@ -185,7 +184,7 @@ const Blog = () => {
                       </CardContent>
                       
                       <CardFooter>
-                        {isPremium ? (
+                        {isPremium || profile?.is_admin ? (
                           <Button asChild variant="outline" className="w-full">
                             <Link to={`/blog/${blog.id}`}>
                               Read Article

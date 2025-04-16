@@ -1,13 +1,15 @@
 
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Bike } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { isAuthenticated, profile } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +36,7 @@ const Header = () => {
     { name: 'Journey', path: '/journey' },
     { name: 'Skills', path: '/skills' },
     { name: 'Projects', path: '/projects' },
+    { name: 'Blog', path: '/blog' },
     { name: 'Contact', path: '/contact' },
   ];
 
@@ -64,18 +67,56 @@ const Header = () => {
               </li>
             ))}
           </ul>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleTheme}
-            className="ml-2"
-          >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
+          
+          <div className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                {profile?.is_admin && (
+                  <Link to="/admin/blog">
+                    <Button variant="outline" size="sm">Admin</Button>
+                  </Link>
+                )}
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm">
+                    {profile?.full_name || 'Profile'}
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <Link to="/auth">
+                <Button variant="outline" size="sm">Login</Button>
+              </Link>
+            )}
+            
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme}
+              className="ml-2"
+            >
+              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
+          </div>
         </nav>
 
         {/* Mobile Navigation */}
         <div className="flex items-center md:hidden">
+          {!isOpen && (
+            <>
+              {isAuthenticated ? (
+                <Link to="/profile" className="mr-2">
+                  <Button variant="ghost" size="sm">
+                    {profile?.full_name || 'Profile'}
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth" className="mr-2">
+                  <Button variant="outline" size="sm">Login</Button>
+                </Link>
+              )}
+            </>
+          )}
+          
           <Button 
             variant="ghost" 
             size="icon" 
@@ -112,6 +153,18 @@ const Header = () => {
                 </NavLink>
               </li>
             ))}
+            
+            {isAuthenticated && profile?.is_admin && (
+              <li>
+                <Link 
+                  to="/admin/blog" 
+                  className="block text-lg font-medium text-primary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Admin
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>

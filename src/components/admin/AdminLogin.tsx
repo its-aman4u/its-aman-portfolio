@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,14 +7,22 @@ import { Lock, AlertCircle, Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated, profile } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  // If the user is already authenticated and is an admin, redirect to admin blog page
+  useEffect(() => {
+    if (isAuthenticated && profile?.is_admin) {
+      navigate('/admin/blog');
+    }
+  }, [isAuthenticated, profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +42,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh]">
+    <div className="flex items-center justify-center min-h-[80vh] pt-16">
       <div className="w-full max-w-md px-4">
         <Card className="shadow-lg border-muted">
           <CardHeader className="space-y-1 text-center">
