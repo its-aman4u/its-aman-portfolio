@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Bot } from 'lucide-react';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -177,12 +177,18 @@ const Auth = () => {
                         'Login'
                       )}
                     </Button>
-                    <div className="w-full text-center">
+                    <div className="w-full flex justify-between items-center">
                       <Link 
                         to="/admin/login" 
                         className="text-sm text-primary hover:underline"
                       >
                         Admin Login
+                      </Link>
+                      <Link 
+                        to="/chatbot" 
+                        className="text-sm flex items-center gap-1 text-primary hover:underline"
+                      >
+                        <Bot className="h-3 w-3" /> Try AI Chatbot
                       </Link>
                     </div>
                   </CardFooter>

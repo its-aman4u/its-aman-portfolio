@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost } from '@/types/blog';
 import { toast } from 'sonner';
@@ -22,7 +22,8 @@ const BlogPostPage = () => {
   const [blog, setBlog] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFreeBlog, setIsFreeBlog] = useState(false);
-  const { isPremium } = useAuth();
+  const { isPremium, profile, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchBlogPost = async () => {
@@ -40,13 +41,21 @@ const BlogPostPage = () => {
         // Check if this is the first (free) blog post
         const { data: allBlogs, error: allBlogsError } = await supabase
           .from('blogs')
-          .select('id')
+          .select('id, premium')
           .eq('published', true)
-          .order('created_at', { ascending: false })
-          .limit(1);
+          .order('created_at', { ascending: false });
           
-        if (!allBlogsError && allBlogs.length > 0 && allBlogs[0].id === id) {
-          setIsFreeBlog(true);
+        if (!allBlogsError && allBlogs.length > 0) {
+          // First post is always free
+          if (allBlogs[0].id === id) {
+            setIsFreeBlog(true);
+          } else {
+            // Check if this is a premium post
+            const currentBlog = allBlogs.find(b => b.id === id);
+            if (currentBlog && !currentBlog.premium) {
+              setIsFreeBlog(true);
+            }
+          }
         }
       } catch (error) {
         toast.error('Failed to fetch blog post', {
@@ -84,7 +93,7 @@ const BlogPostPage = () => {
     );
   }
 
-  const needsSubscription = !isFreeBlog && !isPremium;
+  const needsSubscription = !isFreeBlog && !isPremium && !profile?.is_admin && blog.premium;
 
   // Calculate reading time (rough estimate: 200 words per minute)
   const wordCount = blog.content.split(/\s+/).length;
@@ -144,9 +153,16 @@ const BlogPostPage = () => {
                     This article is available exclusively for premium subscribers.
                     Upgrade your account to continue reading.
                   </p>
-                  <Button asChild size="lg">
-                    <Link to="/subscription">Subscribe Now</Link>
-                  </Button>
+                  <div className="flex flex-col gap-4 items-center">
+                    <Button asChild size="lg">
+                      <Link to="/subscription">Subscribe Now</Link>
+                    </Button>
+                    {!isAuthenticated && (
+                      <Button asChild variant="outline">
+                        <Link to="/auth">Already a member? Sign in</Link>
+                      </Button>
+                    )}
+                  </div>
                 </Card>
               </div>
             ) : (

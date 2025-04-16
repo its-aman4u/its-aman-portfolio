@@ -33,6 +33,8 @@ const AdminLogin = () => {
       const success = await login(email, password);
       if (!success) {
         setError('Invalid credentials. Please try again.');
+      } else if (!profile?.is_admin) {
+        setError('Your account does not have admin privileges.');
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during login');

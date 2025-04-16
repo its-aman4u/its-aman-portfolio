@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Bike } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +9,8 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { isAuthenticated, profile } = useAuth();
+  const { isAuthenticated, profile, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,16 +41,26 @@ const Header = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    navigate('/');
+  };
+
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
 
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-card/80 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <NavLink to="/" className="flex items-center gap-2 text-primary font-heading font-bold text-xl">
+        <a href="#" onClick={handleLogoClick} className="flex items-center gap-2 text-primary font-heading font-bold text-xl">
           <Bike className="w-6 h-6" />
           <span>Aman Singh</span>
-        </NavLink>
+        </a>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
@@ -76,11 +87,13 @@ const Header = () => {
                     <Button variant="outline" size="sm">Admin</Button>
                   </Link>
                 )}
-                <Link to="/profile">
-                  <Button variant="ghost" size="sm">
-                    {profile?.full_name || 'Profile'}
-                  </Button>
-                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleLogout}
+                >
+                  Logout ({profile?.full_name || 'User'})
+                </Button>
               </div>
             ) : (
               <Link to="/auth">
@@ -104,11 +117,21 @@ const Header = () => {
           {!isOpen && (
             <>
               {isAuthenticated ? (
-                <Link to="/profile" className="mr-2">
-                  <Button variant="ghost" size="sm">
-                    {profile?.full_name || 'Profile'}
+                <div className="flex items-center gap-2">
+                  {profile?.is_admin && (
+                    <Link to="/admin/blog" className="mr-2">
+                      <Button variant="outline" size="sm">Admin</Button>
+                    </Link>
+                  )}
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleLogout}
+                    className="mr-2"
+                  >
+                    Logout
                   </Button>
-                </Link>
+                </div>
               ) : (
                 <Link to="/auth" className="mr-2">
                   <Button variant="outline" size="sm">Login</Button>

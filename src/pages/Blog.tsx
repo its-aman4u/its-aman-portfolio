@@ -27,7 +27,32 @@ const Blog = () => {
 
         if (blogsError) throw blogsError;
 
-        setBlogs(blogsData as BlogPost[]);
+        if (blogsData.length === 0) {
+          // If no blogs found, create a sample blog post
+          const { data: userData } = await supabase.auth.getUser();
+          if (userData?.user && profile?.is_admin) {
+            const sampleBlog = {
+              title: 'Welcome to My Blog',
+              excerpt: 'This is my first blog post. Learn more about my journey and projects.',
+              content: `# Welcome to My Blog\n\nThis is my first blog post on my portfolio website. Here, I'll be sharing my journey, experiences, and insights in the world of technology and development.\n\n## What to Expect\n\n- Tutorials and guides on web development\n- Updates on my latest projects\n- Thoughts on emerging technologies\n- Tips and tricks I've learned along the way\n\nStay tuned for more content coming soon!`,
+              cover_image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80',
+              published: true,
+              premium: false,
+              author_id: userData.user.id
+            };
+            
+            const { data: newBlog, error: insertError } = await supabase
+              .from('blogs')
+              .insert(sampleBlog)
+              .select();
+              
+            if (!insertError && newBlog) {
+              setBlogs(newBlog as BlogPost[]);
+            }
+          }
+        } else {
+          setBlogs(blogsData as BlogPost[]);
+        }
       } catch (error) {
         toast.error('Failed to fetch blogs', {
           description: error instanceof Error ? error.message : 'Unknown error'
@@ -38,7 +63,7 @@ const Blog = () => {
     };
 
     fetchBlogs();
-  }, []);
+  }, [profile]);
 
   if (loading) {
     return (
@@ -155,7 +180,7 @@ const Blog = () => {
                           </div>
                         )}
                         
-                        {!isPremium && !profile?.is_admin && (
+                        {!isPremium && !profile?.is_admin && blog.premium && (
                           <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px] flex flex-col items-center justify-center">
                             <Lock className="h-8 w-8 text-primary mb-2" />
                             <p className="font-medium text-center px-4">Premium Content</p>
@@ -184,7 +209,7 @@ const Blog = () => {
                       </CardContent>
                       
                       <CardFooter>
-                        {isPremium || profile?.is_admin ? (
+                        {isPremium || profile?.is_admin || !blog.premium ? (
                           <Button asChild variant="outline" className="w-full">
                             <Link to={`/blog/${blog.id}`}>
                               Read Article
