@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { Loader2, Sparkles } from 'lucide-react';
@@ -10,9 +9,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface GeminiContentGeneratorProps {
   onContentGenerated: (content: { title: string; excerpt: string; content: string }) => void;
+  // Add the new prop
+  onInsertContent?: (content: string) => void;
 }
 
-const GeminiContentGenerator: React.FC<GeminiContentGeneratorProps> = ({ onContentGenerated }) => {
+const GeminiContentGenerator: React.FC<GeminiContentGeneratorProps> = ({ onContentGenerated, onInsertContent }) => {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -64,6 +65,11 @@ const GeminiContentGenerator: React.FC<GeminiContentGeneratorProps> = ({ onConte
         excerpt: parsedContent.excerpt,
         content: parsedContent.content
       });
+      
+      // Also call onInsertContent if it exists and the user wants to insert just the content
+      if (onInsertContent) {
+        onInsertContent(parsedContent.content);
+      }
       
       toast.success('Content generated successfully');
     } catch (error) {

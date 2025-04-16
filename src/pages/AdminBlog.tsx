@@ -24,7 +24,21 @@ const AdminBlog = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data && data.user) {
+        setCurrentUser(data.user.id);
+      } else {
+        navigate('/admin/login');
+      }
+    };
+    
+    getUserId();
+  }, [navigate]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -57,7 +71,7 @@ const AdminBlog = () => {
         excerpt: selectedBlog.excerpt,
         content: selectedBlog.content,
         cover_image: selectedBlog.cover_image || '',
-        published: selectedBlog.published,
+        published: selectedBlog.published || false,
       });
     } else {
       setBlogInput({
@@ -85,7 +99,6 @@ const AdminBlog = () => {
 
     try {
       if (selectedBlog) {
-        // Update existing blog post
         const { error } = await supabase
           .from('blogs')
           .update({
@@ -97,11 +110,15 @@ const AdminBlog = () => {
         if (error) throw error;
         toast.success('Blog post updated successfully!');
       } else {
-        // Create new blog post
+        if (!currentUser) {
+          throw new Error('No user authenticated. Please log in.');
+        }
+        
         const { error } = await supabase
           .from('blogs')
           .insert({
             ...blogInput,
+            author_id: currentUser,
             created_at: new Date().toISOString(),
           });
 
@@ -109,7 +126,6 @@ const AdminBlog = () => {
         toast.success('Blog post created successfully!');
       }
 
-      // Refresh blog list
       const { data } = await supabase
         .from('blogs')
         .select('*')
@@ -136,7 +152,6 @@ const AdminBlog = () => {
       if (error) throw error;
       toast.success('Blog post deleted successfully!');
 
-      // Refresh blog list
       const { data } = await supabase
         .from('blogs')
         .select('*')
@@ -154,6 +169,13 @@ const AdminBlog = () => {
     setSelectedBlog(blog);
   };
 
+  const handleInsertContent = (content: string) => {
+    setBlogInput(prev => ({
+      ...prev,
+      content: prev.content + '\n\n' + content
+    }));
+  };
+
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="flex justify-between items-center mb-8">
@@ -169,7 +191,6 @@ const AdminBlog = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Blog editor - Takes 2/3 of space on desktop */}
         <div className="md:col-span-2">
           <div className="bg-card rounded-lg shadow-sm p-6">
             <h2 className="text-xl font-bold mb-6">
@@ -261,7 +282,6 @@ const AdminBlog = () => {
             </form>
           </div>
 
-          {/* AI Content Generator */}
           <Card className="mt-8">
             <CardHeader>
               <CardTitle>AI Content Generator</CardTitle>
@@ -279,17 +299,22 @@ const AdminBlog = () => {
                   <li>Edit and refine the generated content as needed</li>
                 </ol>
               </div>
-              <GeminiContentGenerator onInsertContent={(content) => {
-                setBlogInput(prev => ({
-                  ...prev,
-                  content: prev.content + '\n\n' + content
-                }));
-              }} />
+              <GeminiContentGenerator 
+                onContentGenerated={(content) => {
+                  setBlogInput({
+                    title: content.title,
+                    excerpt: content.excerpt,
+                    content: content.content,
+                    cover_image: blogInput.cover_image,
+                    published: blogInput.published
+                  });
+                }}
+                onInsertContent={handleInsertContent}
+              />
             </CardContent>
           </Card>
         </div>
 
-        {/* Blog list - Takes 1/3 of space on desktop */}
         <div>
           <div className="bg-card rounded-lg shadow-sm p-6 h-full">
             <div className="flex justify-between items-center mb-6">
