@@ -10,6 +10,7 @@ import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
 
 // Import the plugins
+import type { Pluggable } from 'unified';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 
@@ -93,8 +94,9 @@ const BlogPostPage = () => {
 
         <article className="prose prose-lg dark:prose-invert">
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
+            // Use explicit type casting to fix TypeScript errors
+            remarkPlugins={[remarkGfm as Pluggable]}
+            rehypePlugins={[rehypeRaw as Pluggable]}
             components={{
               img: ({ node, ...props }) => (
                 <img {...props} style={{ maxWidth: '100%', height: 'auto' }} alt={props.alt || ''} />
