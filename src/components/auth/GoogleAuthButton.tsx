@@ -23,7 +23,14 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ mode, className }) 
       });
 
       if (error) {
-        toast.error('Authentication failed', { description: error.message });
+        // Handle specific error for provider not enabled
+        if (error.message.includes('provider is not enabled')) {
+          toast.error('Google authentication is not enabled', { 
+            description: 'Please enable Google provider in your Supabase project settings.' 
+          });
+        } else {
+          toast.error('Authentication failed', { description: error.message });
+        }
       }
     } catch (error: any) {
       toast.error('Authentication failed', { description: error.message });
