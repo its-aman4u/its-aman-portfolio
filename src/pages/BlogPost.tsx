@@ -2,15 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
-import { BlogPost } from '@/types/blog';
+import { BlogPost, BlogComment } from '@/types/blog';
 import { toast } from 'sonner';
-import { CalendarIcon, ArrowLeft, Clock, User, Lock } from 'lucide-react';
+import { CalendarIcon, ArrowLeft, Clock, User, Lock, MessageSquare, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 
 // Import the plugins
 import type { Pluggable } from 'unified';
@@ -20,9 +22,15 @@ import rehypeRaw from 'rehype-raw';
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
   const [blog, setBlog] = useState<BlogPost | null>(null);
+  const [comments, setComments] = useState<BlogComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFreeBlog, setIsFreeBlog] = useState(false);
-  const { isPremium, profile, isAuthenticated } = useAuth();
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentContent, setCommentContent] = useState('');
+  const [commentName, setCommentName] = useState('');
+  const [commentEmail, setCommentEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const { isPremium, profile, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -38,7 +46,7 @@ const BlogPostPage = () => {
         if (blogError) throw blogError;
         setBlog(blogData as BlogPost);
         
-        // Check if this is the first (free) blog post
+        // First two blog posts are always free, rest require premium subscription unless marked free
         const { data: allBlogs, error: allBlogsError } = await supabase
           .from('blogs')
           .select('id, premium')
@@ -46,8 +54,8 @@ const BlogPostPage = () => {
           .order('created_at', { ascending: false });
           
         if (!allBlogsError && allBlogs.length > 0) {
-          // First post is always free
-          if (allBlogs[0].id === id) {
+          // First two posts are always free
+          if (allBlogs[0].id === id || allBlogs[1]?.id === id) {
             setIsFreeBlog(true);
           } else {
             // Check if this is a premium post
@@ -57,10 +65,14 @@ const BlogPostPage = () => {
             }
           }
         }
+
+        // Fetch comments for this post
+        fetchComments();
       } catch (error) {
         toast.error('Failed to fetch blog post', {
           description: error instanceof Error ? error.message : 'Unknown error'
         });
+        console.error('Error fetching blog post:', error);
       } finally {
         setLoading(false);
       }
@@ -68,6 +80,96 @@ const BlogPostPage = () => {
 
     if (id) fetchBlogPost();
   }, [id]);
+
+  // Set user information if authenticated
+  useEffect(() => {
+    if (isAuthenticated && profile) {
+      setCommentName(profile.full_name || '');
+      setCommentEmail(user?.email || '');
+    }
+  }, [isAuthenticated, profile, user]);
+
+  const fetchComments = async () => {
+    if (!id) return;
+    
+    try {
+      setCommentsLoading(true);
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .eq('post_id', id)
+        .eq('approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setComments(data as BlogComment[]);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const handleSubmitComment = async () => {
+    if (!id || !commentContent) return;
+
+    // Validation
+    if (!isAuthenticated) {
+      if (!commentName.trim() || !commentEmail.trim()) {
+        toast.error('Please provide your name and email');
+        return;
+      }
+    }
+
+    try {
+      setSubmitting(true);
+      const commentData = {
+        post_id: id,
+        user_id: user?.id || 'anonymous',
+        name: commentName,
+        email: commentEmail,
+        content: commentContent,
+        approved: profile?.is_admin ? true : false // Auto-approve admin comments
+      };
+
+      const { error } = await supabase.from('comments').insert(commentData);
+
+      if (error) throw error;
+
+      toast.success(profile?.is_admin ? 'Comment added!' : 'Comment submitted for approval!');
+      setCommentContent('');
+      
+      // If comment is auto-approved (admin), refresh the comments
+      if (profile?.is_admin) {
+        fetchComments();
+      }
+    } catch (error) {
+      toast.error('Failed to submit comment', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const { error } = await supabase
+        .from('comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', user?.id || '');
+      
+      if (error) throw error;
+      
+      toast.success('Comment deleted');
+      fetchComments();
+    } catch (error) {
+      toast.error('Failed to delete comment', {
+        description: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -117,6 +219,10 @@ const BlogPostPage = () => {
                 src={blog.cover_image}
                 alt={blog.title}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80";
+                }}
               />
             </div>
           )}
@@ -170,37 +276,132 @@ const BlogPostPage = () => {
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm as Pluggable]}
                   rehypePlugins={[rehypeRaw as Pluggable]}
-                  components={{
-                    img: ({ node, ...props }) => (
-                      <img {...props} className="rounded-md max-w-full my-8 mx-auto" alt={props.alt || ''} />
-                    ),
-                    a: ({ node, ...props }) => (
-                      <a {...props} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-                        {props.children}
-                      </a>
-                    ),
-                    h2: ({ node, ...props }) => (
-                      <h2 {...props} className="text-2xl font-bold mt-8 mb-4" />
-                    ),
-                    h3: ({ node, ...props }) => (
-                      <h3 {...props} className="text-xl font-bold mt-6 mb-3" />
-                    ),
-                    p: ({ node, ...props }) => (
-                      <p {...props} className="my-4 leading-relaxed" />
-                    ),
-                    ul: ({ node, ...props }) => (
-                      <ul {...props} className="my-4 list-disc pl-6" />
-                    ),
-                    ol: ({ node, ...props }) => (
-                      <ol {...props} className="my-4 list-decimal pl-6" />
-                    ),
-                    blockquote: ({ node, ...props }) => (
-                      <blockquote {...props} className="border-l-4 border-primary/30 pl-4 italic my-6" />
-                    ),
-                  }}
                 >
                   {blog.content}
                 </ReactMarkdown>
+              </div>
+            )}
+
+            {/* Comments section - Only show for free content or premium users */}
+            {(!needsSubscription) && (
+              <div className="mt-12">
+                <Separator className="my-8" />
+                <h3 className="text-2xl font-bold flex items-center gap-2 mb-6">
+                  <MessageSquare className="h-5 w-5" />
+                  Comments {comments.length > 0 && `(${comments.length})`}
+                </h3>
+                
+                {/* Comment form */}
+                <div className="mb-8 bg-muted/20 p-6 rounded-lg">
+                  <h4 className="font-medium mb-4">Leave a comment</h4>
+                  
+                  {/* Guest comment fields */}
+                  {!isAuthenticated && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium mb-1">Name *</label>
+                        <Input
+                          id="name"
+                          value={commentName}
+                          onChange={(e) => setCommentName(e.target.value)}
+                          placeholder="Your name"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium mb-1">Email *</label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={commentEmail}
+                          onChange={(e) => setCommentEmail(e.target.value)}
+                          placeholder="Your email"
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="mb-4">
+                    <label htmlFor="comment" className="block text-sm font-medium mb-1">Comment *</label>
+                    <Textarea
+                      id="comment"
+                      value={commentContent}
+                      onChange={(e) => setCommentContent(e.target.value)}
+                      placeholder="Write your comment here..."
+                      rows={4}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={handleSubmitComment}
+                      disabled={!commentContent.trim() || submitting}
+                    >
+                      {submitting ? (
+                        <>
+                          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
+                          Submitting...
+                        </>
+                      ) : isAuthenticated ? "Post Comment" : "Submit Comment"}
+                    </Button>
+                  </div>
+                  
+                  {!isAuthenticated && (
+                    <p className="text-sm text-muted-foreground mt-4">
+                      Comments from guests require approval before appearing.{' '}
+                      <Link to="/auth" className="text-primary underline hover:no-underline">
+                        Log in
+                      </Link> to post immediately.
+                    </p>
+                  )}
+                </div>
+                
+                {/* Comments list */}
+                <div className="space-y-6">
+                  {commentsLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                    </div>
+                  ) : comments.length === 0 ? (
+                    <div className="text-center py-8 bg-muted/10 rounded-lg">
+                      <p className="text-muted-foreground">No comments yet. Be the first to comment!</p>
+                    </div>
+                  ) : (
+                    comments.map((comment) => (
+                      <div key={comment.id} className="bg-muted/10 p-4 rounded-lg">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                              <User className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h4 className="font-medium">{comment.name}</h4>
+                              <p className="text-xs text-muted-foreground">
+                                {format(new Date(comment.created_at), 'MMM d, yyyy • h:mm a')}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {(profile?.is_admin || (isAuthenticated && user?.id === comment.user_id)) && (
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteComment(comment.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                        <div className="mt-2 pl-10">
+                          <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             )}
           </div>

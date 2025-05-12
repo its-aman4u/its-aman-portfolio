@@ -57,6 +57,7 @@ const Blog = () => {
         toast.error('Failed to fetch blogs', {
           description: error instanceof Error ? error.message : 'Unknown error'
         });
+        console.error('Error fetching blogs:', error);
       } finally {
         setLoading(false);
       }
@@ -95,6 +96,11 @@ const Blog = () => {
                 <Button variant="outline">Login</Button>
               </Link>
             )}
+            {isAuthenticated && !profile?.is_admin && (
+              <Link to="/subscription">
+                <Button variant="outline">Subscription</Button>
+              </Link>
+            )}
           </div>
         </div>
         
@@ -110,54 +116,66 @@ const Blog = () => {
           </div>
         ) : (
           <div className="space-y-12">
-            {/* Featured post - first post is always free */}
+            {/* Featured posts - first two posts are always free */}
             {blogs.length > 0 && (
               <div className="mb-12">
-                <h2 className="text-2xl font-bold mb-6">Featured Post</h2>
-                <div className="group">
-                  <Card className="overflow-hidden transition-shadow hover:shadow-lg">
-                    <div className="md:flex">
-                      {blogs[0].cover_image && (
-                        <div className="md:w-2/5 h-64 md:h-auto overflow-hidden">
+                <h2 className="text-2xl font-bold mb-6">Featured Posts</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {blogs.slice(0, 2).map((blog, index) => (
+                    <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+                      <div className="h-56 overflow-hidden">
+                        {blog.cover_image ? (
                           <img 
-                            src={blogs[0].cover_image} 
-                            alt={blogs[0].title} 
-                            className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                            src={blog.cover_image} 
+                            alt={blog.title} 
+                            className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80";
+                            }}
                           />
-                        </div>
-                      )}
-                      <div className="p-6 md:w-3/5 flex flex-col">
-                        <CardHeader className="p-0 pb-4">
-                          <div className="flex items-center text-sm text-muted-foreground mb-2">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            <time dateTime={blogs[0].created_at}>
-                              {format(new Date(blogs[0].created_at), 'MMMM d, yyyy')}
-                            </time>
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-r from-primary/10 to-primary/30 flex items-center justify-center">
+                            <p className="text-primary font-medium">Free Article</p>
                           </div>
-                          <CardTitle className="text-2xl">{blogs[0].title}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0 pb-4 flex-grow">
-                          <p className="text-muted-foreground">{blogs[0].excerpt}</p>
-                        </CardContent>
-                        <CardFooter className="p-0 pt-2">
-                          <Button asChild variant="default" className="group">
-                            <Link to={`/blog/${blogs[0].id}`}>
-                              Read Article <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                          </Button>
-                        </CardFooter>
+                        )}
                       </div>
-                    </div>
-                  </Card>
+                      <CardHeader>
+                        <div className="flex items-center text-sm text-muted-foreground mb-2">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          <time dateTime={blog.created_at}>
+                            {format(new Date(blog.created_at), 'MMMM d, yyyy')}
+                          </time>
+                          <span className="ml-auto bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 px-2 py-0.5 rounded text-xs font-medium">
+                            Free Access
+                          </span>
+                        </div>
+                        <CardTitle className="line-clamp-1">{blog.title}</CardTitle>
+                        <CardDescription className="line-clamp-2">{blog.excerpt}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <p className="line-clamp-3 text-muted-foreground text-sm">
+                          {blog.content.substring(0, 150)}...
+                        </p>
+                      </CardContent>
+                      <CardFooter>
+                        <Button asChild variant="outline" className="w-full">
+                          <Link to={`/blog/${blog.id}`}>
+                            Read Article <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Premium blog posts */}
-            {blogs.length > 1 && (
+            {/* Premium blog posts (the rest of posts) */}
+            {blogs.length > 2 && (
               <div>
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">More Articles</h2>
+                  <h2 className="text-2xl font-bold">Premium Articles</h2>
                   {!isPremium && !profile?.is_admin && (
                     <Link to="/subscription">
                       <Button variant="outline" size="sm">Unlock Premium Content</Button>
@@ -165,7 +183,7 @@ const Blog = () => {
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {blogs.slice(1).map(blog => (
+                  {blogs.slice(2).map(blog => (
                     <Card key={blog.id} className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
                       <div className="relative">
                         {blog.cover_image ? (
@@ -173,10 +191,14 @@ const Blog = () => {
                             src={blog.cover_image} 
                             alt={blog.title} 
                             className="w-full h-48 object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80";
+                            }}
                           />
                         ) : (
-                          <div className="w-full h-48 bg-muted/30 flex items-center justify-center">
-                            <p className="text-muted-foreground">No image</p>
+                          <div className="w-full h-48 bg-gradient-to-r from-primary/10 to-primary/30 flex items-center justify-center">
+                            <p className="text-primary font-medium">Premium Article</p>
                           </div>
                         )}
                         

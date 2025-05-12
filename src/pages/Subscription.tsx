@@ -90,7 +90,7 @@ const Subscription = () => {
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                    <span>Access to all free blog posts</span>
+                    <span>Access to first two blog posts</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
@@ -135,11 +135,11 @@ const Subscription = () => {
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                    <span>Access to all free blog posts</span>
+                    <span>Access to all blog posts</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                    <span>Comment on blog posts</span>
+                    <span>Comment on all blog posts</span>
                   </li>
                   <li className="flex items-start">
                     <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
@@ -177,10 +177,13 @@ const Subscription = () => {
           </div>
           
           <div className="bg-muted/40 rounded-lg p-6 text-center">
-            <h3 className="text-xl font-bold mb-2">Money Back Guarantee</h3>
-            <p className="text-muted-foreground mb-0">
-              Not satisfied with your subscription? Get a full refund within the first 7 days.
+            <h3 className="text-xl font-bold mb-2">Premium Benefits</h3>
+            <p className="text-muted-foreground mb-4">
+              Subscribe to Premium and get unlimited access to all blog content, including exclusive premium articles and case studies.
             </p>
+            <Button asChild variant="outline">
+              <Link to="/blog">Browse Blog Articles</Link>
+            </Button>
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import AdminBlog from "./pages/AdminBlog";
+import AdminComments from "./pages/AdminComments"; // Add this new import
 import AdminLogin from "./components/admin/AdminLogin";
 import Auth from "./pages/Auth";
 import Subscription from "./pages/Subscription";
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="blog" element={<Blog />} />
               <Route path="blog/:id" element={<BlogPost />} />
               <Route path="admin/blog" element={<AdminBlog />} />
+              <Route path="admin/comments" element={<AdminComments />} /> {/* Add this new route */}
               <Route path="admin/login" element={<AdminLogin />} />
               <Route path="chatbot" element={<AIChatbot />} />
               <Route path="auth" element={<Auth />} />

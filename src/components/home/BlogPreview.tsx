@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Badge } from 'lucide-react';
+import { ArrowRight, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 const BlogPreview = () => {
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
@@ -75,86 +76,47 @@ const BlogPreview = () => {
             {latestPosts.map((post, index) => (
               <Card 
                 key={post.id} 
-                className={`overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${index === 0 ? 'md:col-span-3 md:grid md:grid-cols-2' : ''}`}
+                className="overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
-                {index === 0 ? (
-                  <>
-                    <div className="h-full">
-                      {post.cover_image ? (
-                        <img 
-                          src={post.cover_image} 
-                          alt={post.title} 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-                          <p className="text-muted-foreground text-sm">No image available</p>
-                        </div>
-                      )}
+                <div className="h-48 bg-muted/20">
+                  {post.cover_image ? (
+                    <img 
+                      src={post.cover_image} 
+                      alt={post.title} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80";
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-r from-primary/10 to-primary/30 flex items-center justify-center">
+                      <p className="text-primary font-medium">Blog Post</p>
                     </div>
-                    <div className="flex flex-col p-6">
-                      <CardHeader className="p-0 pb-4">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                          <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs font-medium inline-flex items-center">
-                            Featured
-                          </span>
-                          <span className="flex items-center">
-                            <Calendar className="h-3.5 w-3.5 mr-1" />
-                            {format(new Date(post.created_at), 'MMM d, yyyy')}
-                          </span>
-                        </div>
-                        <CardTitle className="text-2xl">{post.title}</CardTitle>
-                        <CardDescription className="mt-2">{post.excerpt}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-0 py-4 flex-grow">
-                        <p className="text-muted-foreground">
-                          {post.content.substring(0, 180)}...
-                        </p>
-                      </CardContent>
-                      <CardFooter className="p-0 pt-2">
-                        <Button asChild className="group">
-                          <Link to={`/blog/${post.id}`}>
-                            Read Article <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                          </Link>
-                        </Button>
-                      </CardFooter>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {post.cover_image && (
-                      <div className="h-48 overflow-hidden">
-                        <img 
-                          src={post.cover_image} 
-                          alt={post.title} 
-                          className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-                        />
-                      </div>
-                    )}
-                    <CardHeader>
-                      <div className="flex items-center text-sm text-muted-foreground mb-2">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        <time dateTime={post.created_at}>
-                          {format(new Date(post.created_at), 'MMMM d, yyyy')}
-                        </time>
-                      </div>
-                      <CardTitle className="line-clamp-1">{post.title}</CardTitle>
-                      <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                      <p className="line-clamp-3 text-muted-foreground text-sm">
-                        {post.content.substring(0, 120)}...
-                      </p>
-                    </CardContent>
-                    <CardFooter>
-                      <Button asChild variant="outline" className="w-full group">
-                        <Link to={`/blog/${post.id}`}>
-                          Read Article <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                      </Button>
-                    </CardFooter>
-                  </>
-                )}
+                  )}
+                </div>
+                <CardHeader>
+                  <div className="flex items-center text-sm text-muted-foreground mb-2">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    <time dateTime={post.created_at}>
+                      {format(new Date(post.created_at), 'MMMM d, yyyy')}
+                    </time>
+                  </div>
+                  <CardTitle className="line-clamp-1">{post.title}</CardTitle>
+                  <CardDescription className="line-clamp-2">{post.excerpt}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="line-clamp-3 text-muted-foreground text-sm">
+                    {post.content.substring(0, 120)}...
+                  </p>
+                </CardContent>
+                <CardFooter>
+                  <Button asChild variant="outline" className="w-full group">
+                    <Link to={`/blog/${post.id}`}>
+                      Read Article <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </CardFooter>
               </Card>
             ))}
           </div>
