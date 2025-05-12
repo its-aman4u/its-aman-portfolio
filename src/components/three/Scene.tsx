@@ -26,16 +26,15 @@ function Scene() {
       {/* Enhanced lighting setup */}
       <ambientLight intensity={0.4} />
       <pointLight position={[10, 10, 10]} intensity={0.8} />
-      <SpotLight 
-        position={[5, 5, 5]} 
-        angle={0.3} 
-        penumbra={0.8} 
-        intensity={0.8} 
-        distance={20} 
-        castShadow 
+      <SpotLight
+        position={[5, 5, 5]}
+        angle={0.3}
+        penumbra={0.8}
+        intensity={0.8}
+        distance={20}
+        castShadow
         attenuation={5}
-        anglePower={5} // Sharper spotlight edge
-        color="#ffffff"
+        anglePower={5}
       />
       
       {/* Main 3D elements */}
@@ -54,13 +53,13 @@ function Scene() {
       />
       
       {/* Add subtle shadow below elements */}
-      <ContactShadows 
-        position={[0, -2, 0]} 
-        opacity={0.4} 
-        width={15} 
-        height={15} 
-        blur={2.5} 
-        far={4} 
+      <ContactShadows
+        frames={1}
+        position={[0, -2, 0]}
+        opacity={0.4}
+        scale={15}
+        blur={2.5}
+        far={4}
         color="#000000"
         rotation={[Math.PI / 2, 0, 0]}
       />

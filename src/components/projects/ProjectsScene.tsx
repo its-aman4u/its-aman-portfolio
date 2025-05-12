@@ -88,7 +88,6 @@ function ProjectTitle({
   return (
     <group ref={textRef} position={position}>
       <Text
-        color={color}
         fontSize={0.2}
         maxWidth={2}
         lineHeight={1}
@@ -97,6 +96,7 @@ function ProjectTitle({
         font="https://fonts.gstatic.com/s/raleway/v14/1Ptrg8zYS_SKggPNwK4vaqI.woff"
         anchorX="center"
         anchorY="middle"
+        color={color}
       >
         {title}
       </Text>
