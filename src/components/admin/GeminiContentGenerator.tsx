@@ -11,9 +11,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface GeminiContentGeneratorProps {
   onInsertContent?: (content: string) => void;
+  onContentGenerated?: (content: { title: string; excerpt: string; content: string }) => void;
 }
 
-const GeminiContentGenerator: React.FC<GeminiContentGeneratorProps> = ({ onInsertContent }) => {
+const GeminiContentGenerator: React.FC<GeminiContentGeneratorProps> = ({ onInsertContent, onContentGenerated }) => {
   const [prompt, setPrompt] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,22 @@ const GeminiContentGenerator: React.FC<GeminiContentGeneratorProps> = ({ onInser
 
       if (error) throw error;
       setGeneratedContent(data.content);
+      
+      // If onContentGenerated is provided, try to parse the content into title, excerpt and content
+      if (onContentGenerated) {
+        try {
+          // Simple parsing logic - we assume the first line is the title
+          // and the second paragraph is the excerpt
+          const lines = data.content.split('\n').filter(line => line.trim() !== '');
+          const title = lines[0].replace(/^#\s+/, ''); // Remove markdown heading if present
+          const excerpt = lines.length > 1 ? lines[1] : '';
+          const content = data.content;
+          
+          onContentGenerated({ title, excerpt, content });
+        } catch (parseError) {
+          console.error('Error parsing generated content:', parseError);
+        }
+      }
     } catch (error) {
       console.error('Error generating content:', error);
       toast.error('Failed to generate content. Please try again.');
