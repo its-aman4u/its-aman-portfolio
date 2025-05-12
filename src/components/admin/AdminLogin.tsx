@@ -121,8 +121,8 @@ const AdminLogin = () => {
               <Info className="h-4 w-4" />
               <AlertTitle>Demo Credentials</AlertTitle>
               <AlertDescription className="text-xs">
-                <div>Email: admin@example.com</div>
-                <div>Password: admin123</div>
+                <div>Email: admin@portfolio.com</div>
+                <div>Password: adminpassword123</div>
               </AlertDescription>
             </Alert>
             

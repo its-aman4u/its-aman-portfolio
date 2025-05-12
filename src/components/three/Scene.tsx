@@ -57,6 +57,7 @@ function Scene() {
         far={4}
         color="#000000"
         resolution={512}
+        args={[10, 10]}
       />
       
       {/* Enhanced camera controls */}

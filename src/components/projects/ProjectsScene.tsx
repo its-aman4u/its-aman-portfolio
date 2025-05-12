@@ -98,6 +98,7 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
+        args={[undefined]}
       >
         {title}
       </Text>
