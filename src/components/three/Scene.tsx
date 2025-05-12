@@ -4,7 +4,6 @@ import {
   Environment, 
   Stars, 
   ContactShadows,
-  SpotLight
 } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import { useEffect } from 'react';
@@ -26,16 +25,12 @@ function Scene() {
       {/* Enhanced lighting setup */}
       <ambientLight intensity={0.4} />
       <pointLight position={[10, 10, 10]} intensity={0.8} />
-      <SpotLight
+      
+      {/* Replace problematic SpotLight with standard pointLight */}
+      <pointLight 
         position={[5, 5, 5]}
-        angle={0.3}
-        penumbra={0.8}
         intensity={0.8}
-        distance={20}
         castShadow
-        attenuation={5}
-        anglePower={5}
-        color="white"
       />
       
       {/* Main 3D elements */}
@@ -53,16 +48,14 @@ function Scene() {
         speed={1}
       />
       
-      {/* Add subtle shadow below elements */}
+      {/* Simplified ContactShadows with correct props */}
       <ContactShadows
-        frames={1}
         position={[0, -2, 0]}
         opacity={0.4}
         scale={15}
         blur={2.5}
         far={4}
         color="#000000"
-        rotation={[Math.PI / 2, 0, 0]}
         resolution={512}
       />
       

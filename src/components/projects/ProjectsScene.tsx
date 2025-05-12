@@ -88,6 +88,7 @@ function ProjectTitle({
   return (
     <group ref={textRef} position={position}>
       <Text
+        position={[0, 0, 0]}
         fontSize={0.2}
         maxWidth={2}
         lineHeight={1}
