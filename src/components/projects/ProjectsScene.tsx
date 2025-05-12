@@ -97,6 +97,8 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
+        position={[0, 0, 0]}
+        material={new THREE.MeshBasicMaterial({ color })}
       >
         {title}
       </Text>

@@ -35,6 +35,7 @@ function Scene() {
         castShadow
         attenuation={5}
         anglePower={5}
+        color="white"
       />
       
       {/* Main 3D elements */}
@@ -62,6 +63,7 @@ function Scene() {
         far={4}
         color="#000000"
         rotation={[Math.PI / 2, 0, 0]}
+        resolution={512}
       />
       
       {/* Enhanced camera controls */}
