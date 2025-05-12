@@ -81,8 +81,10 @@ function Scene() {
         rotateSpeed={0.8}
       />
       
-      {/* Enhanced environment */}
-      <Environment preset="sunset" background={false} />
+      {/* Changed from preset to a simple ambient light environment to prevent HDR loading error */}
+      <Environment background={false}>
+        <ambientLight intensity={1} />
+      </Environment>
     </>
   );
 }

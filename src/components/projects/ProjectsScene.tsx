@@ -97,8 +97,6 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
-        position={[0, 0, 0]}
-        material={new THREE.MeshBasicMaterial({ color })}
       >
         {title}
       </Text>
@@ -190,7 +188,10 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
         dampingFactor={0.05}
       />
       
-      <Environment preset="sunset" />
+      {/* Changed from preset to a simple environment without HDR */}
+      <Environment background={false}>
+        <ambientLight intensity={0.8} />
+      </Environment>
     </>
   );
 }
