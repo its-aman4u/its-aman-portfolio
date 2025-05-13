@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -274,8 +275,8 @@ const BlogPostPage = () => {
             ) : (
               <div className="prose prose-lg dark:prose-invert max-w-none">
                 <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeRaw]}
+                  remarkPlugins={[remarkGfm as any]}
+                  rehypePlugins={[rehypeRaw as any]}
                 >
                   {blog.content}
                 </ReactMarkdown>
