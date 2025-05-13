@@ -11,6 +11,7 @@ import { ArrowLeft, AlertCircle, Bot } from 'lucide-react';
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from 'sonner';
 
 const Auth = () => {
   const { login, signup, isAuthenticated } = useAuth();
@@ -55,14 +56,19 @@ const Auth = () => {
     setError('');
     
     try {
+      console.log('Attempting login with:', loginData.email);
       const success = await login(loginData.email, loginData.password);
       if (success) {
+        toast.success('Login successful');
         navigate('/');
       } else {
         setError('Login failed. Please check your credentials and try again.');
+        toast.error('Login failed', { description: 'Please check your credentials and try again.' });
       }
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || 'An error occurred during login');
+      toast.error('Login error', { description: err.message });
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +82,7 @@ const Auth = () => {
     
     if (signupData.password !== signupData.confirmPassword) {
       setError('Passwords do not match');
+      toast.error('Password mismatch', { description: 'Passwords do not match. Please try again.' });
       return;
     }
     
@@ -83,6 +90,7 @@ const Auth = () => {
     try {
       const success = await signup(signupData.email, signupData.password, signupData.fullName);
       if (success) {
+        toast.success('Account created!', { description: 'Please check your email to verify your account.' });
         // Stay on the page as they may need to verify email
         setSignupData({
           email: '',
@@ -90,9 +98,13 @@ const Auth = () => {
           confirmPassword: '',
           fullName: ''
         });
+      } else {
+        toast.error('Signup failed');
       }
     } catch (err: any) {
+      console.error('Signup error:', err);
       setError(err.message || 'An error occurred during signup');
+      toast.error('Signup error', { description: err.message });
     } finally {
       setIsLoading(false);
     }

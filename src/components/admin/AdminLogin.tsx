@@ -8,11 +8,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const AdminLogin = () => {
   const { login, isAuthenticated, profile } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@portfolio.com');
+  const [password, setPassword] = useState('adminpassword123');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -30,14 +31,24 @@ const AdminLogin = () => {
     setError('');
     
     try {
+      console.log('Attempting admin login with:', { email, password });
       const success = await login(email, password);
+      console.log('Login success:', success, 'Profile:', profile);
+      
       if (!success) {
         setError('Invalid credentials. Please try again.');
+        toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
       } else if (!profile?.is_admin) {
         setError('Your account does not have admin privileges.');
+        toast.error('Access denied', { description: 'Your account does not have admin privileges.' });
+      } else {
+        toast.success('Welcome back, admin!');
+        navigate('/admin/blog');
       }
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || 'An error occurred during login');
+      toast.error('Login error', { description: err.message || 'An error occurred during login' });
     } finally {
       setIsLoading(false);
     }
