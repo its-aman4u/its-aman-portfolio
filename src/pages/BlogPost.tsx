@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -15,9 +14,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 
 // Import the plugins
-import type { Pluggable } from 'unified';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+// Import types from unified
+import type { PluggableList } from 'unified';
 
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -274,8 +274,8 @@ const BlogPostPage = () => {
             ) : (
               <div className="prose prose-lg dark:prose-invert max-w-none">
                 <ReactMarkdown
-                  remarkPlugins={[remarkGfm as Pluggable]}
-                  rehypePlugins={[rehypeRaw as Pluggable]}
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]}
                 >
                   {blog.content}
                 </ReactMarkdown>
