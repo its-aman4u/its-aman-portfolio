@@ -36,7 +36,7 @@ const BlogPreview = () => {
         
         console.log('Latest blog posts fetched:', data);
         
-        if (data.length === 0) {
+        if (!data || data.length === 0) {
           console.log('No blog posts found, using mock data');
           // Use mock data if no posts are found
           setLatestPosts(mockBlogPosts.slice(0, 3));

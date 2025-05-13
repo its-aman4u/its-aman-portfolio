@@ -197,10 +197,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Login successful:', data);
       toast.success('Logged in successfully');
       
-      // Immediately fetch profile to check if admin
+      // Immediately fetch profile data after login
       if (data.user) {
         const profileData = await fetchProfile(data.user.id);
         setProfile(profileData);
+        
+        // Check if user is admin and handle accordingly
+        console.log('Profile data after login:', profileData);
+        if (profileData && profileData.is_admin) {
+          console.log('User is an admin');
+        } else {
+          console.log('User is not an admin or profile data missing');
+        }
       }
       
       return true;

@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const AdminLogin = () => {
+  // Updated default credentials to match what's displayed in your screenshot
   const { login, isAuthenticated, profile } = useAuth();
   const [email, setEmail] = useState('admin@portfolio.com');
   const [password, setPassword] = useState('adminpassword123');
@@ -31,14 +32,14 @@ const AdminLogin = () => {
     setError('');
     
     try {
-      console.log('Attempting admin login with:', { email, password });
+      console.log('Attempting admin login with:', { email });
       const success = await login(email, password);
-      console.log('Login success:', success, 'Profile:', profile);
+      console.log('Login attempt result:', success, 'Profile:', profile);
       
       if (!success) {
         setError('Invalid credentials. Please try again.');
         toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
-      } else if (!profile?.is_admin) {
+      } else if (profile && !profile.is_admin) {
         setError('Your account does not have admin privileges.');
         toast.error('Access denied', { description: 'Your account does not have admin privileges.' });
       } else {
