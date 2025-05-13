@@ -9,9 +9,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
-  // Updated default credentials to match what's displayed in your screenshot
   const { login, isAuthenticated, profile } = useAuth();
   const [email, setEmail] = useState('admin@portfolio.com');
   const [password, setPassword] = useState('adminpassword123');
@@ -34,18 +34,44 @@ const AdminLogin = () => {
     try {
       console.log('Attempting admin login with:', { email });
       const success = await login(email, password);
-      console.log('Login attempt result:', success, 'Profile:', profile);
+      console.log('Login attempt result:', success);
       
-      if (!success) {
+      // Check if the user exists and get their profile
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      console.log('Current authenticated user:', userData?.user || 'No user');
+      
+      if (!success || !userData?.user) {
         setError('Invalid credentials. Please try again.');
         toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
-      } else if (profile && !profile.is_admin) {
+        return;
+      }
+      
+      // Fetch the profile to check admin status
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userData.user.id)
+        .single();
+      
+      console.log('Profile after login:', profileData);
+      
+      if (profileError || !profileData) {
+        console.error('Error fetching profile:', profileError);
+        setError('Could not verify admin status.');
+        toast.error('Login error', { description: 'Could not verify admin status.' });
+        return;
+      }
+      
+      if (!profileData.is_admin) {
         setError('Your account does not have admin privileges.');
         toast.error('Access denied', { description: 'Your account does not have admin privileges.' });
-      } else {
-        toast.success('Welcome back, admin!');
-        navigate('/admin/blog');
+        // Log the user out if they're not an admin
+        await supabase.auth.signOut();
+        return;
       }
+      
+      toast.success('Welcome back, admin!');
+      navigate('/admin/blog');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'An error occurred during login');

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -25,18 +26,30 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulating API call - would connect to Supabase in production
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send the contact submission to Supabase
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+            status: 'unread'
+          }
+        ]);
       
-      console.log('Form submission data:', {
-        ...formData,
-        created_at: new Date().toISOString()
-      });
+      if (error) {
+        throw error;
+      }
+      
+      console.log('Contact submission successful:', data);
       
       toast.success('Message sent successfully!', {
         description: 'Thank you for reaching out. I will get back to you shortly.'
       });
       
+      // Reset form after successful submission
       setFormData({
         name: '',
         email: '',
@@ -44,7 +57,7 @@ const Contact = () => {
         message: ''
       });
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error submitting contact form:', error);
       toast.error('Failed to send message', {
         description: 'There was an error sending your message. Please try again later.'
       });
@@ -226,7 +239,7 @@ const Contact = () => {
               <div className="mt-6 flex items-start gap-2 text-sm">
                 <AlertCircle className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                 <p className="text-muted-foreground">
-                  This is a demo contact form. In a production environment, this would be connected to a backend service like Resend API or similar.
+                  Your message will be stored in the database and I will respond as soon as possible.
                 </p>
               </div>
             </div>
