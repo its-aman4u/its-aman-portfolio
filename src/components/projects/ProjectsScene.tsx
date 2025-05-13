@@ -88,7 +88,6 @@ function ProjectTitle({
   return (
     <group ref={textRef} position={position}>
       <Text
-        position={[0, 0, 0]}
         fontSize={0.2}
         maxWidth={2}
         lineHeight={1}
@@ -98,7 +97,6 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
-        args={[undefined]}
       >
         {title}
       </Text>
@@ -190,7 +188,6 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
         dampingFactor={0.05}
       />
       
-      {/* Changed from preset to a simple environment without HDR */}
       <Environment background={false}>
         <ambientLight intensity={0.8} />
       </Environment>

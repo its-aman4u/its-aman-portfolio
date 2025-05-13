@@ -48,17 +48,18 @@ function Scene() {
         speed={1}
       />
       
-      {/* Simplified ContactShadows with correct props */}
-      <ContactShadows
-        position={[0, -2, 0]}
-        opacity={0.4}
-        scale={15}
-        blur={2.5}
-        far={4}
-        color="#000000"
-        resolution={512}
-        args={[10, 10]}
-      />
+      {/* ContactShadows with proper props */}
+      <group>
+        <ContactShadows
+          position={[0, -2, 0]}
+          opacity={0.4}
+          scale={15}
+          blur={2.5}
+          far={4}
+          color="#000000"
+          resolution={512}
+        />
+      </group>
       
       {/* Enhanced camera controls */}
       <OrbitControls 
