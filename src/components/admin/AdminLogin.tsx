@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from '@/contexts/AuthContext';
-import { Lock, AlertCircle, Info } from 'lucide-react';
+import { Lock, AlertCircle, Info, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
@@ -17,6 +17,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('adminpassword123');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // If the user is already authenticated and is an admin, redirect to admin blog page
@@ -81,6 +82,10 @@ const AdminLogin = () => {
     }
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-[80vh] pt-16">
       <div className="w-full max-w-md px-4">
@@ -124,15 +129,25 @@ const AdminLogin = () => {
                 <label htmlFor="password" className="text-sm font-medium">
                   Password
                 </label>
-                <Input 
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="•••••••••"
-                  required
-                  className="focus:border-primary"
-                />
+                <div className="relative">
+                  <Input 
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="•••••••••"
+                    required
+                    className="focus:border-primary pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    onClick={toggleShowPassword}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               
               <Button 
@@ -146,7 +161,10 @@ const AdminLogin = () => {
                     Logging in...
                   </>
                 ) : (
-                  'Login to Admin'
+                  <>
+                    Login to Admin
+                    <ArrowRight size={16} className="ml-2" />
+                  </>
                 )}
               </Button>
             </form>
