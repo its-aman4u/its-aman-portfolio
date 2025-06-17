@@ -55,6 +55,8 @@ function Scene() {
         scale={15}
         blur={2.5}
         far={4}
+        resolution={512}
+        frames={1}
       />
       
       {/* Enhanced camera controls */}

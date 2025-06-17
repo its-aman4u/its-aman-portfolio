@@ -96,6 +96,7 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
+        material-toneMapped={false}
       >
         {title}
       </Text>
