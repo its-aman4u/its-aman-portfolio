@@ -55,7 +55,6 @@ function Scene() {
         scale={15}
         blur={2.5}
         far={4}
-        color="#000000"
       />
       
       {/* Enhanced camera controls */}

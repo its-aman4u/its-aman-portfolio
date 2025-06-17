@@ -1,3 +1,4 @@
+
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars, Text } from '@react-three/drei';
 import { Suspense, useRef, useState } from 'react';
@@ -92,7 +93,6 @@ function ProjectTitle({
         lineHeight={1}
         letterSpacing={0.02}
         textAlign="center"
-        font="https://fonts.gstatic.com/s/raleway/v14/1Ptrg8zYS_SKggPNwK4vaqI.woff"
         anchorX="center"
         anchorY="middle"
         color={color}
