@@ -364,7 +364,8 @@ const AdminBlog = () => {
                     content: content.content || blogInput.content,
                     cover_image: blogInput.cover_image,
                     published: blogInput.published,
-                    premium: blogInput.premium
+                    premium: blogInput.premium,
+                    price: blogInput.price, // Add missing price property
                   });
                 }}
                 onInsertContent={handleInsertContent}

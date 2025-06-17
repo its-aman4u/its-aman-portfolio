@@ -1,4 +1,3 @@
-
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars, Text } from '@react-three/drei';
 import { Suspense, useRef, useState } from 'react';
@@ -97,7 +96,6 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
-        material={new THREE.MeshBasicMaterial({ color })}
       >
         {title}
       </Text>
