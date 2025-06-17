@@ -1,4 +1,3 @@
-
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, Stars, Text } from '@react-three/drei';
 import { Suspense, useRef, useState } from 'react';
@@ -96,7 +95,7 @@ function ProjectTitle({
         anchorX="center"
         anchorY="middle"
         color={color}
-        material-toneMapped={false}
+        {...({ 'material-toneMapped': false } as any)}
       >
         {title}
       </Text>

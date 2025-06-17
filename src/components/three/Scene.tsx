@@ -50,13 +50,15 @@ function Scene() {
       
       {/* ContactShadows with proper props */}
       <ContactShadows
-        position={[0, -2, 0]}
-        opacity={0.4}
-        scale={15}
-        blur={2.5}
-        far={4}
-        resolution={512}
-        frames={1}
+        {...({
+          position: [0, -2, 0],
+          opacity: 0.4,
+          scale: 15,
+          blur: 2.5,
+          far: 4,
+          resolution: 512,
+          frames: 1
+        } as any)}
       />
       
       {/* Enhanced camera controls */}
