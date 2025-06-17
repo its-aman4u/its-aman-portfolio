@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { BlogPost } from '@/types/blog';
+import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -50,16 +48,9 @@ const AdminBlog = () => {
     const fetchBlogs = async () => {
       setIsLoadingBlogs(true);
       try {
-        const { data, error } = await supabase
-          .from('blogs')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          throw error;
-        }
-
-        setBlogs(data as BlogPost[]);
+        // Use mock data since we're in mock mode
+        console.log('Using mock blog data for admin');
+        setBlogs(mockBlogPosts);
       } catch (error: any) {
         toast.error('Failed to fetch blogs', { description: error.message });
         console.error('Error fetching blogs:', error);
@@ -114,35 +105,27 @@ const AdminBlog = () => {
       }
 
       if (selectedBlog) {
-        const { error } = await supabase
-          .from('blogs')
-          .update({
-            ...blogInput,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', selectedBlog.id);
-
-        if (error) throw error;
-        toast.success('Blog post updated successfully!');
+        // Mock update - just update local state
+        const updatedBlogs = blogs.map(blog => 
+          blog.id === selectedBlog.id 
+            ? { ...blog, ...blogInput, updated_at: new Date().toISOString() }
+            : blog
+        );
+        setBlogs(updatedBlogs);
+        toast.success('Blog post updated successfully! (Mock mode)');
       } else {
-        const { error } = await supabase
-          .from('blogs')
-          .insert({
-            ...blogInput,
-            author_id: user.id,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-
-        if (error) throw error;
-        toast.success('Blog post created successfully!');
+        // Mock create - add to local state
+        const newBlog: BlogPost = {
+          id: `mock-${Date.now()}`,
+          ...blogInput,
+          author_id: user.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        setBlogs([newBlog, ...blogs]);
+        toast.success('Blog post created successfully! (Mock mode)');
       }
 
-      const { data } = await supabase
-        .from('blogs')
-        .select('*')
-        .order('created_at', { ascending: false });
-      setBlogs(data as BlogPost[]);
       setSelectedBlog(null);
       resetForm();
     } catch (error: any) {
@@ -169,19 +152,11 @@ const AdminBlog = () => {
 
     setIsLoading(true);
     try {
-      const { error } = await supabase
-        .from('blogs')
-        .delete()
-        .eq('id', selectedBlog.id);
+      // Mock delete - remove from local state
+      const updatedBlogs = blogs.filter(blog => blog.id !== selectedBlog.id);
+      setBlogs(updatedBlogs);
+      toast.success('Blog post deleted successfully! (Mock mode)');
 
-      if (error) throw error;
-      toast.success('Blog post deleted successfully!');
-
-      const { data } = await supabase
-        .from('blogs')
-        .select('*')
-        .order('created_at', { ascending: false });
-      setBlogs(data as BlogPost[]);
       setSelectedBlog(null);
       resetForm();
     } catch (error: any) {
@@ -367,18 +342,15 @@ const AdminBlog = () => {
             <CardHeader>
               <CardTitle>AI Content Generator</CardTitle>
               <CardDescription>
-                Use Gemini AI to generate content for your blog posts
+                Mock AI content generation (Gemini API not available in mock mode)
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
-                <h3 className="font-medium mb-2">How to use AI content generation:</h3>
-                <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                  <li>Type a prompt describing what content you want</li>
-                  <li>Click "Generate Content" and wait for the AI response</li>
-                  <li>Use the entire response or click "Insert at Cursor" to add it at the cursor position</li>
-                  <li>Edit and refine the generated content as needed</li>
-                </ol>
+                <h3 className="font-medium mb-2">Mock Mode Notice:</h3>
+                <p className="text-sm text-muted-foreground">
+                  AI content generation will return mock responses since the actual Gemini API is not available in mock mode.
+                </p>
               </div>
               <GeminiContentGenerator 
                 onContentGenerated={(content) => {
@@ -471,10 +443,10 @@ const AdminBlog = () => {
                 </Button>
               </div>
               <div>
-                <h3 className="text-sm font-medium mb-2">Blog Stats</h3>
+                <h3 className="text-sm font-medium mb-2">Contact Submissions</h3>
                 <Button asChild variant="outline" className="w-full">
-                  <Link to="/admin/stats">
-                    View Analytics
+                  <Link to="/admin/contact">
+                    View Messages
                   </Link>
                 </Button>
               </div>

@@ -5,10 +5,8 @@ import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
 
 const BlogPreview = () => {
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
@@ -18,34 +16,12 @@ const BlogPreview = () => {
     async function fetchLatestPosts() {
       try {
         setLoading(true);
-        console.log('Fetching latest blog posts');
+        console.log('Using mock blog posts');
         
-        const { data, error } = await supabase
-          .from('blogs')
-          .select('*')
-          .eq('published', true)
-          .order('created_at', { ascending: false })
-          .limit(3);
-          
-        if (error) {
-          console.error('Error fetching latest blog posts:', error);
-          // Fallback to mock data if there's an error
-          setLatestPosts(mockBlogPosts.slice(0, 3));
-          return;
-        }
-        
-        console.log('Latest blog posts fetched:', data);
-        
-        if (!data || data.length === 0) {
-          console.log('No blog posts found, using mock data');
-          // Use mock data if no posts are found
-          setLatestPosts(mockBlogPosts.slice(0, 3));
-          return;
-        }
-        
-        setLatestPosts(data as BlogPost[]);
+        // Use mock data since we're in mock mode
+        setLatestPosts(mockBlogPosts.slice(0, 3));
       } catch (error) {
-        console.error('Error fetching latest blog posts:', error);
+        console.error('Error setting up mock blog posts:', error);
         // Fallback to mock data
         setLatestPosts(mockBlogPosts.slice(0, 3));
       } finally {
