@@ -1,7 +1,5 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from 'sonner';
 
 type UserProfile = {
@@ -21,7 +19,7 @@ type Subscription = {
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  user: User | null;
+  user: any | null;
   profile: UserProfile | null;
   subscription: Subscription | null;
   isLoading: boolean;
@@ -35,9 +33,48 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Mock users data
+const mockUsers = [
+  {
+    id: 'admin-1',
+    email: 'admin@portfolio.com',
+    password: 'adminpassword123',
+    profile: {
+      id: 'admin-1',
+      username: 'admin',
+      full_name: 'Admin User',
+      avatar_url: null,
+      website: null,
+      is_admin: true,
+    },
+    subscription: {
+      tier: 'premium' as const,
+      is_active: true,
+      current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    }
+  },
+  {
+    id: 'user-1',
+    email: 'user@example.com',
+    password: 'password123',
+    profile: {
+      id: 'user-1',
+      username: 'user1',
+      full_name: 'Regular User',
+      avatar_url: null,
+      website: null,
+      is_admin: false,
+    },
+    subscription: {
+      tier: 'free' as const,
+      is_active: true,
+      current_period_end: null,
+    }
+  }
+];
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,172 +82,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Compute premium status
   const isPremium = subscription?.tier === 'premium' && subscription?.is_active === true;
 
-  // Fetch user profile from database
-  const fetchProfile = async (userId: string) => {
-    try {
-      console.log('Fetching profile for user ID:', userId);
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return null;
-      }
-
-      console.log('Profile fetched:', data);
-      return data as UserProfile;
-    } catch (error) {
-      console.error('Error in fetchProfile:', error);
-      return null;
-    }
-  };
-
-  // Fetch user subscription from database
-  const fetchSubscription = async (userId: string) => {
-    try {
-      console.log('Fetching subscription for user ID:', userId);
-      const { data, error } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error) {
-        console.error('Error fetching subscription:', error);
-        return {
-          tier: 'free' as const,
-          is_active: true,
-          current_period_end: null
-        };
-      }
-
-      console.log('Subscription fetched:', data);
-      return {
-        tier: data.tier as 'free' | 'premium',
-        is_active: data.is_active,
-        current_period_end: data.current_period_end
-      };
-    } catch (error) {
-      console.error('Error in fetchSubscription:', error);
-      return {
-        tier: 'free' as const,
-        is_active: true,
-        current_period_end: null
-      };
-    }
-  };
-
-  // Function to refresh profile data
-  const refreshProfile = async () => {
-    if (!user) return;
-    
-    const profileData = await fetchProfile(user.id);
-    if (profileData) {
-      setProfile(profileData);
-    }
-  };
-
-  // Function to refresh subscription data
-  const refreshSubscription = async () => {
-    if (!user) return;
-    
-    const subscriptionData = await fetchSubscription(user.id);
-    if (subscriptionData) {
-      setSubscription(subscriptionData);
-    }
-  };
-
-  // Initialize auth state
+  // Initialize auth state from localStorage
   useEffect(() => {
-    setIsLoading(true);
-    console.log('Setting up auth state listener');
-
-    // Set up the auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        console.log('Auth state changed:', event, currentSession?.user?.id);
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-
-        if (currentSession?.user) {
-          // Don't call Supabase inside the callback directly
-          // Use setTimeout to defer these calls
-          setTimeout(async () => {
-            const [profileData, subscriptionData] = await Promise.all([
-              fetchProfile(currentSession.user.id),
-              fetchSubscription(currentSession.user.id)
-            ]);
-            
-            setProfile(profileData);
-            setSubscription(subscriptionData);
-            setIsLoading(false);
-          }, 0);
-        } else {
-          setProfile(null);
-          setSubscription(null);
-          setIsLoading(false);
-        }
+    const savedAuth = localStorage.getItem('mock-auth');
+    if (savedAuth) {
+      try {
+        const authData = JSON.parse(savedAuth);
+        setUser(authData.user);
+        setProfile(authData.profile);
+        setSubscription(authData.subscription);
+      } catch (error) {
+        console.error('Error parsing saved auth data:', error);
+        localStorage.removeItem('mock-auth');
       }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      console.log('Existing session check:', currentSession?.user?.id);
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-
-      if (currentSession?.user) {
-        Promise.all([
-          fetchProfile(currentSession.user.id),
-          fetchSubscription(currentSession.user.id)
-        ]).then(([profileData, subscriptionData]) => {
-          setProfile(profileData);
-          setSubscription(subscriptionData);
-          setIsLoading(false);
-        });
-      } else {
-        setIsLoading(false);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    }
+    setIsLoading(false);
   }, []);
+
+  // Save auth state to localStorage whenever it changes
+  useEffect(() => {
+    if (user && profile && subscription) {
+      localStorage.setItem('mock-auth', JSON.stringify({
+        user,
+        profile,
+        subscription
+      }));
+    } else {
+      localStorage.removeItem('mock-auth');
+    }
+  }, [user, profile, subscription]);
+
+  const refreshProfile = async () => {
+    // Mock function - no action needed for local state
+  };
+
+  const refreshSubscription = async () => {
+    // Mock function - no action needed for local state
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       console.log('Login attempt for:', email);
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
-      if (error) {
-        console.error('Login error:', error);
-        toast.error('Login failed', { description: error.message });
+      const mockUser = mockUsers.find(u => u.email === email && u.password === password);
+      
+      if (!mockUser) {
+        toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
         return false;
       }
       
-      console.log('Login successful:', data);
+      setUser({ id: mockUser.id, email: mockUser.email });
+      setProfile(mockUser.profile);
+      setSubscription(mockUser.subscription);
+      
+      console.log('Login successful:', mockUser);
       toast.success('Logged in successfully');
-      
-      // Immediately fetch profile data after login
-      if (data.user) {
-        const profileData = await fetchProfile(data.user.id);
-        setProfile(profileData);
-        
-        // Check if user is admin and handle accordingly
-        console.log('Profile data after login:', profileData);
-        if (profileData && profileData.is_admin) {
-          console.log('User is an admin');
-        } else {
-          console.log('User is not an admin or profile data missing');
-        }
-      }
-      
       return true;
     } catch (error: any) {
       console.error('Login error (caught):', error);
@@ -222,25 +148,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (email: string, password: string, fullName: string): Promise<boolean> => {
     try {
       console.log('Signup attempt for:', email);
-      const { data, error } = await supabase.auth.signUp({ 
-        email, 
-        password,
-        options: {
-          data: {
-            full_name: fullName
-          }
-        }
-      });
       
-      if (error) {
-        console.error('Signup error:', error);
-        toast.error('Sign up failed', { description: error.message });
+      // Check if user already exists
+      const existingUser = mockUsers.find(u => u.email === email);
+      if (existingUser) {
+        toast.error('Sign up failed', { description: 'User already exists with this email' });
         return false;
       }
       
-      console.log('Signup successful:', data);
+      // Create new mock user
+      const newUser = {
+        id: `user-${Date.now()}`,
+        email,
+        password,
+        profile: {
+          id: `user-${Date.now()}`,
+          username: email.split('@')[0],
+          full_name: fullName,
+          avatar_url: null,
+          website: null,
+          is_admin: false,
+        },
+        subscription: {
+          tier: 'free' as const,
+          is_active: true,
+          current_period_end: null,
+        }
+      };
+      
+      mockUsers.push(newUser);
+      
+      console.log('Signup successful:', newUser);
       toast.success('Account created successfully', { 
-        description: 'Please check your email to confirm your account.' 
+        description: 'You can now log in with your credentials.' 
       });
       return true;
     } catch (error: any) {
@@ -252,7 +192,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      setUser(null);
+      setProfile(null);
+      setSubscription(null);
       toast.success('Logged out successfully');
     } catch (error: any) {
       console.error('Logout error:', error);

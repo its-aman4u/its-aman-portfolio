@@ -20,17 +20,9 @@ const Subscription = () => {
 
     setIsLoading(true);
     try {
-      // This is where we would call our Stripe checkout edge function
-      // const { data, error } = await supabase.functions.invoke('create-checkout', {
-      //   body: { tier }
-      // });
-      
-      // if (error) throw error;
-      // window.location.href = data.url;
-
-      // For now, just show a toast that this would redirect to Stripe
-      toast.info('This would redirect to Stripe', {
-        description: 'In a real app, this would redirect to Stripe Checkout to complete your subscription.'
+      // Mock subscription process
+      toast.info('This is a demo app', {
+        description: 'In a real app, this would redirect to a payment processor to complete your subscription.'
       });
       
       setTimeout(() => {
@@ -153,8 +145,8 @@ const Subscription = () => {
               </CardContent>
               <CardFooter>
                 {subscription?.tier === 'premium' && subscription?.is_active ? (
-                  <Button variant="outline" className="w-full" asChild>
-                    <Link to="/manage-subscription">Manage Subscription</Link>
+                  <Button variant="outline" className="w-full" disabled>
+                    Active Premium Plan
                   </Button>
                 ) : (
                   <Button 

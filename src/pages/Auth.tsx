@@ -8,8 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, AlertCircle, Bot } from 'lucide-react';
-import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from 'sonner';
 
@@ -90,8 +88,7 @@ const Auth = () => {
     try {
       const success = await signup(signupData.email, signupData.password, signupData.fullName);
       if (success) {
-        toast.success('Account created!', { description: 'Please check your email to verify your account.' });
-        // Stay on the page as they may need to verify email
+        toast.success('Account created!', { description: 'You can now log in with your credentials.' });
         setSignupData({
           email: '',
           password: '',
@@ -146,14 +143,6 @@ const Auth = () => {
                 </CardHeader>
                 <form onSubmit={handleLogin}>
                   <CardContent className="space-y-4">
-                    <GoogleAuthButton mode="sign-in" />
-                    
-                    <div className="relative flex items-center">
-                      <Separator className="flex-1" />
-                      <span className="mx-2 text-xs text-muted-foreground">OR</span>
-                      <Separator className="flex-1" />
-                    </div>
-                    
                     <div className="space-y-2">
                       <Label htmlFor="login-email">Email</Label>
                       <Input
@@ -218,14 +207,6 @@ const Auth = () => {
                 </CardHeader>
                 <form onSubmit={handleSignup}>
                   <CardContent className="space-y-4">
-                    <GoogleAuthButton mode="sign-up" />
-                    
-                    <div className="relative flex items-center">
-                      <Separator className="flex-1" />
-                      <span className="mx-2 text-xs text-muted-foreground">OR</span>
-                      <Separator className="flex-1" />
-                    </div>
-                    
                     <div className="space-y-2">
                       <Label htmlFor="signup-fullname">Full Name</Label>
                       <Input

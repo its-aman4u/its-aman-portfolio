@@ -9,7 +9,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
   const { login, isAuthenticated, profile } = useAuth();
@@ -37,40 +36,12 @@ const AdminLogin = () => {
       const success = await login(email, password);
       console.log('Login attempt result:', success);
       
-      // Check if the user exists and get their profile
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      console.log('Current authenticated user:', userData?.user || 'No user');
-      
-      if (!success || !userData?.user) {
+      if (!success) {
         setError('Invalid credentials. Please try again.');
-        toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
         return;
       }
       
-      // Fetch the profile to check admin status
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userData.user.id)
-        .single();
-      
-      console.log('Profile after login:', profileData);
-      
-      if (profileError || !profileData) {
-        console.error('Error fetching profile:', profileError);
-        setError('Could not verify admin status.');
-        toast.error('Login error', { description: 'Could not verify admin status.' });
-        return;
-      }
-      
-      if (!profileData.is_admin) {
-        setError('Your account does not have admin privileges.');
-        toast.error('Access denied', { description: 'Your account does not have admin privileges.' });
-        // Log the user out if they're not an admin
-        await supabase.auth.signOut();
-        return;
-      }
-      
+      // The AuthContext will handle setting the user and profile
       toast.success('Welcome back, admin!');
       navigate('/admin/blog');
     } catch (err: any) {
