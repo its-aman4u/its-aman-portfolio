@@ -24,42 +24,23 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
-      // Send the contact submission to Supabase
-      const { data, error } = await supabase
-        .from('contact_submissions')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject,
-            message: formData.message,
-            status: 'unread'
-          }
-        ]);
-      
-      if (error) {
-        throw error;
-      }
-      
-      console.log('Contact submission successful:', data);
-      
-      toast.success('Message sent successfully!', {
-        description: 'Thank you for reaching out. I will get back to you shortly.'
+      // Mock contact form submission
+      toast.success('Thank you for your message!', {
+        description: 'Contact form submissions are not available in mock mode, but your message would have been received.',
       });
-      
-      // Reset form after successful submission
+
+      // Reset form
       setFormData({
         name: '',
         email: '',
         subject: '',
-        message: ''
+        message: '',
       });
     } catch (error) {
-      console.error('Error submitting contact form:', error);
       toast.error('Failed to send message', {
-        description: 'There was an error sending your message. Please try again later.'
+        description: 'Please try again later.',
       });
     } finally {
       setIsSubmitting(false);

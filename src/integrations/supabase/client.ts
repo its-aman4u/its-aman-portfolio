@@ -68,7 +68,11 @@ export const supabase = {
           ...baseResponse,
           limit: (count: number) => ({
             ...baseResponse,
-            single: async () => ({ data: null, error: { message: 'Mock client - no database' } })
+            single: async () => ({ data: null, error: { message: 'Mock client - no database' } }),
+            eq: (column: string, value: any) => ({
+              ...baseResponse,
+              single: async () => ({ data: null, error: { message: 'Mock client - no database' } })
+            })
           }),
           eq: (column: string, value: any) => ({
             ...baseResponse,

@@ -22,6 +22,7 @@ const AdminBlog = () => {
     cover_image: '',
     published: false,
     premium: false,
+    price: 0, // Add missing price property
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
@@ -73,6 +74,7 @@ const AdminBlog = () => {
         cover_image: selectedBlog.cover_image || '',
         published: selectedBlog.published || false,
         premium: selectedBlog.premium || false,
+        price: selectedBlog.price || 0, // Add missing price property
       });
     } else {
       setBlogInput({
@@ -82,6 +84,7 @@ const AdminBlog = () => {
         cover_image: '',
         published: false,
         premium: false,
+        price: 0, // Add missing price property
       });
     }
   }, [selectedBlog]);
@@ -144,6 +147,7 @@ const AdminBlog = () => {
       cover_image: '',
       published: false,
       premium: false,
+      price: 0, // Add missing price property
     });
   };
 

@@ -49,17 +49,15 @@ function Scene() {
       />
       
       {/* ContactShadows with proper props */}
-      <group>
-        <ContactShadows
-          position={[0, -2, 0]}
-          opacity={0.4}
-          scale={15}
-          blur={2.5}
-          far={4}
-          color="#000000"
-          resolution={512}
-        />
-      </group>
+      <ContactShadows
+        position={[0, -2, 0]}
+        opacity={0.4}
+        scale={15}
+        blur={2.5}
+        far={4}
+        color="#000000"
+        resolution={512}
+      />
       
       {/* Enhanced camera controls */}
       <OrbitControls 

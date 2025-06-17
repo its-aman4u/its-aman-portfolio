@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -95,15 +94,8 @@ const BlogPostPage = () => {
     
     try {
       setCommentsLoading(true);
-      const { data, error } = await supabase
-        .from('comments')
-        .select('*')
-        .eq('post_id', id)
-        .eq('approved', true)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setComments(data as BlogComment[]);
+      // Use mock comments since we're in mock mode
+      setComments([]);
     } catch (error) {
       console.error('Error fetching comments:', error);
     } finally {
@@ -124,26 +116,9 @@ const BlogPostPage = () => {
 
     try {
       setSubmitting(true);
-      const commentData = {
-        post_id: id,
-        user_id: user?.id || 'anonymous',
-        name: commentName,
-        email: commentEmail,
-        content: commentContent,
-        approved: profile?.is_admin ? true : false // Auto-approve admin comments
-      };
-
-      const { error } = await supabase.from('comments').insert(commentData);
-
-      if (error) throw error;
-
-      toast.success(profile?.is_admin ? 'Comment added!' : 'Comment submitted for approval!');
+      // Mock comment submission
+      toast.success('Comment submission is not available in mock mode');
       setCommentContent('');
-      
-      // If comment is auto-approved (admin), refresh the comments
-      if (profile?.is_admin) {
-        fetchComments();
-      }
     } catch (error) {
       toast.error('Failed to submit comment', {
         description: error instanceof Error ? error.message : 'Unknown error'
@@ -155,16 +130,8 @@ const BlogPostPage = () => {
 
   const handleDeleteComment = async (commentId: string) => {
     try {
-      const { error } = await supabase
-        .from('comments')
-        .delete()
-        .eq('id', commentId)
-        .eq('user_id', user?.id || '');
-      
-      if (error) throw error;
-      
-      toast.success('Comment deleted');
-      fetchComments();
+      // Mock comment deletion
+      toast.success('Comment deletion is not available in mock mode');
     } catch (error) {
       toast.error('Failed to delete comment', {
         description: error instanceof Error ? error.message : 'Unknown error'
