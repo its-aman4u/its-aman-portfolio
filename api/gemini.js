@@ -2,7 +2,29 @@
 // Priority chain:
 //   1. Gemini 1.5 Flash (free, 1500 req/day — most generous free tier)
 //   2. Gemini 2.0 Flash (fallback, lower quota)
-//   3. OpenRouter (Llama 3.3 70B free model — no cost fallback)
+//   3. OpenRouter (current free models - no cost fallback)
+const OPENROUTER_FREE_MODELS = [
+  'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+  'nvidia/nemotron-3-ultra-550b-a55b:free',
+  'nex-agi/nex-n2-pro:free',
+  'poolside/laguna-xs.2:free',
+  'poolside/laguna-m.1:free',
+  'openrouter/owl-alpha',
+];
+
+const DEFAULT_OPENROUTER_MODEL = process.env.OPENROUTER_DEFAULT_MODEL || OPENROUTER_FREE_MODELS[0];
+
+const getOrderedOpenRouterModels = (preferredModel) => {
+  const safePreferredModel = OPENROUTER_FREE_MODELS.includes(preferredModel)
+    ? preferredModel
+    : DEFAULT_OPENROUTER_MODEL;
+
+  return [
+    safePreferredModel,
+    ...OPENROUTER_FREE_MODELS.filter((model) => model !== safePreferredModel),
+  ];
+};
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,7 +40,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { prompt } = req.body;
+  const { prompt, openrouterModel } = req.body;
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
   }
@@ -108,39 +130,41 @@ export default async function handler(req, res) {
     console.warn('No GEMINI_API_KEY configured, skipping Gemini attempts');
   }
 
-  // ─── Attempt 3: OpenRouter — Llama 3.3 70B (free, no billing required) ───
+  // Attempt 3: OpenRouter free models
   if (openrouterApiKey) {
-    try {
-      console.log('Trying OpenRouter (Llama 3.3 70B free)...');
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openrouterApiKey}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://itsaman4u.vercel.app',
-          'X-Title': 'Aman Singh Portfolio — Genesis AI',
-        },
-        body: JSON.stringify({
-          model: 'meta-llama/llama-3.3-70b-instruct:free',
-          messages: [{ role: 'user', content: prompt }],
-          max_tokens: 1024,
-          temperature: 0.7,
-        }),
-      });
+    for (const model of getOrderedOpenRouterModels(openrouterModel)) {
+      try {
+        console.log(`Trying OpenRouter (${model})...`);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openrouterApiKey}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://itsaman4u.vercel.app',
+            'X-Title': 'Aman Singh Portfolio - Genesis AI',
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: 1024,
+            temperature: 0.7,
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        const content = data.choices?.[0]?.message?.content;
-        if (content) {
-          console.log('OpenRouter Llama 3.3 70B succeeded');
-          return res.status(200).json({ content, model: 'llama-3.3-70b' });
+        if (response.ok) {
+          const content = data.choices?.[0]?.message?.content;
+          if (content) {
+            console.log(`OpenRouter succeeded with ${model}`);
+            return res.status(200).json({ content, model: `openrouter:${model}` });
+          }
         }
-      }
 
-      console.error('OpenRouter error:', data.error || data);
-    } catch (err) {
-      console.warn('OpenRouter network error:', err.message);
+        console.error(`OpenRouter error for ${model}:`, data.error || data);
+      } catch (err) {
+        console.warn(`OpenRouter network error for ${model}:`, err.message);
+      }
     }
   } else {
     console.warn('No OPENROUTER_API_KEY configured, skipping OpenRouter fallback');

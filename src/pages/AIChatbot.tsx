@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Send, Bot, Sparkles, Settings, Key, X, Check, RefreshCw, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DEFAULT_OPENROUTER_MODEL, getOpenRouterModelLabel, OPENROUTER_FREE_MODELS } from "@/lib/openrouterModels";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
@@ -18,7 +20,8 @@ type Message = {
   isQuotaError?: boolean;
 };
 
-type ApiStatus = "gemini" | "gemini-15" | "llama" | "fallback" | "quota_exceeded";
+type ApiStatus = "gemini" | "gemini-15" | "openrouter" | "fallback" | "quota_exceeded";
+const OPENROUTER_MODEL_SETTING_ID = "chatbot_openrouter_model";
 
 const AIChatbot = () => {
   const { isAuthenticated, profile } = useAuth();
@@ -27,6 +30,9 @@ const AIChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [localApiKey, setLocalApiKey] = useState(localStorage.getItem("gemini_api_key") || "");
+  const [selectedOpenRouterModel, setSelectedOpenRouterModel] = useState(
+    localStorage.getItem(OPENROUTER_MODEL_SETTING_ID) || DEFAULT_OPENROUTER_MODEL
+  );
   const [apiMode, setApiMode] = useState<ApiStatus>("fallback");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -42,6 +48,40 @@ const AIChatbot = () => {
       setApiMode("fallback");
     }
   }, [localApiKey]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadDefaultModel = async () => {
+      try {
+        const { data, error } = await (supabase as any)
+          .from("site_settings")
+          .select("value")
+          .eq("id", OPENROUTER_MODEL_SETTING_ID)
+          .maybeSingle();
+
+        if (error) {
+          console.warn("OpenRouter model setting unavailable, using local/default model:", error.message);
+          return;
+        }
+
+        const modelId = data?.value?.modelId;
+        const isAllowed = OPENROUTER_FREE_MODELS.some((model) => model.id === modelId);
+        if (isMounted && isAllowed) {
+          setSelectedOpenRouterModel(modelId);
+          localStorage.setItem(OPENROUTER_MODEL_SETTING_ID, modelId);
+        }
+      } catch (error) {
+        console.warn("Could not load OpenRouter model setting:", error);
+      }
+    };
+
+    loadDefaultModel();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Initial welcome message
   useEffect(() => {
@@ -64,20 +104,47 @@ const AIChatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSaveApiKey = (e: React.FormEvent) => {
+  const handleSaveApiSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanKey = localApiKey.trim();
+    const modelLabel = getOpenRouterModelLabel(selectedOpenRouterModel);
+
+    localStorage.setItem(OPENROUTER_MODEL_SETTING_ID, selectedOpenRouterModel);
+
+    try {
+      const { error } = await (supabase as any)
+        .from("site_settings")
+        .upsert({
+          id: OPENROUTER_MODEL_SETTING_ID,
+          value: {
+            modelId: selectedOpenRouterModel,
+            modelLabel,
+          },
+          updated_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.warn("Could not persist shared OpenRouter model setting:", error.message);
+        toast.warning("Model saved locally. Apply the site_settings migration to share it with visitors.");
+      } else {
+        toast.success(`Default OpenRouter model set to ${modelLabel}.`);
+      }
+    } catch (error) {
+      console.warn("Could not save shared OpenRouter model setting:", error);
+      toast.warning("Model saved locally. Shared settings storage is unavailable.");
+    }
+
     if (cleanKey) {
       localStorage.setItem("gemini_api_key", cleanKey);
       setLocalApiKey(cleanKey);
       setApiMode("gemini");
-      toast.success("Gemini API Key saved! Genesis AI is now in Live Mode.");
+      toast.success("Gemini API Key saved. Genesis AI is now in Live Mode.");
       setShowSettings(false);
     } else {
       localStorage.removeItem("gemini_api_key");
       setLocalApiKey("");
       setApiMode(import.meta.env.VITE_GEMINI_API_KEY ? "gemini" : "fallback");
-      toast.info("Local API key cleared.");
+      toast.info("Local API key cleared. Server-side model routing is active.");
     }
   };
 
@@ -178,6 +245,7 @@ const AIChatbot = () => {
           }
         } else {
           responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated by the AI model.";
+          setApiMode("gemini");
         }
       } else {
         // Try Vercel Serverless Function first (production-ready secure path)
@@ -189,7 +257,8 @@ const AIChatbot = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              prompt: createPrompt(userInput, isAdmin)
+              prompt: createPrompt(userInput, isAdmin),
+              openrouterModel: selectedOpenRouterModel,
             }),
           });
           
@@ -199,7 +268,7 @@ const AIChatbot = () => {
             // Update status badge to reflect which model responded
             const model = data.model || 'gemini';
             if (model.includes('1.5') || model.includes('15')) setApiMode('gemini-15');
-            else if (model.includes('llama')) setApiMode('llama');
+            else if (model.includes('openrouter') || model.includes('llama') || model.includes('nemotron') || model.includes('nvidia') || model.includes('nex-agi') || model.includes('poolside') || model.includes('owl-alpha')) setApiMode('openrouter');
             else setApiMode('gemini');
           } else {
             const errData = await response.json();
@@ -258,7 +327,6 @@ const AIChatbot = () => {
       };
 
       setMessages((prev) => [...prev, botResponse]);
-      if (apiMode !== "gemini") setApiMode("gemini");
     } catch (error) {
       console.warn("API Error, falling back to local database reasoning:", error);
       
@@ -431,8 +499,8 @@ const AIChatbot = () => {
       return { text: "Gemini 2.0 Flash", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400 animate-pulse" };
     } else if (apiMode === "gemini-15") {
       return { text: "Gemini 1.5 Flash ✦", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400 animate-pulse" };
-    } else if (apiMode === "llama") {
-      return { text: "Llama 3.3 70B (Free)", bg: "bg-blue-500/10 text-blue-400 border-blue-500/20", dot: "bg-blue-400 animate-pulse" };
+    } else if (apiMode === "openrouter") {
+      return { text: "OpenRouter Free Model", bg: "bg-blue-500/10 text-blue-400 border-blue-500/20", dot: "bg-blue-400 animate-pulse" };
     } else if (apiMode === "quota_exceeded") {
       return { text: "Daily Limit Reached", bg: "bg-orange-500/10 text-orange-400 border-orange-500/20", dot: "bg-orange-400 animate-bounce" };
     } else {
@@ -481,7 +549,7 @@ const AIChatbot = () => {
                   size="icon" 
                   onClick={() => setShowSettings(!showSettings)} 
                   className="h-8 w-8 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10"
-                  title="Admin: Configure Gemini API Key"
+                  title="Admin: Configure AI model"
                 >
                   <Settings className={`h-4 w-4 ${showSettings ? "text-primary animate-spin" : "text-muted-foreground"}`} />
                 </Button>
@@ -493,11 +561,11 @@ const AIChatbot = () => {
         {/* Collapsible API Key Configuration Settings Panel — Admin Only */}
         {showSettings && isAdmin && (
           <div className="absolute top-[73px] left-0 right-0 z-20 bg-slate-950/95 border-b border-white/10 p-4 backdrop-blur-xl animate-in slide-in-from-top duration-300">
-            <form onSubmit={handleSaveApiKey} className="max-w-xl mx-auto space-y-3">
+            <form onSubmit={handleSaveApiSettings} className="max-w-2xl mx-auto space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm font-bold text-foreground">
                   <Key className="h-4 w-4 text-primary" />
-                  Gemini API Configuration (Admin Only)
+                  AI Model Configuration (Admin Only)
                 </div>
                 <Button 
                   type="button" 
@@ -510,7 +578,7 @@ const AIChatbot = () => {
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Enter a Gemini API Key to override the server key. This is saved in your browser only and used client-side for direct API access. Get a key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">aistudio.google.com/apikey</a>
+                Choose the OpenRouter fallback model visitors should use by default. A Gemini key still overrides routing in this browser only.
               </p>
               {apiMode === "quota_exceeded" && (
                 <div className="flex items-center gap-2 text-[11px] text-orange-400 bg-orange-500/10 border border-orange-500/20 rounded-lg p-2">
@@ -518,6 +586,23 @@ const AIChatbot = () => {
                   <span>Daily quota exceeded. Add a new API key or wait for reset at midnight.</span>
                 </div>
               )}
+              <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+                <Select value={selectedOpenRouterModel} onValueChange={setSelectedOpenRouterModel}>
+                  <SelectTrigger className="glass-input h-9 text-xs border-white/20">
+                    <SelectValue placeholder="Select OpenRouter model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OPENROUTER_FREE_MODELS.map((model) => (
+                      <SelectItem key={model.id} value={model.id}>
+                        {model.provider} - {model.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button type="submit" size="sm" className="h-9 px-4 bg-primary text-white border-white/20">
+                  <Check className="h-4 w-4 mr-1.5" /> Save
+                </Button>
+              </div>
               <div className="flex gap-2">
                 <Input
                   type="password"
@@ -526,9 +611,6 @@ const AIChatbot = () => {
                   onChange={(e) => setLocalApiKey(e.target.value)}
                   className="glass-input h-9 text-xs border-white/20 flex-grow"
                 />
-                <Button type="submit" size="sm" className="h-9 px-4 bg-primary text-white border-white/20">
-                  <Check className="h-4 w-4 mr-1.5" /> Save
-                </Button>
               </div>
             </form>
           </div>

@@ -155,6 +155,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          id: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          id?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       purchases: {
         Row: {
           amount: number
