@@ -3,7 +3,7 @@
 An immersive, interactive 3D portfolio showcasing technical business analysis, full-stack development, and operations automation projects.
 
 ## 🚀 Live Demo
-* Deployed Site: [aman-singh-portfolio-eight.vercel.app](https://aman-singh-portfolio-eight.vercel.app)
+* Deployed Site: [itsaman4u.vercel.app](https://itsaman4u.vercel.app)
 
 ## 🛠️ Tech Stack
 * **Frontend**: React, TypeScript, Tailwind CSS, shadcn/ui, Framer Motion
