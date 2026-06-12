@@ -21,6 +21,7 @@ import Auth from "./pages/Auth";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 import AIChatbot from "./pages/AIChatbot";
+import CVPreview from "./pages/CVPreview";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="admin/login" element={<AdminLogin />} />
               <Route path="chatbot" element={<AIChatbot />} />
               <Route path="auth" element={<Auth />} />
+              <Route path="cv-preview" element={<CVPreview />} />
               <Route path="subscription" element={<Subscription />} />
               <Route path="*" element={<NotFound />} />
             </Route>

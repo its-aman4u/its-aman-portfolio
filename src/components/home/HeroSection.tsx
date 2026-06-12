@@ -78,14 +78,14 @@ const HeroSection = () => {
                 </Link>
               </Button>
               <Button variant="outline" className="glass-button border-white/20" asChild>
-                <a href="/ai_automation_architect_master.pdf" download="Aman_Singh_AI_Systems_Architect.pdf">
+                <Link to="/cv-preview?type=architect">
                   Architect CV <Download className="ml-1.5 h-4 w-4" />
-                </a>
+                </Link>
               </Button>
               <Button variant="outline" className="glass-button border-white/20" asChild>
-                <a href="/premium_fullstack_uiux.pdf" download="Aman_Singh_Fullstack_Engineer.pdf">
+                <Link to="/cv-preview?type=fullstack">
                   Full-Stack CV <Download className="ml-1.5 h-4 w-4" />
-                </a>
+                </Link>
               </Button>
             </div>
           </div>

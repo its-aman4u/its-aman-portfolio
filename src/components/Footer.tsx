@@ -1,5 +1,5 @@
-
 import { Mail, Phone, MapPin, Linkedin, Github } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -65,21 +65,19 @@ const Footer = () => {
             &copy; {currentYear} Aman Singh. All rights reserved.
           </p>
           <div className="flex gap-3 mt-4 md:mt-0">
-            <a 
-              href="/ai_automation_architect_master.pdf" 
-              download="Aman_Singh_AI_Systems_Architect.pdf"
+            <Link 
+              to="/cv-preview?type=architect"
               className="text-sm text-primary hover:underline"
             >
               Architect CV
-            </a>
+            </Link>
             <span className="text-muted-foreground text-sm">|</span>
-            <a 
-              href="/premium_fullstack_uiux.pdf" 
-              download="Aman_Singh_Fullstack_Engineer.pdf"
+            <Link 
+              to="/cv-preview?type=fullstack"
               className="text-sm text-primary hover:underline"
             >
               Full-Stack CV
-            </a>
+            </Link>
           </div>
         </div>
       </div>

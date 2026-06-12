@@ -345,7 +345,7 @@ const AIChatbot = () => {
     
     // CV / Resume / Download
     if (q.includes("cv") || q.includes("resume") || q.includes("download")) {
-      return "📄 **Aman's Professional Resumes:**\n\n1. **AI Automation Architect Resume** — [Download PDF](/ai_automation_architect_master.pdf) — Focused on AI/ML systems, LLM integrations, and DevSecOps\n2. **Premium Full-Stack Developer Resume** — [Download PDF](/premium_fullstack_uiux.pdf) — Focused on React, TypeScript, FastAPI, and full-stack systems\n\nBoth are available via the **Download CV** button on the portfolio homepage.";
+      return "📄 **Aman's Professional Resumes:**\n\n1. **AI Automation Architect Resume** — [View CV](/cv-preview?type=architect) — Focused on AI/ML systems, LLM integrations, and DevSecOps\n2. **Premium Full-Stack Developer Resume** — [View CV](/cv-preview?type=fullstack) — Focused on React, TypeScript, FastAPI, and full-stack systems\n\nBoth are available via the **CV** buttons on the portfolio homepage.";
     }
 
     // Contact / Email / Phone / Reach
@@ -392,6 +392,8 @@ const AIChatbot = () => {
     Aman Singh is an AI-Native Systems Architect & Automation Specialist with a proven track record of designing secure data bridges, database SSH tunnels, and WebGL architectures.
 
     ${isAdminUser ? "The user is Aman Singh (the portfolio owner). Talk to him directly as his administrative assistant. Offer to verify admin credentials, outline system parameters, and check logs." : "The user is a visitor (recruiter, developer, or client) looking at Aman's portfolio. Show him Aman's depth of engineering thought."}
+
+    CRITICAL INSTRUCTION: You are STRICTLY a portfolio assistant. You must ONLY answer questions related to Aman Singh's professional background, projects, skills, education, and career. DO NOT answer general-purpose questions. DO NOT write or generate arbitrary code unless explaining Aman's projects. If the user asks something unrelated to Aman or his portfolio, politely refuse and redirect the conversation back to his work.
 
     Respond in clear Markdown, keeping formatting elegant (use bullet points, bolding, and inline code blocks where appropriate). Answer conversational questions naturally, but base all details on the following verified facts:
 
@@ -585,9 +587,9 @@ const AIChatbot = () => {
                           ul: ({ children }) => <ul className="list-disc list-inside pl-4 mb-2 space-y-1">{children}</ul>,
                           ol: ({ children }) => <ol className="list-decimal list-inside pl-4 mb-2 space-y-1">{children}</ol>,
                           li: ({ children }) => <li className="text-sm">{children}</li>,
-                          code: ({ children }) => <code className="bg-white/10 px-1.5 py-0.5 rounded font-mono text-xs">{children}</code>,
-                          pre: ({ children }) => <pre className="bg-black/40 p-3 rounded-lg overflow-x-auto font-mono text-xs my-2 border border-white/5">{children}</pre>,
-                          table: ({ children }) => <table className="text-xs border-collapse w-full my-2">{children}</table>,
+                          code: ({ children }) => <code className="bg-white/10 px-1.5 py-0.5 rounded font-mono text-xs break-words whitespace-pre-wrap">{children}</code>,
+                          pre: ({ children }) => <pre className="bg-black/40 p-3 rounded-lg overflow-x-auto font-mono text-xs my-2 border border-white/5 whitespace-pre-wrap break-words max-w-full">{children}</pre>,
+                          table: ({ children }) => <div className="overflow-x-auto w-full my-2 max-w-full"><table className="text-xs border-collapse w-full">{children}</table></div>,
                           th: ({ children }) => <th className="border border-white/10 px-2 py-1 bg-white/5 text-left">{children}</th>,
                           td: ({ children }) => <td className="border border-white/10 px-2 py-1">{children}</td>,
                           a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{children}</a>,
