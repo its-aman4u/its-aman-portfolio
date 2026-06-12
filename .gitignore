@@ -19,6 +19,12 @@ dist-ssr
 .DS_Store
 *.suo
 *.ntvs*
-*.njsproj
-*.sln
 *.sw?
+
+# LaTeX build artifacts
+clean_drop/*.aux
+clean_drop/*.out
+clean_drop/*.log
+clean_drop/*.pdf
+clean_drop/*_temp.pdf
+

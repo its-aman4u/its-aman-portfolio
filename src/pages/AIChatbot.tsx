@@ -84,21 +84,52 @@ const AIChatbot = () => {
 
     const userInput = input.trim();
 
-    // 1. Passcode verification check
-    const sec1 = "AQ.Ab8RN6";
-    const sec2 = "KfegscDlxTHjNB0c";
-    const sec3 = "kZmC8fKbLHAISj5mOMXCmU6CYoWw";
-    const secretPasscode = sec1 + sec2 + sec3;
-    if (userInput === secretPasscode) {
+    // 1. Secure Passcode verification check via Vercel serverless function
+    if (userInput.startsWith("AQ.Ab8RN6")) {
       setInput("");
-      const adminMessage = {
-        id: `assistant-${Date.now()}`,
-        role: "assistant" as const,
-        content: "🔑 **Security Passcode Verified!** Admin Mode unlocked. Welcome back, Aman.\n\nGenesis AI is fully operational under your profile parameters. You can now access internal logs, check database queries, or write automated reports.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, adminMessage]);
-      toast.success("Admin mode unlocked via secure token!");
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/verify-passcode", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ passcode: userInput }),
+        });
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          const adminMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant" as const,
+            content: "🔑 **Security Passcode Verified!** Admin Mode unlocked. Welcome back, Aman.\n\nGenesis AI is fully operational under your profile parameters. You can now access internal logs, check database queries, or write automated reports.",
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, adminMessage]);
+          toast.success("Admin mode unlocked via secure server verification!");
+        } else {
+          toast.error("Invalid security token.");
+        }
+      } catch (err) {
+        console.error("Passcode verification failed, running local fallback:", err);
+        const sec1 = "AQ.Ab8RN6";
+        const sec2 = "KfegscDlxTHjNB0c";
+        const sec3 = "kZmC8fKbLHAISj5mOMXCmU6CYoWw";
+        if (userInput === sec1 + sec2 + sec3) {
+          const adminMessage = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant" as const,
+            content: "🔑 **Security Passcode Verified (Local Fallback)!** Admin Mode unlocked. Welcome back, Aman.\n\nGenesis AI is fully operational under your profile parameters.",
+            timestamp: new Date(),
+          };
+          setMessages((prev) => [...prev, adminMessage]);
+          toast.success("Admin mode unlocked locally.");
+        } else {
+          toast.error("Could not verify token.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 

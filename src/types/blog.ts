@@ -37,7 +37,7 @@ Fulfillment operations generate massive volumes of transactional logs (order dis
 
 To bridge this gap securely, I built a query broker that sits between the client dashboard and the remote MySQL databases, establishing an on-demand encrypted SSH tunnel.
 
-```mermaid
+\`\`\`mermaid
 graph LR
     subgraph Client Panel
         UI[Next.js Dashboard]
@@ -57,7 +57,7 @@ graph LR
     API -->|Decrypt Connection Settings| AES
     API -->|Secure Port Binding| SSH
     SSH -->|Localhost Query| DB
-```
+\`\`\`
 
 By binding connection requests to a local port inside the hosting environment, the MySQL server is configured to *only* accept queries originating from \`localhost (127.0.0.1)\` and the secure SSH broker's gateway IP. No MySQL ports are ever exposed to the public internet.
 
@@ -131,7 +131,7 @@ The **Increff Inventory Validator** automates the entire audit flow through a ro
 
 Below is a simplified example of the reconciliation engine's core dataframe merging logic:
 
-```python
+\`\`\`python
 import pandas as pd
 
 def reconcile_inventories(wms_file, erp_file):
@@ -151,7 +151,7 @@ def reconcile_inventories(wms_file, erp_file):
     discrepancies = merged[merged['variance'] != 0].copy()
     
     return discrepancies
-```
+\`\`\`
 
 ---
 
@@ -200,7 +200,7 @@ Unlike traditional software, LLM behavior is probabilistic. An agent can be tric
 
 The sandbox isolates autonomous agents using a defense-in-depth layout:
 
-```
+\`\`\`
                 [ Autonomous AI Agent ]
                           │
                           ▼
@@ -216,7 +216,7 @@ The sandbox isolates autonomous agents using a defense-in-depth layout:
         │  - Unsandboxed Command Guard     │
         │  - Restricted Egress Proxy       │
         └──────────────────────────────────┘
-```
+\`\`\`
 
 ### 1. Hardened Docker Containers
 Agents operate in isolated container runtimes with strict configurations:
@@ -290,7 +290,7 @@ The parser executes 22 validation rules, including:
 
 Here is the implementation pattern used inside InsightForge to query data safely:
 
-```python
+\`\`\`python
 import re
 
 def assert_readonly(sql_query: str) -> bool:
@@ -306,7 +306,7 @@ def execute_user_query(sql_query: str, db_connection):
         
     # Query execution runs safely on local read-only database
     return db_connection.execute(sql_query).fetchdf()
-```
+\`\`\`
 
 ---
 
