@@ -71,15 +71,20 @@ const HeroSection = () => {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start flex-wrap">
               <Button className="bg-primary text-white hover:bg-primary/95 border border-white/25 shadow-lg shadow-primary/20" asChild>
                 <Link to="/chatbot">
-                  Chat with Hermes AI <Mail className="ml-2 h-4 w-4" />
+                  Chat with Genesis AI <Sparkles className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="outline" className="glass-button border-white/20" asChild>
-                <a href="https://drive.google.com/file/d/1XiczZvGjJeaSTUxlIz_M_J9DgtsclVMa/view?usp=sharing" target="_blank" rel="noopener noreferrer">
-                  Download CV <Download className="ml-2 h-4 w-4" />
+                <a href="/ai_automation_architect_master.pdf" download="Aman_Singh_AI_Systems_Architect.pdf">
+                  Architect CV <Download className="ml-1.5 h-4 w-4" />
+                </a>
+              </Button>
+              <Button variant="outline" className="glass-button border-white/20" asChild>
+                <a href="/premium_fullstack_uiux.pdf" download="Aman_Singh_Fullstack_Engineer.pdf">
+                  Full-Stack CV <Download className="ml-1.5 h-4 w-4" />
                 </a>
               </Button>
             </div>

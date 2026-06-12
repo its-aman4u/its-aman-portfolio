@@ -17,7 +17,8 @@
 \usepackage[hidelinks]{hyperref}
 \DeclareUnicodeCharacter{20B9}{Rs.}
 
-\geometry{left=0.55in, top=0.55in, right=0.55in, bottom=0.55in}
+% Set clean, professional 0.5-inch margins on all sides (standard for dense resumes)
+\geometry{left=0.5in, top=0.5in, right=0.5in, bottom=0.5in}
 
 % Define custom color accents
 \definecolor{primaryColor}{RGB}{20, 80, 80} % Deep Teal Accent
@@ -29,20 +30,14 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-\addtolength{\oddsidemargin}{-0.1in}
-\addtolength{\evensidemargin}{-0.1in}
-\addtolength{\textwidth}{0.2in}
-\addtolength{\topmargin}{-0.15in}
-\addtolength{\textheight}{0.3in}
-
 \urlstyle{same}
 \raggedbottom
 \raggedright
 
 % Section formatting
 \titleformat{\section}{
-  \vspace{-5pt}\scshape\raggedright\large\bfseries\color{primaryColor}
-}{}{0em}{}[\color{primaryColor}\titlerule \vspace{-5pt}]
+  \vspace{-6pt}\scshape\raggedright\large\bfseries\color{primaryColor}
+}{}{0em}{}[\color{primaryColor}\titlerule \vspace{-4pt}]
 
 \newcommand{\resumeItem}[2]{
   \item\small{
@@ -67,7 +62,7 @@
 
 %----------HEADER-----------------
 \begin{center}
-    {\Huge \textbf{\color{primaryColor} AMAN SINGH}} \\ \vspace{5pt}
+    {\Huge \textbf{\color{primaryColor} AMAN SINGH}} \\ \vspace{6pt}
     \small
     \faPhone\ +91 93404 74252 \quad | \quad
     \faEnvelope\ \href{mailto:aman.singh01031997@gmail.com}{aman.singh01031997@gmail.com} \quad | \quad
@@ -79,49 +74,19 @@
 
 %--- PROFESSIONAL EXECUTIVE SUMMARY ---
 \section{Executive Profile}
-Full-stack \textbf{AI Systems Architect} and automation specialist who leverages AI pipelines, prompt configurations, and local LLMs (Ollama/Deepseek) to build enterprise applications. Expertise in secure backend API engineering, database SSH tunneling, and data processing. Deployed production integrations that automated \textbf{151.5 hours of manual efforts per month} (saving 0.86 FTE) and generated over \textbf{₹1.3 Crore (\$155K+ USD) in verified bottomline profit} at Holisol Logistics.
+Full-stack \textbf{AI Systems Architect} and automation specialist who leverages AI pipelines, prompt guarding, and local LLMs (Ollama/Deepseek) to build secure enterprise applications. Expertise in backend API engineering, database SSH tunneling, and warehouse operations data processing. Deployed production integrations that automated over \textbf{150 hours of manual efforts per month} (saving 0.86 FTE) and optimized operational costing, daily fulfillment center reconciliations, and logistics leakages.
 
 %--- TECHNICAL CORE COMPETENCIES ---
 \section{Technical Core Competencies}
 \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
-     \textbf{AI \& Agentic Orchestration}{: Local LLM setups (Ollama, Deepseek), RAG pipelines, Prompt Shielding, Vector Databases} \\
-     \textbf{Backend \& Web Engineering}{: Python (FastAPI, Streamlit, Pandas), SQL (MySQL, SQLite, DuckDB), REST APIs} \\
+     \textbf{AI \& Agentic Orchestration}{: Local LLM setups (Ollama, Deepseek), RAG pipelines, Prompt Shielding, Vector Databases, Agent Workspaces} \\
+     \textbf{Backend \& Web Engineering}{: Python (FastAPI, Streamlit, Pandas), SQL (MySQL, SQLite, DuckDB), REST APIs, SFTP integration} \\
      \textbf{Secure Infrastructures}{: SSH database tunneling, JWT Authentication, AES-256 (Fernet) Encryption, Docker sandboxing} \\
      \textbf{Frontend \& UI/UX}{: React, TypeScript, Tailwind CSS, shadcn/ui, Three.js, React Three Fiber, WebGL} \\
      \textbf{Systems \& Processes}{: BRD/PRD writing, SDLC mapping, JIRA tracking, Git/GitHub, LaTeX, Agile sprints}
     }}
 \end{itemize}
-
-%--- R&D FLAGSHIP PROJECTS ---
-\section{Flagship AI \& Full-Stack Projects}
-  \resumeSubHeadingListStart
-
-    \resumeSubheading{Zero-Trust AI Workspace Framework}{Research \& Systems Design}
-    {Lead Researcher | Tech: Docker sandboxing, Model Context Protocol (MCP) Security, DevSecOps}{2026}
-    \resumeItemListStart
-      \item{Authored a 37,000-word research publication defining execution parameters, prompt shielding, and pre-ingestion quarantine zones to isolate autonomous AI development agents inside Docker environments.}
-    \resumeItemListEnd
-
-    \resumeSubheading{HWMS Insights Connector}{Full-Stack Production System}
-    {Lead Architect | Tech: Python, FastAPI, Next.js, SQLite, SSH Tunneling, Cryptography, RBAC}{2025}
-    \resumeItemListStart
-      \item{Connected custom Next.js UI to live warehouse databases via SSH-tunneled Python FastAPI endpoints; implemented a 4-role RBAC access matrix and AES-256 credentials encryption, saving \textbf{44 hours of manual SQL exports/month}.}
-    \resumeItemListEnd
-
-    \resumeSubheading{Vercel Interactive Deployments}{Rapid UI/UX Prototypes}
-    {Lead UI Developer | Tech: React, TypeScript, Tailwind CSS, Supabase, Vercel CI/CD}{2025}
-    \resumeItemListStart
-      \item{Shipped and maintained 5 live-deployed web portals: Cyber Creative Agency (\href{https://cyber-creative-agency.vercel.app}{cyber-creative-agency.vercel.app}), AI Exam Prep (\href{https://ai-exam-prep-portal.vercel.app}{ai-exam-prep-portal.vercel.app}), Recovery Clinic (\href{https://recovery-clinic-portal.vercel.app}{recovery-clinic-portal.vercel.app}), Citizen News (\href{https://citizen-news-platform.vercel.app}{citizen-news-platform.vercel.app}), and Digital Quest (\href{https://digital-genesis-quest.vercel.app}{digital-genesis-quest.vercel.app}).}
-    \resumeItemListEnd
-
-    \resumeSubheading{InsightForge Engine}{Open Source Analytics Tool}
-    {Creator | Tech: Python, Streamlit, DuckDB, Pandas, local Ollama LLM}{2025}
-    \resumeItemListStart
-      \item{Built an ETL dashboard engine converting database logs into clean metrics; integrated local LLM queries with custom SQL validation rules (`assert\_readonly()`) verified by 22 automated safety tests.}
-    \resumeItemListEnd
-
-  \resumeSubHeadingListEnd
 
 %--- PROFESSIONAL EXPERIENCE ---
 \section{Professional Experience}
@@ -130,22 +95,49 @@ Full-stack \textbf{AI Systems Architect} and automation specialist who leverages
     \resumeSubheading{Holisol Logistics Pvt Ltd}{New Delhi, India}
     {AI Automation \& Systems Developer}{Nov 2021 -- Present}
     \resumeItemListStart
-      \resumeItem{Operations Pipeline Automation}{Automated daily Increff WMS (HINA) and Verdis file transfers, saving \textbf{30 hours of manual work/month} and eliminating data-entry discrepancies.}
-      \resumeItem{MIS P\&L Automation}{Developed roll-forward models to automate regional P\&L submissions, saving \textbf{25 hours/month} of accounting compilation.}
-      \resumeItem{Safety Audit Automation}{Digitized compliance database and audit checklists for the Holihealth platform, generating automated weekly dispatches that saved \textbf{22.5 hours/month} of reporting effort.}
-      \resumeItem{Financial Value Generation}{Generated \textbf{₹130.27 Lakhs (~₹1.3 Crore)} in bottomline savings by automating cost audits, tracking invoicing errors (₹6.91L recovery), and optimizing last-mile delivery rates (₹24.55L saved).}
+      \resumeItem{HWMS Live Connector}{Engineered a live data connector utilizing secure SSH tunneling to interface FastAPI (Python) endpoints with internal warehouse MySQL databases. Built a 4-role RBAC access matrix and AES-256 credentials vault, eliminating manual data queries (saves 44 hours/month). Repo link: \href{https://github.com/its-aman4u/hwms-insights-connector}{github.com/its-aman4u/hwms-insights-connector}}
+      \resumeItem{Fulfillment Operations \& Reconciliations}{Automated daily inventory reconciliations between WMS and ERP systems (such as Increff) using Python, SFTP, and pandas. Plugged data leakages and reduced discrepancies across regional fulfillment hubs (saves 30 hours/month).}
+      \resumeItem{MIS and Daily P\&L Processing}{Developed roll-forward analytical models in Python to automate regional MIS P\&L compilation. Enabled real-time profit auditing and optimized last-mile delivery rate structures (saves 25 hours/month).}
+      \resumeItem{Safety Compliance \& Audit Checklists}{Digitized the corporate Permit-to-Work (PTW) checklists. Created Google Apps Script pipelines that automatically compile compliance audits and dispatch warning triggers to hub managers (saves 22.5 hours/month).}
+      \resumeItem{Documentation \& Agile Practices}{Authored detailed Business Requirement Documents (BRDs) and Product Requirement Documents (PRDs) for internal automation tooling, mapping SDLC phases and tracking releases using JIRA in collaboration with cross-functional logistics teams.}
     \resumeItemListEnd
 
     \resumeSubheading{Somany Ceramics Ltd}{Noida, India}
     {Data Analyst \& L\&D Coordinator}{Mar 2024 -- June 2024}
     \resumeItemListStart
-      \resumeItem{Productivity Audits}{Designed SQL query templates and Excel spreadsheets to evaluate ground personnel training compliance; restructured the document registry to improve file retrieval speed by \textbf{30\%}.}
+      \resumeItem{Productivity Audits}{Designed SQL query templates and Excel spreadsheets to evaluate ground personnel training compliance; restructured the document registry to improve file retrieval speed by 30\%.}
+      \resumeItem{Operational Performance Tracking}{Developed data visualization sheets and performance dashboards for the learning and development team, ensuring data accuracy and compliance with internal safety guidelines.}
     \resumeItemListEnd
 
     \resumeSubheading{Holisol Logistics Pvt Ltd (Early Tenure)}{New Delhi, India}
     {Compliance \& Safety Team Lead}{Nov 2021 -- Feb 2024}
     \resumeItemListStart
-      \resumeItem{Process Optimization}{Led compliance audits for PAN India warehouse centers; implemented safety frameworks to reduce violation incidents by \textbf{25\%}.}
+      \resumeItem{Process Optimization}{Led compliance audits for PAN India warehouse centers; implemented safety frameworks to reduce violation incidents by 25\%.}
+      \resumeItem{Standard Operating Procedures}{Maintained SOP documentation and audited regulatory certifications for large-scale operations hubs, ensuring alignment with national safety codes.}
+    \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%--- R&D FLAGSHIP PROJECTS ---
+\section{Flagship AI \& Full-Stack Projects}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading{Zero-Trust AI Workspace Framework}{Research \& Systems Design}
+    {Lead Researcher | Tech: Docker sandboxing, Model Context Protocol (MCP) Security, DevSecOps}{2026}
+    \resumeItemListStart
+      \item{Authored a 37,000-word research publication defining execution parameters, prompt shielding, and pre-ingestion quarantine zones to isolate autonomous AI development agents inside Docker environments. Link: \href{https://github.com/its-aman4u/zero-trust-ai-workspace}{github.com/its-aman4u/zero-trust-ai-workspace}}
+    \resumeItemListEnd
+
+    \resumeSubheading{InsightForge Engine}{Open Source Analytics Tool}
+    {Creator | Tech: Python, Streamlit, DuckDB, Pandas, local Ollama LLM}{2025}
+    \resumeItemListStart
+      \item{Built an ETL dashboard engine converting database logs into clean metrics; integrated local LLM queries with custom SQL validation rules (`assert\_readonly()`) verified by 22 automated safety tests. Link: \href{https://github.com/its-aman4u/insightforge-engine}{github.com/its-aman4u/insightforge-engine}}
+    \resumeItemListEnd
+
+    \resumeSubheading{Vercel Interactive Deployments}{Rapid UI/UX Prototypes}
+    {Lead UI Developer | Tech: React, TypeScript, Tailwind CSS, Supabase, Vercel CI/CD}{2025}
+    \resumeItemListStart
+      \item{Shipped and maintained 5 live-deployed web portals: Cyber Creative Agency (\href{https://cyber-creative-agency.vercel.app}{cyber-creative-agency.vercel.app}), AI Exam Prep (\href{https://ai-exam-prep-portal.vercel.app}{ai-exam-prep-portal.vercel.app}), Recovery Clinic (\href{https://recovery-clinic-portal.vercel.app}{recovery-clinic-portal.vercel.app}), Citizen News (\href{https://citizen-news-platform.vercel.app}{citizen-news-platform.vercel.app}), and Digital Quest (\href{https://digital-genesis-quest.vercel.app}{digital-genesis-quest.vercel.app}).}
     \resumeItemListEnd
 
   \resumeSubHeadingListEnd
@@ -155,6 +147,18 @@ Full-stack \textbf{AI Systems Architect} and automation specialist who leverages
   \resumeSubHeadingListStart
     \resumeSubheading{ITM University}{Gwalior, India}
     {Master of Business Administration (MBA) -- SCM \& Logistics}{2020 -- 2022}
+    \resumeSubheading{University of Delhi}{Delhi, India}
+    {Bachelor of Science (B.Sc.)}{2015 -- 2018}
   \resumeSubHeadingListEnd
+
+%--- CERTIFICATIONS ---
+\section{Certifications \& Affiliations}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Certified Operations Analyst} --- SCM Analytics Training, Holisol (2023) \\
+     \textbf{Advanced Full-Stack Engineering} --- Open Source Software Contributions (2024) \\
+     \textbf{Securing AI Workspaces} --- Prompt Shielding \& LLM Defenses Framework (2025)
+    }}
+\end{itemize}
 
 \end{document}

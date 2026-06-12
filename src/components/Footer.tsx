@@ -64,14 +64,23 @@ const Footer = () => {
           <p className="text-sm text-muted-foreground">
             &copy; {currentYear} Aman Singh. All rights reserved.
           </p>
-          <a 
-            href="https://drive.google.com/file/d/1XiczZvGjJeaSTUxlIz_M_J9DgtsclVMa/view?usp=sharing" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline mt-4 md:mt-0"
-          >
-            Download CV
-          </a>
+          <div className="flex gap-3 mt-4 md:mt-0">
+            <a 
+              href="/ai_automation_architect_master.pdf" 
+              download="Aman_Singh_AI_Systems_Architect.pdf"
+              className="text-sm text-primary hover:underline"
+            >
+              Architect CV
+            </a>
+            <span className="text-muted-foreground text-sm">|</span>
+            <a 
+              href="/premium_fullstack_uiux.pdf" 
+              download="Aman_Singh_Fullstack_Engineer.pdf"
+              className="text-sm text-primary hover:underline"
+            >
+              Full-Stack CV
+            </a>
+          </div>
         </div>
       </div>
     </footer>
