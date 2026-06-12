@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { BlogPost } from '@/types/blog';
+import { BlogPost, mockBlogPosts } from '@/types/blog';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -25,39 +25,17 @@ const Blog = () => {
           .eq('published', true)
           .order('created_at', { ascending: false });
 
-        if (blogsError) throw blogsError;
-
-        if (blogsData.length === 0) {
-          // If no blogs found, create a sample blog post
-          const { data: userData } = await supabase.auth.getUser();
-          if (userData?.user && profile?.is_admin) {
-            const sampleBlog = {
-              title: 'Welcome to My Blog',
-              excerpt: 'This is my first blog post. Learn more about my journey and projects.',
-              content: `# Welcome to My Blog\n\nThis is my first blog post on my portfolio website. Here, I'll be sharing my journey, experiences, and insights in the world of technology and development.\n\n## What to Expect\n\n- Tutorials and guides on web development\n- Updates on my latest projects\n- Thoughts on emerging technologies\n- Tips and tricks I've learned along the way\n\nStay tuned for more content coming soon!`,
-              cover_image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80',
-              published: true,
-              premium: false,
-              author_id: userData.user.id
-            };
-            
-            const { data: newBlog, error: insertError } = await supabase
-              .from('blogs')
-              .insert(sampleBlog)
-              .select();
-              
-            if (!insertError && newBlog) {
-              setBlogs(newBlog as BlogPost[]);
-            }
-          }
+        if (blogsError) {
+          console.warn('Database fetch error, falling back to local case studies:', blogsError);
+          setBlogs(mockBlogPosts);
+        } else if (!blogsData || blogsData.length === 0) {
+          setBlogs(mockBlogPosts);
         } else {
           setBlogs(blogsData as BlogPost[]);
         }
       } catch (error) {
-        toast.error('Failed to fetch blogs', {
-          description: error instanceof Error ? error.message : 'Unknown error'
-        });
         console.error('Error fetching blogs:', error);
+        setBlogs(mockBlogPosts);
       } finally {
         setLoading(false);
       }

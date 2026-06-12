@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
-import { BlogPost, BlogComment } from '@/types/blog';
+import { BlogPost, BlogComment, mockBlogPosts } from '@/types/blog';
 import { toast } from 'sonner';
 import { CalendarIcon, ArrowLeft, Clock, User, Lock, MessageSquare, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -43,25 +43,35 @@ const BlogPostPage = () => {
           .eq('id', id)
           .single();
 
-        if (blogError) throw blogError;
-        setBlog(blogData as BlogPost);
-        
-        // First two blog posts are always free, rest require premium subscription unless marked free
-        const { data: allBlogs, error: allBlogsError } = await supabase
-          .from('blogs')
-          .select('id, premium')
-          .eq('published', true)
-          .order('created_at', { ascending: false });
-          
-        if (!allBlogsError && allBlogs.length > 0) {
-          // First two posts are always free
-          if (allBlogs[0].id === id || allBlogs[1]?.id === id) {
-            setIsFreeBlog(true);
+        if (blogError) {
+          console.warn("Database fetch error, trying local mockBlogPosts:", blogError);
+          const mockPost = mockBlogPosts.find(b => b.id === id);
+          if (mockPost) {
+            setBlog(mockPost);
+            setIsFreeBlog(!mockPost.premium);
           } else {
-            // Check if this is a premium post
-            const currentBlog = allBlogs.find(b => b.id === id);
-            if (currentBlog && !currentBlog.premium) {
+            throw new Error("Post not found in database or local mock database");
+          }
+        } else {
+          setBlog(blogData as BlogPost);
+          
+          // First two blog posts are always free, rest require premium subscription unless marked free
+          const { data: allBlogs, error: allBlogsError } = await supabase
+            .from('blogs')
+            .select('id, premium')
+            .eq('published', true)
+            .order('created_at', { ascending: false });
+            
+          if (!allBlogsError && allBlogs.length > 0) {
+            // First two posts are always free
+            if (allBlogs[0].id === id || allBlogs[1]?.id === id) {
               setIsFreeBlog(true);
+            } else {
+              // Check if this is a premium post
+              const currentBlog = allBlogs.find(b => b.id === id);
+              if (currentBlog && !currentBlog.premium) {
+                setIsFreeBlog(true);
+              }
             }
           }
         }
