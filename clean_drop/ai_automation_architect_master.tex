@@ -13,6 +13,9 @@
 \usepackage{fontawesome5}
 \usepackage{geometry}
 \usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\DeclareUnicodeCharacter{20B9}{Rs.}
 
 \geometry{left=0.55in, top=0.55in, right=0.55in, bottom=0.55in}
 
@@ -39,7 +42,7 @@
 % Section formatting
 \titleformat{\section}{
   \vspace{-5pt}\scshape\raggedright\large\bfseries\color{primaryColor}
-}{}{0em}{}[\color{primaryColor}\hairline \vspace{-5pt}]
+}{}{0em}{}[\color{primaryColor}\titlerule \vspace{-5pt}]
 
 \newcommand{\resumeItem}[2]{
   \item\small{
@@ -76,7 +79,7 @@
 
 %--- PROFESSIONAL EXECUTIVE SUMMARY ---
 \section{Executive Profile}
-Full-stack \textbf{AI Systems Architect} and automation specialist who leverages AI pipelines, prompt configurations, and local LLMs (Ollama/Deepseek) to build enterprise applications. Expertise in secure backend API engineering, database SSH tunneling, and data processing. Deployed production integrations that automated **151.5 hours of manual efforts per month** (saving 0.86 FTE) and generated over **₹1.3 Crore ($155\text{K}+$ USD) in verified bottomline profit** at Holisol Logistics.
+Full-stack \textbf{AI Systems Architect} and automation specialist who leverages AI pipelines, prompt configurations, and local LLMs (Ollama/Deepseek) to build enterprise applications. Expertise in secure backend API engineering, database SSH tunneling, and data processing. Deployed production integrations that automated \textbf{151.5 hours of manual efforts per month} (saving 0.86 FTE) and generated over \textbf{₹1.3 Crore (\$155K+ USD) in verified bottomline profit} at Holisol Logistics.
 
 %--- TECHNICAL CORE COMPETENCIES ---
 \section{Technical Core Competencies}
@@ -85,8 +88,8 @@ Full-stack \textbf{AI Systems Architect} and automation specialist who leverages
      \textbf{AI \& Agentic Orchestration}{: Local LLM setups (Ollama, Deepseek), RAG pipelines, Prompt Shielding, Vector Databases} \\
      \textbf{Backend \& Web Engineering}{: Python (FastAPI, Streamlit, Pandas), SQL (MySQL, SQLite, DuckDB), REST APIs} \\
      \textbf{Secure Infrastructures}{: SSH database tunneling, JWT Authentication, AES-256 (Fernet) Encryption, Docker sandboxing} \\
-     \textbf{Frontend & UI/UX}{: React, TypeScript, Tailwind CSS, shadcn/ui, Three.js, React Three Fiber, WebGL} \\
-     \textbf{Systems & Processes}{: BRD/PRD writing, SDLC mapping, JIRA tracking, Git/GitHub, LaTeX, Agile sprints}
+     \textbf{Frontend \& UI/UX}{: React, TypeScript, Tailwind CSS, shadcn/ui, Three.js, React Three Fiber, WebGL} \\
+     \textbf{Systems \& Processes}{: BRD/PRD writing, SDLC mapping, JIRA tracking, Git/GitHub, LaTeX, Agile sprints}
     }}
 \end{itemize}
 
@@ -148,7 +151,7 @@ Full-stack \textbf{AI Systems Architect} and automation specialist who leverages
   \resumeSubHeadingListEnd
 
 %--- EDUCATION ---
-\section{Education & Credentials}
+\section{Education \& Credentials}
   \resumeSubHeadingListStart
     \resumeSubheading{ITM University}{Gwalior, India}
     {Master of Business Administration (MBA) -- SCM \& Logistics}{2020 -- 2022}

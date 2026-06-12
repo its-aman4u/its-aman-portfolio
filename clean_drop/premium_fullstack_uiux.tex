@@ -13,6 +13,9 @@
 \usepackage{fontawesome5}
 \usepackage{geometry}
 \usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\DeclareUnicodeCharacter{20B9}{Rs.}
 
 \geometry{left=0.55in, top=0.55in, right=0.55in, bottom=0.55in}
 
@@ -40,7 +43,7 @@
 % Section formatting with color accents
 \titleformat{\section}{
   \vspace{-5pt}\scshape\raggedright\large\bfseries\color{primaryColor}
-}{}{0em}{}[\color{primaryColor}\hairline \vspace{-5pt}]
+}{}{0em}{}[\color{primaryColor}\titlerule \vspace{-5pt}]
 
 \newcommand{\resumeItem}[2]{
   \item\small{
@@ -77,10 +80,10 @@
 
 %--- PROFESSIONAL EXECUTIVE SUMMARY ---
 \section{Executive Profile}
-Full-stack \textbf{AI Systems Engineer} and automation developer with a proven record of implementing secure backend APIs, database tunnels, and WebGL frontend architectures. Expert in leveraging local LLM engines (Ollama, Deepseek, Hermes) to multiply engineering velocity. Deployed enterprise WMS connectors, P\&L compilers, and safety aggregators that automated **151.5 hours of manual processes per month** and generated over **₹1.3 Crore ($155\text{K}+$ USD) in verified bottomline profit**.
+Full-stack \textbf{AI Systems Engineer} and automation developer with a proven record of implementing secure backend APIs, database tunnels, and WebGL frontend architectures. Expert in leveraging local LLM engines (Ollama, Deepseek, Hermes) to multiply engineering velocity. Deployed enterprise WMS connectors, P\&L compilers, and safety aggregators that automated \textbf{151.5 hours of manual processes per month} and generated over \textbf{₹1.3 Crore (\$155K+ USD) in verified bottomline profit}.
 
 %--- ARCHITECTURE TOOLKIT ---
-\section{Technical Architecture & Toolkit}
+\section{Technical Architecture \& Toolkit}
 \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
      \textbf{AI Integration \& Agents}{: Local LLM deployments, RAG pipelines, Prompt Guarding, autonomous agent security} \\
@@ -101,8 +104,8 @@ Full-stack \textbf{AI Systems Engineer} and automation developer with a proven r
       \resumeItem{WMS Insights Integration}{Engineered the live **HWMS Insights Connector** using FastAPI, Next.js, and SQLite, establishing secure SSH-tunnels to live warehouse MySQL databases; automated reporting dashboards to save \textbf{44 hours of manual labor/month}.}
       \resumeItem{Operations Pipeline Automation}{Built Python ETL scripts for daily Increff WMS (HINA) and Verdis file transfers, automating data ingestion pipelines to save \textbf{30 hours/month} and eliminate transcription errors.}
       \resumeItem{MIS P\&L Automation}{Created automated month-over-month roll-forward financial compilers; designed data validation checks and locked regional submission structures, saving \textbf{25 hours/month} of manual aggregation.}
-      \resumeItem{Holihealth & Safety Mailers}{Aggregated facility safety compliance and checklist score databases into automated weekly PDF dispatch engines, saving \textbf{22.5 hours/month}.}
-      \resumeItem{Financial Bottomline Gains}{Facilitated \textbf{₹1.3 Crore} in cumulative savings through Daily FC P&L audits (₹42L saved), Last-Mile delivery route mapping (₹24.55L saved), and billing realization recovery (₹6.91L recovered).}
+      \resumeItem{Holihealth \& Safety Mailers}{Aggregated facility safety compliance and checklist score databases into automated weekly PDF dispatch engines, saving \textbf{22.5 hours/month}.}
+      \resumeItem{Financial Bottomline Gains}{Facilitated \textbf{₹1.3 Crore} in cumulative savings through Daily FC P\&L audits (₹42L saved), Last-Mile delivery route mapping (₹24.55L saved), and billing realization recovery (₹6.91L recovered).}
     \resumeItemListEnd
 
     \resumeSubheading{Somany Ceramics Ltd}{Noida, India}
@@ -132,10 +135,10 @@ Full-stack \textbf{AI Systems Engineer} and automation developer with a proven r
   \resumeSubHeadingListEnd
 
 %--- EDUCATION ---
-\section{Education & Credentials}
+\section{Education \& Credentials}
   \resumeSubHeadingListStart
     \resumeSubheading{ITM University}{Gwalior, India}
-    {Master of Business Administration (MBA) -- Supply Chain & Logistics}{2020 -- 2022}
+    {Master of Business Administration (MBA) -- Supply Chain \& Logistics}{2020 -- 2022}
   \resumeSubHeadingListEnd
 
 \end{document}
