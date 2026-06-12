@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Bike } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,6 +11,7 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const { isAuthenticated, profile, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +33,10 @@ const Header = () => {
     }
   }, [isDarkMode]);
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Journey', path: '/journey' },
@@ -47,8 +52,8 @@ const Header = () => {
     navigate('/');
   };
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  const toggleMenu = () => setIsOpen((open) => !open);
+  const toggleTheme = () => setIsDarkMode((darkMode) => !darkMode);
   
   const handleLogout = async () => {
     await logout();
@@ -103,10 +108,12 @@ const Header = () => {
             )}
             
             <Button 
+              type="button"
               variant="ghost" 
               size="icon" 
               onClick={toggleTheme}
               className="ml-2"
+              aria-label={isDarkMode ? "Use light theme" : "Use dark theme"}
             >
               {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
@@ -114,7 +121,7 @@ const Header = () => {
         </nav>
 
         {/* Mobile Navigation */}
-        <div className="flex items-center md:hidden">
+        <div className="relative z-[60] flex items-center gap-1 md:hidden">
           {!isOpen && (
             <>
               {isAuthenticated ? (
@@ -142,18 +149,23 @@ const Header = () => {
           )}
           
           <Button 
+            type="button"
             variant="ghost" 
             size="icon" 
             onClick={toggleTheme}
-            className="mr-2"
+            aria-label={isDarkMode ? "Use light theme" : "Use dark theme"}
           >
             {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
           <Button 
+            type="button"
             variant="ghost"
             size="icon"
             className="text-foreground"
             onClick={toggleMenu}
+            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
@@ -161,7 +173,15 @@ const Header = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden bg-background dark:bg-card fixed inset-x-0 transition-all duration-300 ease-in-out ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
+      <div
+        id="mobile-navigation"
+        aria-hidden={!isOpen}
+        className={`fixed inset-x-0 top-[72px] bottom-0 z-40 overflow-y-auto bg-background/98 shadow-xl backdrop-blur-md transition-all duration-200 ease-out dark:bg-card/98 md:hidden ${
+          isOpen
+            ? 'visible translate-y-0 opacity-100 pointer-events-auto'
+            : 'invisible -translate-y-3 opacity-0 pointer-events-none'
+        }`}
+      >
         <nav className="container mx-auto px-4 py-8">
           <ul className="space-y-6">
             {navItems.map((item) => (
