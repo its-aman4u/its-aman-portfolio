@@ -18,7 +18,7 @@ type Message = {
   isQuotaError?: boolean;
 };
 
-type ApiStatus = "gemini" | "fallback" | "quota_exceeded";
+type ApiStatus = "gemini" | "gemini-15" | "llama" | "fallback" | "quota_exceeded";
 
 const AIChatbot = () => {
   const { isAuthenticated, profile } = useAuth();
@@ -196,6 +196,11 @@ const AIChatbot = () => {
           if (response.ok) {
             const data = await response.json();
             responseText = data.content;
+            // Update status badge to reflect which model responded
+            const model = data.model || 'gemini';
+            if (model.includes('1.5') || model.includes('15')) setApiMode('gemini-15');
+            else if (model.includes('llama')) setApiMode('llama');
+            else setApiMode('gemini');
           } else {
             const errData = await response.json();
             const errMsg = errData.error || "";
@@ -423,7 +428,11 @@ const AIChatbot = () => {
 
   const getStatusBadge = () => {
     if (apiMode === "gemini") {
-      return { text: "Live Gemini Mode", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400 animate-pulse" };
+      return { text: "Gemini 2.0 Flash", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400 animate-pulse" };
+    } else if (apiMode === "gemini-15") {
+      return { text: "Gemini 1.5 Flash ✦", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", dot: "bg-emerald-400 animate-pulse" };
+    } else if (apiMode === "llama") {
+      return { text: "Llama 3.3 70B (Free)", bg: "bg-blue-500/10 text-blue-400 border-blue-500/20", dot: "bg-blue-400 animate-pulse" };
     } else if (apiMode === "quota_exceeded") {
       return { text: "Daily Limit Reached", bg: "bg-orange-500/10 text-orange-400 border-orange-500/20", dot: "bg-orange-400 animate-bounce" };
     } else {
