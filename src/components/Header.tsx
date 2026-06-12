@@ -37,6 +37,7 @@ const Header = () => {
     { name: 'Journey', path: '/journey' },
     { name: 'Skills', path: '/skills' },
     { name: 'Projects', path: '/projects' },
+    { name: 'AI Chatbot', path: '/chatbot' },
     { name: 'Blog', path: '/blog' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -55,7 +56,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-card/80 backdrop-blur-md shadow-md' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/40 dark:bg-card/45 backdrop-blur-md border-b border-white/20 dark:border-white/10 shadow-lg' : 'bg-transparent'}`}>
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="#" onClick={handleLogoClick} className="flex items-center gap-2 text-primary font-heading font-bold text-xl">
           <Bike className="w-6 h-6" />

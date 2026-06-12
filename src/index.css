@@ -116,6 +116,32 @@
   .text-shadow-lg {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   }
+
+  /* Premium 2026 Apple Glassmorphism Styles */
+  .glass-panel {
+    @apply bg-white/20 dark:bg-card/25 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-xl;
+  }
+  .glass-card {
+    @apply bg-white/20 dark:bg-card/25 backdrop-blur-lg border border-white/20 dark:border-white/10 shadow-xl
+           hover:bg-white/30 dark:hover:bg-card/35 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/5
+           transition-all duration-500 rounded-2xl;
+  }
+  .glass-button {
+    @apply bg-white/10 hover:bg-white/25 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-md
+           border border-white/30 dark:border-white/15 text-foreground hover:text-primary
+           shadow-md hover:shadow-lg transition-all duration-300 rounded-lg;
+  }
+  .glass-input {
+    @apply bg-white/10 dark:bg-black/25 backdrop-blur-sm border border-white/25 dark:border-white/10
+           text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2
+           focus:ring-primary/40 focus:border-primary/50 transition-all duration-300 rounded-lg;
+  }
+  .glass-chat-bubble-user {
+    @apply bg-primary/75 dark:bg-primary/80 backdrop-blur-sm text-primary-foreground border border-white/10 shadow-md;
+  }
+  .glass-chat-bubble-bot {
+    @apply bg-white/25 dark:bg-card/30 backdrop-blur-sm text-foreground border border-white/10 shadow-sm;
+  }
 }
 
 /* Custom scrollbar */

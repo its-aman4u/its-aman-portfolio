@@ -29,6 +29,19 @@ const AdminBlog = () => {
   const { user, profile, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  // Admin Settings states
+  const [adminEmailInput, setAdminEmailInput] = useState(localStorage.getItem('admin_email') || 'admin@portfolio.com');
+  const [adminPasswordInput, setAdminPasswordInput] = useState(localStorage.getItem('admin_password') || 'adminpassword123');
+  const [geminiApiKeyInput, setGeminiApiKeyInput] = useState(localStorage.getItem('gemini_api_key') || '');
+
+  const handleUpdateAdminSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem('admin_email', adminEmailInput);
+    localStorage.setItem('admin_password', adminPasswordInput);
+    localStorage.setItem('gemini_api_key', geminiApiKeyInput);
+    toast.success('Admin config settings updated successfully!');
+  };
+
   useEffect(() => {
     // Check if user is authenticated and is admin
     if (!isAuthenticated) {
@@ -450,11 +463,58 @@ const AdminBlog = () => {
               <div>
                 <h3 className="text-sm font-medium mb-2">Contact Submissions</h3>
                 <Button asChild variant="outline" className="w-full">
-                  <Link to="/admin/contact">
+                  <Link to="/admin/contacts">
                     View Messages
                   </Link>
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mt-6">
+            <CardHeader className="pb-3">
+              <CardTitle>Admin Configuration Settings</CardTitle>
+              <CardDescription>Configure credentials and Gemini API keys</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleUpdateAdminSettings} className="space-y-4">
+                <div className="space-y-1">
+                  <Label htmlFor="admin_email_conf">Admin Test Email</Label>
+                  <Input
+                    type="email"
+                    id="admin_email_conf"
+                    value={adminEmailInput}
+                    onChange={(e) => setAdminEmailInput(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="admin_password_conf">Admin Passcode/Password</Label>
+                  <Input
+                    type="text"
+                    id="admin_password_conf"
+                    value={adminPasswordInput}
+                    onChange={(e) => setAdminPasswordInput(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="gemini_api_key_conf">Gemini API Key</Label>
+                  <Input
+                    type="password"
+                    id="gemini_api_key_conf"
+                    value={geminiApiKeyInput}
+                    onChange={(e) => setGeminiApiKeyInput(e.target.value)}
+                    placeholder="AIzaSy..."
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Entering a key enables direct frontend queries to Gemini 2.0.
+                  </p>
+                </div>
+                <Button type="submit" className="w-full">
+                  Save Settings
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </div>

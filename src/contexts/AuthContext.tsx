@@ -124,7 +124,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('Login attempt for:', email);
       
-      const mockUser = mockUsers.find(u => u.email === email && u.password === password);
+      const adminEmail = localStorage.getItem('admin_email') || 'admin@portfolio.com';
+      const adminPassword = localStorage.getItem('admin_password') || 'adminpassword123';
+      
+      const currentMockUsers = mockUsers.map(u => {
+        if (u.profile.is_admin) {
+          return {
+            ...u,
+            email: adminEmail,
+            password: adminPassword
+          };
+        }
+        return u;
+      });
+
+      const mockUser = currentMockUsers.find(u => u.email === email && u.password === password);
       
       if (!mockUser) {
         toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });

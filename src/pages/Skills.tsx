@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import { 
   BarChart3, Database, LineChart, Cog, Globe, Users, Brain, 
-  Code, Search, Layout, Sparkles, Gauge
+  Code, Search, Layout, Sparkles, Gauge, ShieldAlert
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -11,100 +10,70 @@ const Skills = () => {
   
   const categories = [
     { id: 'all', name: 'All Skills' },
-    { id: 'technical', name: 'Technical' },
-    { id: 'business', name: 'Business' },
-    { id: 'soft', name: 'Soft Skills' }
+    { id: 'technical', name: 'Systems & Engineering' },
+    { id: 'business', name: 'Operations & Product' },
+    { id: 'soft', name: 'Leadership' }
   ];
   
   const skills = [
     {
-      title: "Data Analysis",
-      description: "Expert in cleaning, analyzing, and visualizing data to drive business decisions.",
-      icon: BarChart3,
+      title: "AI Integration & Prompt Guarding",
+      description: "Integrating Gemini and local LLM configurations (Ollama/Deepseek) with custom system prompts, context routing, and dynamic data engines.",
+      icon: Brain,
       category: "technical"
     },
     {
-      title: "Process Optimization",
-      description: "Redesigning workflows to improve efficiency, reduce costs, and enhance productivity.",
-      icon: Cog,
-      category: "business"
-    },
-    {
-      title: "Supply Chain Management",
-      description: "Expertise in logistics, procurement, vendor negotiation, and SCM trainings.",
-      icon: Gauge,
-      category: "business"
-    },
-    {
-      title: "Automation",
-      description: "Creating scripts and tools to automate routine tasks with Google AppScript, APIs, etc.",
-      icon: Sparkles,
-      category: "technical"
-    },
-    {
-      title: "Microsoft 365",
-      description: "Advanced skills in the full suite of Microsoft productivity and collaboration tools.",
+      title: "Secure DB Tunneling",
+      description: "Configuring secure SSH database tunnels, RBAC access schemas, AES-256 Fernet data encryption, and read-only query safety gates.",
       icon: Database,
       category: "technical"
     },
     {
-      title: "Marketing Campaigns",
-      description: "Experience in campaign design, brand visibility, sales optimization, and SEO.",
-      icon: Globe,
-      category: "business"
-    },
-    {
-      title: "Customer Service",
-      description: "Expertise in issue resolution, customer satisfaction, and relationship management.",
-      icon: Users,
-      category: "business"
-    },
-    {
-      title: "AI & Prompt Engineering",
-      description: "Skilled in utilizing and fine-tuning AI models for business applications.",
-      icon: Brain,
+      title: "Data Pipelines & ETL",
+      description: "Building Python-based automation pipelines with Pandas, DuckDB, SQLite, and Streamlit, transforming raw logs into gold analytics data.",
+      icon: BarChart3,
       category: "technical"
     },
     {
-      title: "Web Development",
-      description: "Knowledge of web technologies and design principles for creating effective digital experiences.",
+      title: "Process Automation",
+      description: "Designing high-leverage scripts (Google Apps Script, REST APIs, SFTP transfers) automating file uploads, saving 151.5 hours of manual work/month.",
+      icon: Cog,
+      category: "technical"
+    },
+    {
+      title: "Modern Web Engineering",
+      description: "Developing premium full-stack interfaces in React, TypeScript, Tailwind CSS, Vite, and Node, utilizing three.js / WebGL space UI.",
       icon: Code,
       category: "technical"
     },
     {
-      title: "Data Visualization",
-      description: "Creating clear, insightful visualizations with tools like Power BI and other platforms.",
-      icon: LineChart,
+      title: "Zero-Trust Security",
+      description: "Designing container sandboxing (Docker) and Model Context Protocol (MCP) prompt guarding systems to protect autonomous AI developer environments.",
+      icon: ShieldAlert,
       category: "technical"
     },
     {
-      title: "SEO Optimization",
-      description: "Implementing strategies to improve online visibility and search engine rankings.",
-      icon: Search,
-      category: "technical"
+      title: "Supply Chain Operations",
+      description: "Deep knowledge of warehouse management systems (WMS), fulfillment centers (FC) operating plans, P&L variance audits, and Last-Mile cost structures.",
+      icon: Gauge,
+      category: "business"
     },
     {
-      title: "UI/UX Design",
-      description: "Designing user-centered interfaces that enhance user experience and engagement.",
+      title: "Product Strategy & Specs",
+      description: "Authoring comprehensive product requirement documents (PRD/BRD), user stories, API definitions, and sprint planning schedules in JIRA.",
       icon: Layout,
-      category: "technical"
+      category: "business"
     },
     {
-      title: "Leadership",
-      description: "Leading teams and initiatives with clear vision and effective communication.",
+      title: "Executive Leadership",
+      description: "Managing PAN India operations, safety compliance, and coordinating cross-functional team collaborations to drive bottomline savings.",
       icon: Users,
       category: "soft"
     },
     {
-      title: "Critical Thinking",
-      description: "Analyzing complex problems and developing innovative solutions.",
-      icon: Brain,
-      category: "soft"
-    },
-    {
-      title: "Communication",
-      description: "Effectively conveying ideas and information to diverse audiences.",
-      icon: Users,
+      title: "Critical Problem Solving",
+      description: "Root cause analysis (RCA) on operational floor failures and translating operational business logics into scalable code structures.",
+      icon: Sparkles,
       category: "soft"
     }
   ];
@@ -114,13 +83,18 @@ const Skills = () => {
     : skills.filter(skill => skill.category === activeCategory);
 
   return (
-    <div className="min-h-screen pt-20">
-      <section className="py-16">
+    <div className="relative min-h-screen pt-24 pb-12 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-cycle-light to-muted dark:from-cycle-dark dark:to-background -z-10"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/15 rounded-full blur-3xl -z-10 animate-pulse delay-500"></div>
+
+      <section className="py-12 relative z-10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold mb-4">Skills & Expertise</h1>
+            <h1 className="text-4xl font-bold mb-4 text-foreground">Skills & Expertise</h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              An overview of my professional capabilities and areas of specialization.
+              An overview of my technical toolkit, supply chain systems background, and high-impact capabilities.
             </p>
           </div>
           
@@ -131,7 +105,7 @@ const Skills = () => {
                 key={category.id}
                 variant={activeCategory === category.id ? "default" : "outline"}
                 onClick={() => setActiveCategory(category.id)}
-                className="mb-2"
+                className={`mb-2 transition-all duration-300 ${activeCategory === category.id ? '' : 'glass-button border-white/20'}`}
               >
                 {category.name}
               </Button>
@@ -143,16 +117,16 @@ const Skills = () => {
             {filteredSkills.map((skill, index) => (
               <div 
                 key={index} 
-                className="skill-card animate-fade-in" 
+                className="glass-card p-6 flex flex-col items-center text-center animate-fade-in" 
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="mb-4 flex justify-center">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-primary/15 rounded-full flex items-center justify-center border border-white/20">
                     <skill.icon className="w-6 h-6 text-primary" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-center">{skill.title}</h3>
-                <p className="text-muted-foreground text-center">
+                <h3 className="text-xl font-bold mb-3 text-foreground">{skill.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {skill.description}
                 </p>
               </div>

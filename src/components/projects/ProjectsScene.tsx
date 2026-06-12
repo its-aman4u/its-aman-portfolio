@@ -123,45 +123,45 @@ function Scene({ scrollToProject }: { scrollToProject: (index: number) => void }
         <ProjectCard 
           position={[-2.5, 0, 0]} 
           color="#1A6A8F" 
-          title="O3 Automation" 
+          title="Cyber Creative" 
           onClick={() => {
-            scrollToProject(1);
+            scrollToProject(0);
           }}
         />
         
         <ProjectTitle 
           position={[-2.5, -0.6, 0]} 
-          title="O3 Automation" 
+          title="Cyber Creative" 
           color="#ffffff" 
         />
         
         <ProjectCard 
           position={[0, 0, 0]} 
           color="#53A2BE" 
-          title="AI Portfolios" 
+          title="AI Exam Prep" 
           onClick={() => {
-            scrollToProject(2);
+            scrollToProject(1);
           }}
         />
         
         <ProjectTitle 
           position={[0, -0.6, 0]} 
-          title="AI Portfolios" 
+          title="AI Exam Prep" 
           color="#ffffff" 
         />
         
         <ProjectCard 
           position={[2.5, 0, 0]} 
           color="#53BE76" 
-          title="Masterclass Scheduler" 
+          title="Recovery Clinic" 
           onClick={() => {
-            scrollToProject(3);
+            scrollToProject(2);
           }}
         />
         
         <ProjectTitle 
           position={[2.5, -0.6, 0]} 
-          title="Masterclass Scheduler" 
+          title="Recovery Clinic" 
           color="#ffffff" 
         />
       </group>

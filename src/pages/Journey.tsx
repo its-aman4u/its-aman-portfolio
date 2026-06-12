@@ -101,63 +101,27 @@ const getIconForIndex = (index, className = "w-6 h-6") => {
 const Journey = () => {
   const milestones = [
     {
-      year: "2016",
-      title: "Academic Pivot",
-      description: "Made a strategic career decision to pursue commerce after 12th standard, establishing a solid foundation for my future business studies despite initial academic challenges.",
+      year: "2020 -- 2022",
+      title: "MBA Specialization (Logistics & SCM)",
+      description: "Earned my MBA with a focus on Supply Chain Management & Marketing, developing a comprehensive understanding of logistics operations, warehouse setups, and data-driven business modeling.",
       icon: GraduationCap
     },
     {
-      year: "2017",
-      title: "Higher Education",
-      description: "Despite facing significant family challenges that resulted in a gap year, I demonstrated resilience by enrolling at ITM to pursue a Bachelor of Commerce degree, determined to excel academically.",
-      icon: BookOpen
-    },
-    {
-      year: "2018",
-      title: "Academic Excellence",
-      description: "Through dedication and disciplined study habits, I achieved first-year topper status, showcasing my commitment to academic excellence and establishing a strong foundation for future professional growth.",
-      icon: Award
-    },
-    {
-      year: "2020",
-      title: "MBA Specialization",
-      description: "Enhanced my expertise by pursuing an MBA with dual specialization in Supply Chain Management & Marketing, developing comprehensive knowledge in business operations and strategic market dynamics.",
-      icon: GraduationCap
-    },
-    {
-      year: "2021",
-      title: "Professional Debut",
-      description: "Secured a position as Warehouse Executive at Holisol, where I gained valuable hands-on experience in logistics operations and developed practical skills in supply chain management and process optimization.",
+      year: "2021 -- 2024",
+      title: "Compliance & Safety Lead (Holisol Logistics)",
+      description: "Managed PAN India warehouse compliance audits and process optimization. Restructured ground operations registries to improve file retrieval by 30% and implemented safety frameworks that cut violations by 25%.",
       icon: Briefcase
     },
     {
-      year: "2022",
-      title: "Graduation & Career Growth",
-      description: "Successfully completed my MBA and advanced professionally by joining Holisol Corporate, transitioning from operational roles to strategic positions with broader organizational responsibilities.",
-      icon: Briefcase
-    },
-    {
-      year: "2024 (June)",
-      title: "Data Science Exploration",
-      description: "Recognized the transformative potential of AI in business operations and proactively embraced data science learning through LinkedIn and Coursera, adapting to evolving technological landscapes.",
+      year: "2024 -- Present",
+      title: "AI Automation & Systems Developer (Holisol)",
+      description: "Translated ground business workflows into code. Designed the HWMS Insights Connector, automated file transfer interfaces, and compiled daily FC P&Ls, yielding over ₹1.3 Crore in verified bottomline value and saving 151.5 hours of manual work/month.",
       icon: Code
     },
     {
-      year: "2024 (August)",
-      title: "Data Analysis Certification",
-      description: "Formalized my expertise in data analysis through professional certification, validating my technical skills in extracting actionable business insights from complex datasets.",
-      icon: BarChart
-    },
-    {
-      year: "2024 (October)",
-      title: "Leadership Advancement",
-      description: "Rejoined Holisol in a leadership capacity, spearheading comprehensive safety initiatives across PAN India operations and successfully managing cross-functional responsibilities.",
-      icon: Briefcase
-    },
-    {
-      year: "2025 (March)",
-      title: "Technology Integration",
-      description: "Leveraged my combined business acumen and technical skills to develop innovative automation solutions with AppScript and implement machine learning models, significantly driving operational efficiency and cost reduction.",
+      year: "2025 -- Present",
+      title: "Founder & Principal Developer (Amanverse Solutions)",
+      description: "Launched a full-stack digital solutions service. Delivered and deployed modern, secure client platforms, news aggregators, and clinic booking systems utilizing React, Supabase, and Vercel CI/CD.",
       icon: Rocket
     }
   ];

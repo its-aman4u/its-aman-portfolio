@@ -1,0 +1,141 @@
+%-------------------------
+% Premium Full-Stack Engineer CV
+% Author : Aman Singh
+%------------------------
+
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{fontawesome5}
+\usepackage{geometry}
+\usepackage{xcolor}
+
+\geometry{left=0.55in, top=0.55in, right=0.55in, bottom=0.55in}
+
+% Define premium colors
+\definecolor{primaryColor}{RGB}{26, 75, 115} % Deep Slate Blue
+\definecolor{charcoal}{RGB}{51, 51, 51}
+\definecolor{lightGrey}{RGB}{240, 240, 240}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\addtolength{\oddsidemargin}{-0.1in}
+\addtolength{\evensidemargin}{-0.1in}
+\addtolength{\textwidth}{0.2in}
+\addtolength{\topmargin}{-0.1in}
+\addtolength{\textheight}{0.2in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+
+% Section formatting with color accents
+\titleformat{\section}{
+  \vspace{-5pt}\scshape\raggedright\large\bfseries\color{primaryColor}
+}{}{0em}{}[\color{primaryColor}\hairline \vspace{-5pt}]
+
+\newcommand{\resumeItem}[2]{
+  \item\small{
+    \textbf{\color{charcoal}#1}{: #2 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{\color{charcoal}#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+%----------HEADER WITH VECTOR ICONS-----------------
+\begin{center}
+    {\Huge \textbf{\color{primaryColor} AMAN SINGH}} \\ \vspace{6pt}
+    \small
+    \faPhone\ +91 93404 74252 \quad | \quad
+    \faEnvelope\ \href{mailto:aman.singh01031997@gmail.com}{aman.singh01031997@gmail.com} \quad | \quad
+    \faGlobe\ \href{https://aman-singh-portfolio-eight.vercel.app}{aman-singh-portfolio-eight.vercel.app} \\ \vspace{3pt}
+    \faLinkedin\ \href{https://linkedin.com/in/aman-singh-10a060217}{linkedin.com/in/aman-singh-10a060217} \quad | \quad
+    \faGithub\ \href{https://github.com/its-aman4u}{github.com/its-aman4u} \quad | \quad
+    \small Gurugram, India
+\end{center}
+
+%--- PROFESSIONAL EXECUTIVE SUMMARY ---
+\section{Executive Profile}
+Full-stack \textbf{AI Systems Engineer} and automation developer with a proven record of implementing secure backend APIs, database tunnels, and WebGL frontend architectures. Expert in leveraging local LLM engines (Ollama, Deepseek, Hermes) to multiply engineering velocity. Deployed enterprise WMS connectors, P\&L compilers, and safety aggregators that automated **151.5 hours of manual processes per month** and generated over **₹1.3 Crore ($155\text{K}+$ USD) in verified bottomline profit**.
+
+%--- ARCHITECTURE TOOLKIT ---
+\section{Technical Architecture & Toolkit}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{AI Integration \& Agents}{: Local LLM deployments, RAG pipelines, Prompt Guarding, autonomous agent security} \\
+     \textbf{Backend \& APIs}{: Python, FastAPI, Streamlit, RESTful APIs, JWT, AES-256 (Fernet) Encryption} \\
+     \textbf{Data Engineering}{: SQL (MySQL, SQLite, DuckDB), SSH database tunneling, ETL pipelines, Pandas, Openpyxl} \\
+     \textbf{Frontend \& UI/UX}{: React, TypeScript, Tailwind CSS, shadcn/ui, Three.js, React Three Fiber, WebGL} \\
+     \textbf{DevOps \& Tools}{: Git, Docker sandboxing, Model Context Protocol (MCP), JIRA, LaTeX, Vite}
+    }}
+\end{itemize}
+
+%--- PROFESSIONAL EXPERIENCE ---
+\section{Professional Experience}
+  \resumeSubHeadingListStart
+    
+    \resumeSubheading{Holisol Logistics Pvt Ltd}{New Delhi, India}
+    {AI Automation \& Systems Developer}{Nov 2021 -- Present}
+    \resumeItemListStart
+      \resumeItem{WMS Insights Integration}{Engineered the live **HWMS Insights Connector** using FastAPI, Next.js, and SQLite, establishing secure SSH-tunnels to live warehouse MySQL databases; automated reporting dashboards to save \textbf{44 hours of manual labor/month}.}
+      \resumeItem{Operations Pipeline Automation}{Built Python ETL scripts for daily Increff WMS (HINA) and Verdis file transfers, automating data ingestion pipelines to save \textbf{30 hours/month} and eliminate transcription errors.}
+      \resumeItem{MIS P\&L Automation}{Created automated month-over-month roll-forward financial compilers; designed data validation checks and locked regional submission structures, saving \textbf{25 hours/month} of manual aggregation.}
+      \resumeItem{Holihealth & Safety Mailers}{Aggregated facility safety compliance and checklist score databases into automated weekly PDF dispatch engines, saving \textbf{22.5 hours/month}.}
+      \resumeItem{Financial Bottomline Gains}{Facilitated \textbf{₹1.3 Crore} in cumulative savings through Daily FC P&L audits (₹42L saved), Last-Mile delivery route mapping (₹24.55L saved), and billing realization recovery (₹6.91L recovered).}
+    \resumeItemListEnd
+
+    \resumeSubheading{Somany Ceramics Ltd}{Noida, India}
+    {Data Analyst \& L\&D Coordinator}{Mar 2024 -- June 2024}
+    \resumeItemListStart
+      \resumeItem{Productivity Audits}{Designed SQL query templates and Excel spreadsheets to evaluate ground personnel training compliance; restructured the document registry to improve file retrieval speed by \textbf{30\%}.}
+    \resumeItemListEnd
+
+    \resumeSubheading{Holisol Logistics Pvt Ltd (Early Tenure)}{New Delhi, India}
+    {Compliance \& Safety Team Lead}{Nov 2021 -- Feb 2024}
+    \resumeItemListStart
+      \resumeItem{Process Optimization}{Led compliance audits for PAN India warehouse centers; implemented safety frameworks to reduce violation incidents by \textbf{25\%}.}
+    \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%--- COMMERCIAL DELIVERABLES ---
+\section{Commercial Web Deliverables \& Vercel Deployments (Amanverse Solutions)}
+  \resumeSubHeadingListStart
+    
+    \resumeSubheading{Vercel Interactive Deployments}{Rapid UI/UX Prototypes}
+    {Lead Developer | Tech: React, TypeScript, Tailwind CSS, Supabase, Vercel CI/CD}{2025}
+    \resumeItemListStart
+      \item{Shipped and maintained 5 live-deployed web portals: Cyber Creative Agency (\href{https://cyber-creative-agency.vercel.app}{cyber-creative-agency.vercel.app}), AI Exam Prep (\href{https://ai-exam-prep-portal.vercel.app}{ai-exam-prep-portal.vercel.app}), Recovery Clinic (\href{https://recovery-clinic-portal.vercel.app}{recovery-clinic-portal.vercel.app}), Citizen News (\href{https://citizen-news-platform.vercel.app}{citizen-news-platform.vercel.app}), and Digital Quest (\href{https://digital-genesis-quest.vercel.app}{digital-genesis-quest.vercel.app}).}
+    \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%--- EDUCATION ---
+\section{Education & Credentials}
+  \resumeSubHeadingListStart
+    \resumeSubheading{ITM University}{Gwalior, India}
+    {Master of Business Administration (MBA) -- Supply Chain & Logistics}{2020 -- 2022}
+  \resumeSubHeadingListEnd
+
+\end{document}
