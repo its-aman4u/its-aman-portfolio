@@ -17,8 +17,8 @@
 \usepackage[hidelinks]{hyperref}
 \DeclareUnicodeCharacter{20B9}{Rs.}
 
-% Set clean, professional 0.5-inch margins on all sides (standard for dense resumes)
-\geometry{left=0.5in, top=0.5in, right=0.5in, bottom=0.5in}
+% Set clean, professional margins
+\geometry{left=0.5in, top=0.4in, right=0.5in, bottom=0.4in}
 
 % Define custom color accents
 \definecolor{primaryColor}{RGB}{20, 80, 80} % Deep Teal Accent
@@ -36,8 +36,8 @@
 
 % Section formatting
 \titleformat{\section}{
-  \vspace{-6pt}\scshape\raggedright\large\bfseries\color{primaryColor}
-}{}{0em}{}[\color{primaryColor}\titlerule \vspace{-4pt}]
+  \vspace{-8pt}\scshape\raggedright\large\bfseries\color{primaryColor}
+}{}{0em}{}[\color{primaryColor}\titlerule \vspace{-5pt}]
 
 \newcommand{\resumeItem}[2]{
   \item\small{
@@ -46,17 +46,17 @@
 }
 
 \newcommand{\resumeSubheading}[4]{
-  \vspace{-1pt}\item
+  \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
       \textbf{\color{charcoal}#1} & #2 \\
       \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-5pt}
+    \end{tabular*}\vspace{-6pt}
 }
 
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
 \newcommand{\resumeItemListStart}{\begin{itemize}}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-7pt}}
 
 \begin{document}
 
@@ -69,7 +69,7 @@
     \faGlobe\ \href{https://itsaman4u.vercel.app}{itsaman4u.vercel.app} \\ \vspace{3pt}
     \faGithub\ \href{https://github.com/its-aman4u}{github.com/its-aman4u} \quad | \quad
     \faLinkedin\ \href{https://linkedin.com/in/aman-singh-10a060217}{linkedin.com/in/aman-singh-10a060217} \quad | \quad
-    \small Gurugram, Haryana, India
+    \faMapMarker*\ Gurugram, Haryana, India
 \end{center}
 
 %--- PROFESSIONAL EXECUTIVE SUMMARY ---
@@ -134,6 +134,8 @@ Full-stack \textbf{AI Systems Architect} and automation specialist who leverages
       \item{Built an ETL dashboard engine converting database logs into clean metrics; integrated local LLM queries with custom SQL validation rules (`assert\_readonly()`) verified by 22 automated safety tests. Link: \href{https://github.com/its-aman4u/insightforge-engine}{github.com/its-aman4u/insightforge-engine}}
     \resumeItemListEnd
 
+    \newpage
+
     \resumeSubheading{Vercel Interactive Deployments}{Rapid UI/UX Prototypes}
     {Lead UI Developer | Tech: React, TypeScript, Tailwind CSS, Supabase, Vercel CI/CD}{2025}
     \resumeItemListStart
@@ -147,8 +149,8 @@ Full-stack \textbf{AI Systems Architect} and automation specialist who leverages
   \resumeSubHeadingListStart
     \resumeSubheading{ITM University}{Gwalior, India}
     {Master of Business Administration (MBA) -- SCM \& Logistics}{2020 -- 2022}
-    \resumeSubheading{University of Delhi}{Delhi, India}
-    {Bachelor of Science (B.Sc.)}{2015 -- 2018}
+    \resumeSubheading{ITM University}{Gwalior, India}
+    {Bachelor of Commerce (B.Com)}{2017 -- 2020}
   \resumeSubHeadingListEnd
 
 %--- CERTIFICATIONS ---

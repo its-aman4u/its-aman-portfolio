@@ -355,7 +355,7 @@ const AIChatbot = () => {
 
     // Education / Experience / Journey
     if (q.includes("experience") || q.includes("job") || q.includes("mba") || q.includes("education") || q.includes("university") || q.includes("degree") || q.includes("background") || q.includes("career") || q.includes("journey")) {
-      return "**Aman Singh — Career Journey:**\n\n💼 **Work Experience:**\n- **AI-Native Systems Architect & Automation Specialist** | Holisol Logistics | 2024–Present\n  - Designs secure data bridges, warehouse integrations, and LLM automation tools\n- **Operations Lead & Compliance Specialist** | Holisol Logistics | 2022–2024\n  - Drove ₹1.3 Crore in savings through analytics, audits, and process automation\n\n🎓 **Education:**\n- **MBA in Supply Chain & Logistics** | ITM University, Vadodara | 2020–2022\n- **B.Sc.** | University of Delhi | 2015–2018\n\n🛠️ **Toolkit:** Python, FastAPI, Streamlit, Pandas, SQL, MySQL, DuckDB, React, TypeScript, Docker, Git, Supabase, LangChain, Ollama";
+      return "**Aman Singh — Career Journey:**\n\n💼 **Work Experience:**\n- **AI-Native Systems Architect & Automation Specialist** | Holisol Logistics | 2024–Present\n  - Designs secure data bridges, warehouse integrations, and LLM automation tools\n- **Operations Lead & Compliance Specialist** | Holisol Logistics | 2022–2024\n  - Drove ₹1.3 Crore in savings through analytics, audits, and process automation\n\n🎓 **Education:**\n- **MBA in Supply Chain & Logistics** | ITM University, Gwalior | 2020–2022\n- **Bachelor of Commerce (B.Com)** | ITM University, Gwalior | 2017–2020\n\n🛠️ **Toolkit:** Python, FastAPI, Streamlit, Pandas, SQL, MySQL, DuckDB, React, TypeScript, Docker, Git, Supabase, LangChain, Ollama";
     }
 
     // Tech Stack / Skills / Tools
@@ -375,7 +375,7 @@ const AIChatbot = () => {
 
     // What can you do / help
     if (q.includes("what can") || q.includes("help me") || q.includes("what do you know") || q.includes("capabilities") || q.includes("features")) {
-      return "**Genesis AI — Powered by Aman's Portfolio Data:**\n\n🧠 I know about:\n- All **11 of Aman's projects** (architecture, tech stack, business impact)\n- His **₹1.3 Crore+ operational savings** story\n- **151.5 hours/month** automated across 6 tools\n- His full **career timeline** (Holisol, ITM MBA, Delhi University)\n- His **tech stack** (Python, React, Docker, LLMs, DuckDB, FastAPI)\n- His **5 published case studies** in the blog\n- How to **contact or hire** Aman\n\n💬 **Try asking:**\n- *\"Explain the Zero-Trust project\"*\n- *\"What is Aman's biggest achievement?\"*\n- *\"What technologies does Aman know?\"*\n- *\"How can I reach Aman?\"*";
+      return "**Genesis AI — Powered by Aman's Portfolio Data:**\n\n🧠 I know about:\n- All **11 of Aman's projects** (architecture, tech stack, business impact)\n- His **₹1.3 Crore+ operational savings** story\n- **151.5 hours/month** automated across 6 tools\n- His full **career timeline** (Holisol, ITM University Gwalior)\n- His **tech stack** (Python, React, Docker, LLMs, DuckDB, FastAPI)\n- His **5 published case studies** in the blog\n- How to **contact or hire** Aman\n\n💬 **Try asking:**\n- *\"Explain the Zero-Trust project\"*\n- *\"What is Aman's biggest achievement?\"*\n- *\"What technologies does Aman know?\"*\n- *\"How can I reach Aman?\"*";
     }
 
     // Holisol / Company
@@ -384,7 +384,7 @@ const AIChatbot = () => {
     }
     
     // Default — rich, intelligent fallback
-    return "🌐 **Genesis AI — Enhanced Knowledge Mode**\n\nI'm Aman Singh's portfolio AI, loaded with his full professional context.\n\n**Aman Singh** is an **AI-Native Systems Architect** with **₹1.3 Crore** in operations savings and **151.5 hours/month** automated.\n\n**I can answer questions about:**\n- 🔧 His 11 projects (HWMS Connector, InsightForge, Zero-Trust Sandbox, TAT Automator, Increff Validator...)\n- 💰 His operational savings and business impact metrics\n- 🛠️ His tech stack (Python, React, Docker, LangChain, DuckDB, FastAPI)\n- 🎓 His career journey and education (MBA, B.Sc.)\n- 📬 How to contact or hire him\n- 📝 His 5 published technical case studies\n\nTry asking something more specific — I'll give you a detailed answer!";
+    return "🌐 **Genesis AI — Enhanced Knowledge Mode**\n\nI'm Aman Singh's portfolio AI, loaded with his full professional context.\n\n**Aman Singh** is an **AI-Native Systems Architect** with **₹1.3 Crore** in operations savings and **151.5 hours/month** automated.\n\n**I can answer questions about:**\n- 🔧 His 11 projects (HWMS Connector, InsightForge, Zero-Trust Sandbox, TAT Automator, Increff Validator...)\n- 💰 His operational savings and business impact metrics\n- 🛠️ His tech stack (Python, React, Docker, LangChain, DuckDB, FastAPI)\n- 🎓 His career journey and education (MBA, B.Com)\n- 📬 How to contact or hire him\n- 📝 His 5 published technical case studies\n\nTry asking something more specific — I'll give you a detailed answer!";
   };
 
   const createPrompt = (userInput: string, isAdminUser: boolean) => {
@@ -430,8 +430,8 @@ const AIChatbot = () => {
     - Blog 5: "Operations Analytics: Reconciling Logistics Profitability and Daily FC P&L" (Premium). Business leakage tracking, Permit-to-Work stats, fuel surcharge updates.
 
     ### EDUCATION & SKILLS
-    - MBA in Supply Chain & Logistics: ITM University (2020-2022).
-    - B.Sc.: University of Delhi (2015-2018).
+    - MBA in Supply Chain & Logistics: ITM University, Gwalior (2020-2022).
+    - Bachelor of Commerce (B.Com): ITM University, Gwalior (2017-2020).
     - Toolkit: Python (FastAPI, Streamlit, Pandas, NumPy), SQL (MySQL, SQLite, DuckDB, SSH tunneling), LangChain, LangGraph, Ollama, React, TypeScript, Tailwind CSS, Three.js, React Three Fiber, Git, Supabase, Docker, Vercel.
     - Tone: Highly professional, direct, systems-oriented, and corporate business-focused. Never invent stats or make up credentials. Answer general AI questions with reference to how they apply to Aman's work.
 
