@@ -33,16 +33,17 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users data
+// Mock users data — actual admin credentials are stored securely in localStorage
+// and overridden at login time. These defaults cannot be used to log in.
 const mockUsers = [
   {
     id: 'admin-1',
-    email: 'admin@portfolio.com',
-    password: 'adminpassword123',
+    email: '', // Overridden at login from localStorage('admin_email')
+    password: '', // Overridden at login from localStorage('admin_password')
     profile: {
       id: 'admin-1',
       username: 'admin',
-      full_name: 'Admin User',
+      full_name: 'Aman Singh',
       avatar_url: null,
       website: null,
       is_admin: true,
@@ -124,34 +125,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('Login attempt for:', email);
       
-      const adminEmail = localStorage.getItem('admin_email') || 'admin@portfolio.com';
-      const adminPassword = localStorage.getItem('admin_password') || 'adminpassword123';
-      
-      const currentMockUsers = mockUsers.map(u => {
-        if (u.profile.is_admin) {
-          return {
-            ...u,
-            email: adminEmail,
-            password: adminPassword
-          };
+      // Try server-side admin verification first (most secure path)
+      try {
+        const response = await fetch('/api/verify-admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.is_admin) {
+            // Admin verified server-side
+            const adminUser = mockUsers.find(u => u.profile.is_admin)!;
+            setUser({ id: adminUser.id, email });
+            setProfile({ ...adminUser.profile, full_name: data.full_name || 'Aman Singh' });
+            setSubscription(adminUser.subscription);
+            toast.success('Welcome back, Aman! Admin access granted.');
+            return true;
+          } else if (data.success && !data.is_admin) {
+            // Regular user verified server-side
+            const regularUser = mockUsers.find(u => !u.profile.is_admin)!;
+            setUser({ id: `user-${Date.now()}`, email });
+            setProfile({ ...regularUser.profile, username: email.split('@')[0] });
+            setSubscription(regularUser.subscription);
+            toast.success('Logged in successfully');
+            return true;
+          }
         }
-        return u;
-      });
-
-      const mockUser = currentMockUsers.find(u => u.email === email && u.password === password);
-      
-      if (!mockUser) {
-        toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
-        return false;
+      } catch (serverError) {
+        console.warn('Server-side auth unavailable, using local fallback:', serverError);
       }
       
-      setUser({ id: mockUser.id, email: mockUser.email });
-      setProfile(mockUser.profile);
-      setSubscription(mockUser.subscription);
+      // Local fallback: only use credentials from localStorage (never hardcoded defaults)
+      const adminEmail = localStorage.getItem('admin_email');
+      const adminPassword = localStorage.getItem('admin_password');
       
-      console.log('Login successful:', mockUser);
-      toast.success('Logged in successfully');
-      return true;
+      if (adminEmail && adminPassword && email === adminEmail && password === adminPassword) {
+        const adminUser = mockUsers.find(u => u.profile.is_admin)!;
+        setUser({ id: adminUser.id, email });
+        setProfile(adminUser.profile);
+        setSubscription(adminUser.subscription);
+        toast.success('Welcome back, Aman!');
+        return true;
+      }
+      
+      // Regular user fallback
+      const regularUser = mockUsers.find(u => !u.profile.is_admin && u.email === email && u.password === password);
+      if (regularUser) {
+        setUser({ id: regularUser.id, email: regularUser.email });
+        setProfile(regularUser.profile);
+        setSubscription(regularUser.subscription);
+        toast.success('Logged in successfully');
+        return true;
+      }
+      
+      toast.error('Login failed', { description: 'Invalid credentials. Please try again.' });
+      return false;
     } catch (error: any) {
       console.error('Login error (caught):', error);
       toast.error('Login failed', { description: error.message });

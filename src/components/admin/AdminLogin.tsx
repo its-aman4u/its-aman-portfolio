@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from '@/contexts/AuthContext';
-import { Lock, AlertCircle, Info, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Lock, AlertCircle, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
@@ -12,8 +12,8 @@ import { toast } from 'sonner';
 
 const AdminLogin = () => {
   const { login, isAuthenticated, profile } = useAuth();
-  const [email, setEmail] = useState('admin@portfolio.com');
-  const [password, setPassword] = useState('adminpassword123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -144,15 +144,6 @@ const AdminLogin = () => {
           <Separator />
           
           <CardFooter className="flex-col pt-6">
-            <Alert className="mb-4 bg-muted/40 border-muted">
-              <Info className="h-4 w-4" />
-              <AlertTitle>Demo Credentials</AlertTitle>
-              <AlertDescription className="text-xs">
-                <div>Email: admin@portfolio.com</div>
-                <div>Password: adminpassword123</div>
-              </AlertDescription>
-            </Alert>
-            
             <div className="text-center w-full">
               <Link to="/auth" className="text-sm text-primary hover:underline">
                 Regular user? Login here
