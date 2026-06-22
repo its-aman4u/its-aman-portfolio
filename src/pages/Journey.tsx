@@ -115,7 +115,7 @@ const Journey = () => {
     {
       year: "2024 -- Present",
       title: "AI Automation & Systems Developer (Holisol)",
-      description: "Translated ground business workflows into code. Designed the HWMS Insights Connector, automated file transfer interfaces, and compiled daily FC P&Ls, yielding over ₹1.3 Crore in verified bottomline value and saving 151.5 hours of manual work/month.",
+      description: "Translated ground business workflows into code. Designed the HWMS Insights Connector, automated file transfer interfaces, and compiled daily FC P&Ls, automating over 121.5 hours of manual operational work/month.",
       icon: Code
     },
     {

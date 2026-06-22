@@ -62,12 +62,12 @@ const HeroSection = () => {
             {/* Quantified Impact Badges */}
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="glass-panel p-4 rounded-xl border border-white/20">
-                <div className="text-2xl md:text-3xl font-extrabold text-primary">₹1.3 Crore+</div>
-                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mt-1">Bottomline Savings</div>
+                <div className="text-2xl md:text-3xl font-extrabold text-primary">121.5 Hours</div>
+                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mt-1">Saved / Month</div>
               </div>
               <div className="glass-panel p-4 rounded-xl border border-white/20">
-                <div className="text-2xl md:text-3xl font-extrabold text-primary">151.5 Hours</div>
-                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mt-1">Saved / Month</div>
+                <div className="text-2xl md:text-3xl font-extrabold text-primary">11+ Systems</div>
+                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mt-1">Integrated</div>
               </div>
             </div>
 

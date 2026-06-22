@@ -36,7 +36,7 @@ const Skills = () => {
     },
     {
       title: "Process Automation",
-      description: "Designing high-leverage scripts (Google Apps Script, REST APIs, SFTP transfers) automating file uploads, saving 151.5 hours of manual work/month.",
+      description: "Designing high-leverage scripts (Google Apps Script, REST APIs, SFTP transfers) automating file uploads, saving 121.5 hours of manual work/month.",
       icon: Cog,
       category: "technical"
     },

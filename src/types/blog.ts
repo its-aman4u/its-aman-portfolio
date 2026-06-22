@@ -330,12 +330,12 @@ InsightForge proves that you can build highly capable, AI-driven data intelligen
   {
     id: '5',
     title: 'Operations Analytics: Reconciling Logistics Profitability and Daily FC P&L',
-    excerpt: 'How automation of roll-forward MIS financial models and route mapping audits saved Holisol Logistics over ₹1.3 Crore in bottom-line operations leakage.',
+    excerpt: 'How automation of roll-forward MIS financial models and route mapping audits automated 25 hours/month of manual compilation at Holisol Logistics.',
     content: `# Operations Analytics: Reconciling Logistics Profitability and Daily FC P&L
 
 In contract logistics, margins are razor-thin. Profitability depends entirely on managing minute details: last-mile transport rates, fuel surcharge variances, warehouse space utilization, and labour utilization. When these operational costs are tracked manually in disparate spreadsheets, billing leaks go undetected.
 
-At Holisol Logistics, I developed a series of **operations analytics pipelines and MIS compilers** that automated daily fulfillment center (FC) P&L reporting. This automation plugged leakages, recovering over **₹1.3 Crore ($155,000 USD)** in bottom-line value.
+At Holisol Logistics, I developed a series of **operations analytics pipelines and MIS compilers** that automated daily fulfillment center (FC) P&L reporting. This automation streamlined reporting, saving over **25 hours/month** of manual compilation time.
 
 ---
 
@@ -360,7 +360,7 @@ To eliminate these blindspots, I designed an automated Profit & Loss compiler us
 ## Results and Core Metrics
 
 The automation of financial reconciliations delivered measurable results:
-- 💰 **₹1.3 Crore saved**: Identified and recovered billing leakages and transport invoice overcharges.
+- 🔍 **Audit Automation**: Automated fuel surcharge discrepancy checks and last-mile route mapping audits.
 - ⏱️ **25 Hours/Month Saved**: Replaced manual MIS compiler consolidation tasks with a single-click analytical routine.
 - 🎯 **Accurate Auditing**: Enabled daily Profit & Loss visibility at the hub level, allowing managers to identify and correct labor cost variances immediately.
 

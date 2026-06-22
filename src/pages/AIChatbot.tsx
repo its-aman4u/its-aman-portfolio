@@ -76,7 +76,7 @@ const AIChatbot = () => {
   useEffect(() => {
     const initialMessage = isAdmin
       ? "Welcome back, Aman! Genesis AI is active and fully loaded with your project data, metrics, and portfolio context. Ask me anything or enter your security passcode to unlock admin utilities."
-      : "Hello! I'm **Genesis AI**, Aman Singh's intelligent portfolio companion. I know everything about Aman's 11 projects, his ₹1.3 Crore+ operational savings, his tech stack, and his career journey.\n\nAsk me anything — *'Tell me about Aman's HWMS project'*, *'What tech does Aman use?'*, *'How can I contact Aman?'*";
+      : "Hello! I'm **Genesis AI**, Aman Singh's intelligent portfolio companion. I know everything about Aman's 11 projects, his 121.5 hours/month in operational time savings, his tech stack, and his career journey.\n\nAsk me anything — *'Tell me about Aman's HWMS project'*, *'What tech does Aman use?'*, *'How can I contact Aman?'*";
 
     setMessages([
       {
@@ -295,12 +295,12 @@ const AIChatbot = () => {
     
     // Greetings
     if (/^(hi|hello|hey|greetings|howdy|yo|sup|hiya|good\s*(morning|afternoon|evening))[\s!?.]*$/.test(q)) {
-      return "Hello! 👋 I'm **Genesis AI**, Aman Singh's portfolio assistant. I'm loaded with everything about Aman's work.\n\n**Try asking me:**\n- *\"What is the HWMS Insights Connector?\"*\n- *\"How much money did Aman save at Holisol?\"*\n- *\"What is Aman's tech stack?\"*\n- *\"Tell me about Aman's Zero-Trust project\"*\n- *\"How do I contact Aman?\"*";
+      return "Hello! 👋 I'm **Genesis AI**, Aman Singh's portfolio assistant. I'm loaded with everything about Aman's work.\n\n**Try asking me:**\n- *\"What is the HWMS Insights Connector?\"*\n- *\"How much time did Aman save at Holisol?\"*\n- *\"What is Aman's tech stack?\"*\n- *\"Tell me about Aman's Zero-Trust project\"*\n- *\"How do I contact Aman?\"*";
     }
 
     // Who is Aman / About
     if (q.includes("who is aman") || q.includes("about aman") || q.includes("tell me about aman") || q.includes("introduce") || (q.includes("who") && q.includes("you")) || q.includes("your creator") || q.includes("portfolio owner")) {
-      return "**Aman Singh** is an **AI-Native Systems Architect & Automation Specialist** based in Gurugram, India.\n\n🎯 **What he does:**\n- Builds secure data pipelines, warehouse management integrations, and AI-powered automation tools\n- Specializes in Python (FastAPI, Streamlit, Pandas), SQL, React, TypeScript, Docker, and LLM integrations\n- Has generated **₹1.3 Crore+ ($155K USD)** in bottom-line value at Holisol Logistics\n- Automated **151.5 hours/month** (0.86 FTE) of manual labor through intelligent pipelines\n\n🏢 **Current Role:** Operations Lead & AI-Native Systems Architect at Holisol Logistics (2022–Present)\n\n📧 **Contact:** aman.singh01031997@gmail.com";
+      return "**Aman Singh** is an **AI-Native Systems Architect & Automation Specialist** based in Gurugram, India.\n\n🎯 **What he does:**\n- Builds secure data pipelines, warehouse management integrations, and AI-powered automation tools\n- Specializes in Python (FastAPI, Streamlit, Pandas), SQL, React, TypeScript, Docker, and LLM integrations\n- Automated over **121.5 hours/month** (0.7 FTE equivalent) of manual operational labor at Holisol Logistics through intelligent pipelines.\n\n🏢 **Current Role:** Operations Lead & AI-Native Systems Architect at Holisol Logistics (2022–Present)\n\n📧 **Contact:** aman.singh01031997@gmail.com";
     }
 
     // TAT / Turnaround Time / SLA
@@ -340,7 +340,7 @@ const AIChatbot = () => {
     
     // Savings / Metrics / ROI / Impact
     if (q.includes("saving") || q.includes("metric") || q.includes("hour") || q.includes("cost") || q.includes("crore") || q.includes("lakh") || q.includes("roi") || q.includes("impact") || q.includes("result") || q.includes("achievement") || q.includes("money") || q.includes("value")) {
-      return "**Aman Singh — Quantifiable Business Impact:**\n\n💰 **₹1.3 Crore+ ($155K USD) Bottom-Line Value Generated:**\n- Transport audit recovery (fuel surcharge discrepancies)\n- Last-mile route mapping & vendor billing verification\n- Logistics leakage identification & plug\n- Daily FC Profit & Loss automation preventing billing misses\n\n⏱️ **151.5 Hours Saved Per Month (0.86 FTE Equivalent):**\n| Project | Hours Saved/Month |\n|---------|------------------|\n| HWMS Insights Connector | 44 hrs |\n| Increff Inventory Validator | 30 hrs |\n| PTW Architecture | 22.5 hrs |\n| TAT Automator | 20 hrs |\n| MIS P&L Compiler | 25 hrs |\n| Other Automations | 10 hrs |\n\nThese savings directly converted to retained headcount and avoided operational delays.";
+      return "**Aman Singh — Quantifiable Business Impact:**\n\n⏱️ **121.5 Hours Saved Per Month (0.7 FTE Equivalent):**\n| Project | Hours Saved/Month |\n|---------|------------------|\n| HWMS Insights Connector | 44 hrs |\n| Increff Inventory Validator | 30 hrs |\n| Enterprise PTW Architecture | 22.5 hrs |\n| MIS P&L Compiler | 25 hrs |\n\nThese time savings directly converted to optimized operational focus, error-free auditing pipelines, and avoided administrative delays across fulfillment hubs.";
     }
     
     // CV / Resume / Download
@@ -355,7 +355,7 @@ const AIChatbot = () => {
 
     // Education / Experience / Journey
     if (q.includes("experience") || q.includes("job") || q.includes("mba") || q.includes("education") || q.includes("university") || q.includes("degree") || q.includes("background") || q.includes("career") || q.includes("journey")) {
-      return "**Aman Singh — Career Journey:**\n\n💼 **Work Experience:**\n- **AI-Native Systems Architect & Automation Specialist** | Holisol Logistics | 2024–Present\n  - Designs secure data bridges, warehouse integrations, and LLM automation tools\n- **Operations Lead & Compliance Specialist** | Holisol Logistics | 2022–2024\n  - Drove ₹1.3 Crore in savings through analytics, audits, and process automation\n\n🎓 **Education:**\n- **MBA in Supply Chain & Logistics** | ITM University, Gwalior | 2020–2022\n- **Bachelor of Commerce (B.Com)** | ITM University, Gwalior | 2017–2020\n\n🛠️ **Toolkit:** Python, FastAPI, Streamlit, Pandas, SQL, MySQL, DuckDB, React, TypeScript, Docker, Git, Supabase, LangChain, Ollama";
+      return "**Aman Singh — Career Journey:**\n\n💼 **Work Experience:**\n- **AI-Native Systems Architect & Automation Specialist** | Holisol Logistics | 2024–Present\n  - Designs secure data bridges, warehouse integrations, and LLM automation tools\n- **Operations Lead & Compliance Specialist** | Holisol Logistics | 2022–2024\n  - Drove significant operational efficiency and safety compliance through custom analytics and automated pipelines\n\n🎓 **Education:**\n- **MBA in Supply Chain & Logistics** | ITM University, Gwalior | 2020–2022\n- **Bachelor of Commerce (B.Com)** | ITM University, Gwalior | 2017–2020\n\n🛠️ **Toolkit:** Python, FastAPI, Streamlit, Pandas, SQL, MySQL, DuckDB, React, TypeScript, Docker, Git, Supabase, LangChain, Ollama";
     }
 
     // Tech Stack / Skills / Tools
@@ -375,16 +375,16 @@ const AIChatbot = () => {
 
     // What can you do / help
     if (q.includes("what can") || q.includes("help me") || q.includes("what do you know") || q.includes("capabilities") || q.includes("features")) {
-      return "**Genesis AI — Powered by Aman's Portfolio Data:**\n\n🧠 I know about:\n- All **11 of Aman's projects** (architecture, tech stack, business impact)\n- His **₹1.3 Crore+ operational savings** story\n- **151.5 hours/month** automated across 6 tools\n- His full **career timeline** (Holisol, ITM University Gwalior)\n- His **tech stack** (Python, React, Docker, LLMs, DuckDB, FastAPI)\n- His **5 published case studies** in the blog\n- How to **contact or hire** Aman\n\n💬 **Try asking:**\n- *\"Explain the Zero-Trust project\"*\n- *\"What is Aman's biggest achievement?\"*\n- *\"What technologies does Aman know?\"*\n- *\"How can I reach Aman?\"*";
+      return "**Genesis AI — Powered by Aman's Portfolio Data:**\n\n🧠 I know about:\n- All **11 of Aman's projects** (architecture, tech stack, business impact)\n- His **121.5 hours/month** in operational time savings\n- His full **career timeline** (Holisol, ITM University Gwalior)\n- His **tech stack** (Python, React, Docker, LLMs, DuckDB, FastAPI)\n- His **5 published case studies** in the blog\n- How to **contact or hire** Aman\n\n💬 **Try asking:**\n- *\"Explain the Zero-Trust project\"*\n- *\"What is Aman's biggest achievement?\"*\n- *\"What technologies does Aman know?\"*\n- *\"How can I reach Aman?\"*";
     }
 
     // Holisol / Company
     if (q.includes("holisol") || (q.includes("company") && !q.includes("project")) || q.includes("employer") || q.includes("workplace")) {
-      return "**Holisol Logistics Pvt Ltd** 🏢\n\nAman's employer where he has worked since **2022**, progressively evolving from:\n- **Compliance & Safety Team Lead** (2021–2024) → managing PTW systems, audit pipelines, operational safety compliance\n- **AI-Native Systems Architect** (2024–Present) → designing data bridges, secure database connectors, AI automation tools\n\nHolisol is a **contract logistics company** operating large-scale fulfillment centers across India for major e-commerce brands. Aman's automations directly reduced operational costs by **₹1.3 Crore** and replaced 0.86 FTE equivalent of manual work.";
+      return "**Holisol Logistics Pvt Ltd** 🏢\n\nAman's employer where he has worked since **2022**, progressively evolving from:\n- **Compliance & Safety Team Lead** (2021–2024) → managing PTW systems, audit pipelines, operational safety compliance\n- **AI-Native Systems Architect** (2024–Present) → designing data bridges, secure database connectors, AI automation tools\n\nHolisol is a **contract logistics company** operating large-scale fulfillment centers across India for major e-commerce brands. Aman's automations directly saved over **121.5 hours/month** of manual operational work, equivalent to 0.7 FTE.";
     }
     
     // Default — rich, intelligent fallback
-    return "🌐 **Genesis AI — Enhanced Knowledge Mode**\n\nI'm Aman Singh's portfolio AI, loaded with his full professional context.\n\n**Aman Singh** is an **AI-Native Systems Architect** with **₹1.3 Crore** in operations savings and **151.5 hours/month** automated.\n\n**I can answer questions about:**\n- 🔧 His 11 projects (HWMS Connector, InsightForge, Zero-Trust Sandbox, TAT Automator, Increff Validator...)\n- 💰 His operational savings and business impact metrics\n- 🛠️ His tech stack (Python, React, Docker, LangChain, DuckDB, FastAPI)\n- 🎓 His career journey and education (MBA, B.Com)\n- 📬 How to contact or hire him\n- 📝 His 5 published technical case studies\n\nTry asking something more specific — I'll give you a detailed answer!";
+    return "🌐 **Genesis AI — Enhanced Knowledge Mode**\n\nI'm Aman Singh's portfolio AI, loaded with his full professional context.\n\n**Aman Singh** is an **AI-Native Systems Architect** with **121.5 hours/month** of automated operational savings.\n\n**I can answer questions about:**\n- 🔧 His 11 projects (HWMS Connector, InsightForge, Zero-Trust Sandbox, TAT Automator, Increff Validator...)\n- ⏱️ His 121.5 hours/month automated time savings\n- 🛠️ His tech stack (Python, React, Docker, LangChain, DuckDB, FastAPI)\n- 🎓 His career journey and education (MBA, B.Com)\n- 📬 How to contact or hire him\n- 📝 His 5 published technical case studies\n\nTry asking something more specific — I'll give you a detailed answer!";
   };
 
   const createPrompt = (userInput: string, isAdminUser: boolean) => {
@@ -407,8 +407,7 @@ const AIChatbot = () => {
     - Website: itsaman4u.vercel.app
 
     ### KEY METRICS & BUSINESS VALUE
-    - Bottom-line Operations Value: Generated over ₹1.3 Crore ($155K USD) in cumulative savings at Holisol Logistics through transport audits, fuel surcharge verification, last-mile rate mappings, and leakage plugging.
-    - Automation Impact: Automated 151.5 hours of manual work/month (equivalent to 0.86 FTE) across logistics, safety reporting, compliance records, and inventory auditing.
+    - Automation Impact: Automated 121.5 hours of manual work/month (equivalent to 0.7 FTE) across logistics, safety reporting, compliance records, and inventory auditing.
 
     ### 11 PORTFOLIO PROJECTS
     1. HWMS Insights Connector: Live warehouse database MySQL query broker built with FastAPI, Next.js, and SQLite. Utilizes secure port-binding SSH tunnels, a 4-role RBAC access matrix, and an AES-256 Fernet credentials vault to eliminate direct database exposure (Saves 44 hours/month).

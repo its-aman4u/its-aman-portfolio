@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-FastAPI_/_Streamlit-yellow?logo=python&logoColor=white&style=flat-square)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-An immersive, interactive 3D portfolio and AI assistant showcasing technical business analysis, full-stack systems engineering, and operational logistics automation. Deployed at Holisol Logistics, these architectures successfully optimized operational workflows, recovering **₹1.3 Crore ($155K USD) in bottom-line leakage** and automating **151.5 hours/month of manual labor**.
+An immersive, interactive 3D portfolio and AI assistant showcasing technical business analysis, full-stack systems engineering, and operational logistics automation. Deployed at Holisol Logistics, these architectures successfully optimized operational workflows, automating **121.5 hours/month of manual operational labor** across 11+ integrated systems.
 
 ---
 
